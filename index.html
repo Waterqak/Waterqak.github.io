@@ -641,8 +641,8 @@
                     </div>
 
                     <div class="bg-black/20 p-6 rounded-xl border border-white/5 space-y-6">
-                        <div><div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_complexity">Complexity</label><span id="complexity-val" class="text-schale text-xs font-mono bg-schale/10 px-2 py-0.5 rounded">Normal</span></div><input type="range" min="1" max="2" step="0.5" value="1" id="complexity-range" oninput="calculateBudget()"></div>
-                        <div><div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_timeline">Urgency</label><span id="rush-val" class="text-schale text-xs font-mono bg-schale/10 px-2 py-0.5 rounded">Standard</span></div><input type="range" min="1" max="1.5" step="0.5" value="1" id="rush-range" oninput="calculateBudget()"></div>
+                        <div><div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_complexity">Complexity</label><span id="complexity-val" class="text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded">Standard</span></div><input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()"></div>
+                        <div><div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_timeline">Urgency</label><span id="rush-val" class="text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded">Standard</span></div><input type="range" min="1" max="1.5" step="0.1" value="1" id="rush-range" oninput="calculateBudget()"></div>
                     </div>
                 </div>
 
@@ -1065,11 +1065,56 @@
         // Calculator Logic
         let basePrice=2500; const RATES={'R$':{r:1,s:' R$',rev:false},'USD':{r:0.0035,s:'$',rev:true},'THB':{r:0.12,s:'฿',rev:true},'VND':{r:90,s:'₫',rev:false}};
         function selectService(p,b){basePrice=p;document.querySelectorAll('.service-btn').forEach(x=>{x.classList.remove('border-schale');x.classList.add('border-white/10');x.querySelector('div').classList.remove('bg-schale/5')});b.classList.remove('border-white/10');b.classList.add('border-schale');b.querySelector('div').classList.add('bg-schale/5');calculateBudget();}
+        
         function calculateBudget(){
-            const c=parseFloat(document.getElementById('complexity-range').value),r=parseFloat(document.getElementById('rush-range').value),cu=document.getElementById('currency-select').value;
-            let t=basePrice*c*r,f=t*RATES[cu].r,d=RATES[cu].rev?RATES[cu].s+Math.ceil(f).toLocaleString():Math.ceil(f).toLocaleString()+RATES[cu].s;
-            document.getElementById('receipt-base').innerText=basePrice.toLocaleString();document.getElementById('receipt-comp').innerText=`x${c}`;document.getElementById('receipt-rush').innerText=`x${r}`;document.getElementById('total-price').innerText=d;
-            if(cu!=='USD')document.getElementById('sub-price').innerText=`approx ~$${Math.ceil(t*RATES['USD'].r)} USD`;else document.getElementById('sub-price').innerText=`approx ${t.toLocaleString()} R$`;
+            const complexityInput = document.getElementById('complexity-range');
+            const rushInput = document.getElementById('rush-range');
+            
+            const c = parseFloat(complexityInput.value);
+            const r = parseFloat(rushInput.value);
+            const cu = document.getElementById('currency-select').value;
+
+            // Update Complexity Label
+            const compLabel = document.getElementById('complexity-val');
+            if(c < 1.3) { 
+                compLabel.innerText = "Standard"; 
+                compLabel.className = "text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded"; 
+            } else if(c < 1.7) { 
+                compLabel.innerText = "Complex"; 
+                compLabel.className = "text-schale text-xs font-mono bg-schale/10 px-2 py-0.5 rounded"; 
+            } else { 
+                compLabel.innerText = "Architect Level"; 
+                compLabel.className = "text-gold text-xs font-mono bg-gold/10 px-2 py-0.5 rounded"; 
+            }
+
+            // Update Urgency Label
+            const rushLabel = document.getElementById('rush-val');
+            if(r < 1.2) { 
+                rushLabel.innerText = "Standard"; 
+                rushLabel.className = "text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded"; 
+            } else if(r < 1.4) { 
+                rushLabel.innerText = "Priority"; 
+                rushLabel.className = "text-schale text-xs font-mono bg-schale/10 px-2 py-0.5 rounded"; 
+            } else { 
+                rushLabel.innerText = "ASAP"; 
+                rushLabel.className = "text-alert text-xs font-mono bg-alert/10 px-2 py-0.5 rounded"; 
+            }
+
+            // Calculations
+            let t = basePrice * c * r;
+            let f = t * RATES[cu].r;
+            let d = RATES[cu].rev ? RATES[cu].s + Math.ceil(f).toLocaleString() : Math.ceil(f).toLocaleString() + RATES[cu].s;
+            
+            document.getElementById('receipt-base').innerText = basePrice.toLocaleString();
+            document.getElementById('receipt-comp').innerText = `x${c.toFixed(1)}`; 
+            document.getElementById('receipt-rush').innerText = `x${r.toFixed(1)}`;
+            document.getElementById('total-price').innerText = d;
+            
+            if(cu !== 'USD') {
+                document.getElementById('sub-price').innerText = `approx ~$${Math.ceil(t*RATES['USD'].r)} USD`;
+            } else {
+                document.getElementById('sub-price').innerText = `approx ${Math.ceil(t).toLocaleString()} R$`;
+            }
         }
 
         // Language & UI Toggles
