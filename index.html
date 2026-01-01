@@ -36,7 +36,6 @@
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-fast': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'blink': 'blink 0.8s step-end infinite',
-                        'spin-slow': 'spin 12s linear infinite',
                     },
                     keyframes: {
                         float: {
@@ -95,15 +94,27 @@
             margin-left: 2px;
         }
 
+        /* Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -6px; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer; background: #333; border-radius: 2px;
+        }
+
         /* MATRIX MODE STYLES (Secret) */
         body.matrix-mode { background-color: #001100 !important; color: #00ff41 !important; font-family: 'Courier New', monospace; }
         body.matrix-mode .text-gradient { background: #00ff41; -webkit-background-clip: text; -webkit-text-fill-color: #00ff41; text-shadow: 0 0 10px #00ff41; animation: none; }
         body.matrix-mode .glass, body.matrix-mode .glass-card { background: rgba(0, 20, 0, 0.9); border-color: #00ff41; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
         body.matrix-mode .mesh-bg { background: radial-gradient(circle, rgba(0, 255, 65, 0.1), transparent); }
-        body.matrix-mode .text-gray-400 { color: #80ff9a; }
+        body.matrix-mode .text-gray-400, body.matrix-mode .text-gray-500 { color: #80ff9a; }
         body.matrix-mode .text-white { color: #fff; text-shadow: 0 0 5px #00ff41; }
         body.matrix-mode button { background: #003300 !important; color: #00ff41 !important; border: 1px solid #00ff41; box-shadow: 0 0 10px #00ff41 !important; }
         body.matrix-mode .text-blue-500, body.matrix-mode .text-purple-400, body.matrix-mode .text-emerald-400, body.matrix-mode .text-orange-400 { color: #00ff41 !important; }
+        body.matrix-mode input[type=range]::-webkit-slider-thumb { background: #00ff41; box-shadow: 0 0 10px #00ff41; }
     </style>
 </head>
 <body class="antialiased selection:bg-blue-500 selection:text-white">
@@ -124,7 +135,7 @@
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                 <a href="#about" class="nav-link hover:text-white hover:text-blue-400 transition-colors">About</a>
                 <a href="#projects" class="nav-link hover:text-white hover:text-blue-400 transition-colors">Work</a>
-                <a href="#skills" class="nav-link hover:text-white hover:text-blue-400 transition-colors">Stack</a>
+                <a href="#calculator" class="nav-link hover:text-white hover:text-blue-400 transition-colors">Estimator</a>
                 <a href="#contact" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:-translate-y-0.5 font-bold">Hire Me</a>
             </div>
             <div class="md:hidden">
@@ -249,32 +260,65 @@
         </div>
     </section>
 
-    <!-- Skills Section -->
-    <section id="skills" class="py-32 px-6 bg-black/10">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold text-white mb-16" data-aos="fade-up">My Tech Stack</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] duration-300" data-aos="flip-left" data-aos-delay="0">
-                    <i data-lucide="server" class="mx-auto mb-6 text-blue-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">Server Stuff</h4>
-                    <p class="text-xs text-gray-400 mt-2">I make the logic secure.</p>
+    <!-- NEW BUDGET ESTIMATOR -->
+    <section id="calculator" class="py-24 relative bg-black/40 border-t border-white/5">
+        <div class="max-w-3xl mx-auto px-6" data-aos="fade-up">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-white">Budget Estimator</h2>
+                <p class="text-gray-400 mt-2">Get a rough idea of the cost before we talk.</p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-8 border border-white/10">
+                <!-- Service Type -->
+                <div class="mb-8">
+                    <label class="block text-gray-400 text-sm font-bold mb-4 uppercase tracking-widest">Type of Work</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button onclick="selectService(5000, this)" class="service-btn p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all active-service">
+                            <i data-lucide="wrench" class="mx-auto mb-2 text-orange-400"></i>
+                            Bug Fix / Polish
+                            <div class="text-xs text-gray-500 mt-1">Starts at 5k R$</div>
+                        </button>
+                        <button onclick="selectService(15000, this)" class="service-btn p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all">
+                            <i data-lucide="box" class="mx-auto mb-2 text-blue-400"></i>
+                            System Module
+                            <div class="text-xs text-gray-500 mt-1">Starts at 15k R$</div>
+                        </button>
+                        <button onclick="selectService(50000, this)" class="service-btn p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all">
+                            <i data-lucide="gamepad-2" class="mx-auto mb-2 text-purple-400"></i>
+                            Full Game Loop
+                            <div class="text-xs text-gray-500 mt-1">Starts at 50k R$</div>
+                        </button>
+                    </div>
                 </div>
-                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(34,197,94,0.15)] duration-300" data-aos="flip-left" data-aos-delay="100">
-                    <i data-lucide="database" class="mx-auto mb-6 text-green-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">Saving Data</h4>
-                    <p class="text-xs text-gray-400 mt-2">No data loss allowed.</p>
+
+                <!-- Sliders -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-sm font-bold text-gray-400">Complexity</label>
+                            <span id="complexity-val" class="text-sm text-blue-400">Normal (1x)</span>
+                        </div>
+                        <input type="range" min="1" max="2" step="0.5" value="1" id="complexity-range" oninput="calculateBudget()">
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-sm font-bold text-gray-400">Timeline</label>
+                            <span id="rush-val" class="text-sm text-blue-400">Standard</span>
+                        </div>
+                        <input type="range" min="1" max="1.5" step="0.5" value="1" id="rush-range" oninput="calculateBudget()">
+                    </div>
                 </div>
-                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] duration-300" data-aos="flip-left" data-aos-delay="200">
-                    <i data-lucide="layout" class="mx-auto mb-6 text-purple-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">UI Magic</h4>
-                    <p class="text-xs text-gray-400 mt-2">I make menus pop.</p>
-                </div>
-                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(239,68,68,0.15)] duration-300" data-aos="flip-left" data-aos-delay="300">
-                    <i data-lucide="shield-check" class="mx-auto mb-6 text-red-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">Anti-Cheat</h4>
-                    <p class="text-xs text-gray-400 mt-2">I stop exploiters.</p>
+
+                <!-- Total -->
+                <div class="flex items-center justify-between border-t border-white/10 pt-6 mt-6">
+                    <span class="text-gray-400 text-sm">Estimated Range:</span>
+                    <div class="text-right">
+                        <div id="total-price" class="text-3xl font-bold text-white text-shadow-glow">5,000 R$</div>
+                        <div class="text-xs text-gray-500">(approx ~<span id="usd-price">$17</span> USD)</div>
+                    </div>
                 </div>
             </div>
+            <p class="text-center text-xs text-gray-600 mt-6">*Final price may vary based on specific requirements.</p>
         </div>
     </section>
 
@@ -296,16 +340,23 @@
                     <!-- Decorative Scan Lines -->
                     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-50 animate-pulse"></div>
 
-                    <!-- Status Indicator -->
-                    <div class="flex items-center justify-between mb-8 border-b border-white/5 pb-4">
-                        <div class="flex items-center gap-3">
-                            <span class="relative flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    <!-- Status Indicator (TIMEZONE) -->
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-8 border-b border-white/5 pb-4 gap-4">
+                        
+                        <!-- Online Status -->
+                        <div class="flex items-center gap-3 bg-black/40 px-3 py-1.5 rounded-full border border-white/5">
+                            <span class="relative flex h-2.5 w-2.5">
+                                <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span id="status-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                             </span>
-                            <span class="text-xs font-mono text-green-400 tracking-widest">SIGNAL: STRONG</span>
+                            <span id="status-text" class="text-xs font-mono text-green-400 tracking-widest">ONLINE</span>
                         </div>
-                        <span class="text-xs font-mono text-gray-600">ID: WATER.LOGS</span>
+
+                        <!-- Local Time -->
+                        <div class="flex items-center gap-2 text-xs font-mono text-gray-500">
+                            <i data-lucide="globe" class="w-3 h-3"></i>
+                            <span>MY TIME: <span id="local-time" class="text-blue-400">Loading...</span> (UTC+7)</span>
+                        </div>
                     </div>
 
                     <!-- Contact Grid -->
@@ -412,138 +463,134 @@
         ];
         // ==========================================
         
+        // --- 1. RENDER PROJECTS ---
         function renderProjects() {
             const container = document.getElementById('projects-grid');
             if(!container) return;
-
             const styles = {
                 emerald: { from: 'from-green-900', text: 'text-emerald-400', border: 'border-emerald-400/20', bg: 'bg-emerald-400/10', hoverBorder: 'hover:border-emerald-500/50' },
                 purple: { from: 'from-purple-900', text: 'text-purple-400', border: 'border-purple-400/20', bg: 'bg-purple-400/10', hoverBorder: 'hover:border-purple-500/50' },
                 orange: { from: 'from-orange-900', text: 'text-orange-400', border: 'border-orange-400/20', bg: 'bg-orange-400/10', hoverBorder: 'hover:border-orange-500/50' },
                 blue: { from: 'from-blue-900', text: 'text-blue-400', border: 'border-blue-400/20', bg: 'bg-blue-400/10', hoverBorder: 'hover:border-blue-500/50' },
-                red: { from: 'from-red-900', text: 'text-red-400', border: 'border-red-400/20', bg: 'bg-red-400/10', hoverBorder: 'hover:border-red-500/50' },
             };
-
             const html = myProjects.map((project, index) => {
                 const style = styles[project.color] || styles.blue;
-                
                 let visual = '';
                 if (project.video && project.video.trim() !== "") {
-                     visual = `
-                        <video src="${project.video}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"></video>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>
-                    `;
+                     visual = `<video src="${project.video}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"></video><div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>`;
                 } else if (project.image && project.image.trim() !== "") {
-                    visual = `
-                        <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>
-                    `;
+                    visual = `<img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"><div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>`;
                 } else {
-                    visual = `
-                        <div class="absolute inset-0 bg-${project.color}-500/5 group-hover:bg-${project.color}-500/10 transition-colors"></div>
-                        <i data-lucide="${project.icon}" class="${style.text} w-20 h-20 relative z-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"></i>
-                    `;
+                    visual = `<div class="absolute inset-0 bg-${project.color}-500/5 group-hover:bg-${project.color}-500/10 transition-colors"></div><i data-lucide="${project.icon}" class="${style.text} w-20 h-20 relative z-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"></i>`;
                 }
-
-                const tags = project.techStack.map(tag => 
-                    `<span class="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded border border-white/5">${tag}</span>`
-                ).join('');
-
-                return `
-                <div class="group relative bg-surface rounded-3xl overflow-hidden border border-white/5 ${style.hoverBorder} transition-all duration-500 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="${index * 100}">
-                    <div class="h-56 bg-gradient-to-br ${style.from} to-black flex items-center justify-center relative overflow-hidden group-hover:bg-gray-800 transition-colors">
-                        ${visual}
-                    </div>
-                    <div class="p-8">
-                        <div class="flex justify-between items-start mb-4">
-                            <h3 class="text-xl font-bold text-white group-hover:${style.text} transition-colors">${project.title}</h3>
-                            <span class="text-[10px] font-bold ${style.text} ${style.bg} px-3 py-1 rounded-full border ${style.border}">${project.category}</span>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-6 leading-relaxed h-20 overflow-hidden text-ellipsis">
-                            ${project.description}
-                        </p>
-                        <div class="flex flex-wrap gap-2">
-                            ${tags}
-                        </div>
-                    </div>
-                </div>
-                `;
+                const tags = project.techStack.map(tag => `<span class="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded border border-white/5">${tag}</span>`).join('');
+                return `<div class="group relative bg-surface rounded-3xl overflow-hidden border border-white/5 ${style.hoverBorder} transition-all duration-500 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="${index * 100}"><div class="h-56 bg-gradient-to-br ${style.from} to-black flex items-center justify-center relative overflow-hidden group-hover:bg-gray-800 transition-colors">${visual}</div><div class="p-8"><div class="flex justify-between items-start mb-4"><h3 class="text-xl font-bold text-white group-hover:${style.text} transition-colors">${project.title}</h3><span class="text-[10px] font-bold ${style.text} ${style.bg} px-3 py-1 rounded-full border ${style.border}">${project.category}</span></div><p class="text-gray-400 text-sm mb-6 leading-relaxed h-20 overflow-hidden text-ellipsis">${project.description}</p><div class="flex flex-wrap gap-2">${tags}</div></div></div>`;
             }).join('');
-
             container.innerHTML = html;
         }
 
-        // Typewriter Effect
+        // --- 2. BUDGET CALCULATOR ---
+        let currentBasePrice = 5000;
+        function selectService(price, btn) {
+            currentBasePrice = price;
+            document.querySelectorAll('.service-btn').forEach(b => {
+                b.classList.remove('border-blue-500', 'bg-blue-500/10');
+                b.classList.add('border-white/10', 'bg-white/5');
+            });
+            btn.classList.remove('border-white/10', 'bg-white/5');
+            btn.classList.add('border-blue-500', 'bg-blue-500/10');
+            calculateBudget();
+        }
+
+        function calculateBudget() {
+            const complexity = parseFloat(document.getElementById('complexity-range').value);
+            const rush = parseFloat(document.getElementById('rush-range').value);
+            
+            // Text Updates
+            const complexityText = complexity == 1 ? "Normal (1x)" : complexity == 1.5 ? "Medium (1.5x)" : "Complex (2x)";
+            document.getElementById('complexity-val').innerText = complexityText;
+            
+            const rushText = rush == 1 ? "Standard" : rush == 1.5 ? "Fast (1.5x)" : "ASAP (2x)";
+            document.getElementById('rush-val').innerText = rushText;
+
+            // Math
+            let total = currentBasePrice * complexity * rush;
+            
+            // Formatting
+            document.getElementById('total-price').innerText = total.toLocaleString() + " R$";
+            document.getElementById('usd-price').innerText = "$" + Math.ceil(total * 0.0035); // Approx DevEx/Market Rate
+        }
+
+        // --- 3. TIMEZONE LOGIC (UTC+7 Thailand) ---
+        function updateTime() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const offset = 7; // Thailand UTC+7
+            const localDate = new Date(utc + (3600000 * offset));
+            
+            // Format Time (10:07 PM)
+            let hours = localDate.getHours();
+            const minutes = localDate.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            document.getElementById('local-time').innerText = `${hours}:${minutes} ${ampm}`;
+
+            // Determine Status (Awake between 8 AM and 1 AM)
+            const rawHour = localDate.getHours();
+            const isAwake = rawHour >= 8 || rawHour < 1; 
+            
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const statusPing = document.getElementById('status-ping');
+
+            if(isAwake) {
+                statusText.innerText = "ONLINE";
+                statusText.classList.replace("text-orange-400", "text-green-400");
+                statusDot.classList.replace("bg-orange-500", "bg-green-500");
+                statusPing.classList.replace("bg-orange-400", "bg-green-400");
+            } else {
+                statusText.innerText = "ASLEEP";
+                statusText.classList.replace("text-green-400", "text-orange-400");
+                statusDot.classList.replace("bg-green-500", "bg-orange-500");
+                statusPing.classList.replace("bg-green-400", "bg-orange-400");
+            }
+        }
+
+        // --- 4. INIT ---
         function typeWriter() {
             const text = "Actually Works.";
             const element = document.getElementById("typewriter");
             let i = 0;
-            
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, 80); // Faster typing speed
-                } else {
-                    element.classList.remove("typing-cursor");
-                }
-            }
+            function type() { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, 80); } else { element.classList.remove("typing-cursor"); } }
             type();
         }
 
-        // Active Nav Highlighter & Scroll Progress
         function handleScroll() {
             const sections = document.querySelectorAll("section, header");
             const navLinks = document.querySelectorAll(".nav-link");
             const progressBar = document.getElementById("scroll-progress");
-            
             let current = "";
             const scrollY = window.scrollY;
-            
-            // Progress Bar Width
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             if(progressBar) progressBar.style.width = scrolled + "%";
-
-            // Active Section logic
-            sections.forEach((section) => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - 150) {
-                    current = section.getAttribute("id");
-                }
-            });
-
+            sections.forEach((section) => { const sectionTop = section.offsetTop; if (scrollY >= sectionTop - 150) { current = section.getAttribute("id"); } });
             navLinks.forEach((link) => {
-                link.classList.remove("text-blue-400");
-                link.classList.add("text-gray-400");
-                if (link.getAttribute("href").includes(current)) {
-                    link.classList.add("text-blue-400");
-                    link.classList.remove("text-gray-400");
-                }
+                link.classList.remove("text-blue-400"); link.classList.add("text-gray-400");
+                if (link.getAttribute("href").includes(current)) { link.classList.add("text-blue-400"); link.classList.remove("text-gray-400"); }
             });
         }
 
-        // KONAMI CODE EASTER EGG
+        // Konami Code
         let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
         let konamiIndex = 0;
-
         document.addEventListener('keydown', (e) => {
-            if (e.key === konamiCode[konamiIndex]) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    activateMatrixMode();
-                    konamiIndex = 0;
-                }
-            } else {
-                konamiIndex = 0;
-            }
+            if (e.key === konamiCode[konamiIndex]) { konamiIndex++; if (konamiIndex === konamiCode.length) { activateMatrixMode(); konamiIndex = 0; } } else { konamiIndex = 0; }
         });
-
         function activateMatrixMode() {
             document.body.classList.toggle('matrix-mode');
-            const audio = new Audio('https://www.soundjay.com/button/beep-07.wav'); // Simple beep for effect
-            audio.play().catch(e => console.log('Audio blocked'));
             alert("SYSTEM HACKED: DEVELOPER MODE ACTIVE");
         }
 
@@ -551,31 +598,25 @@
             renderProjects();
             lucide.createIcons();
             AOS.init({ once: true, offset: 80, duration: 800 });
-            
-            // Start typewriter
-            setTimeout(typeWriter, 500); // Faster start
-
-            // Scroll Listener
+            setTimeout(typeWriter, 500);
             window.addEventListener("scroll", handleScroll);
+            
+            // Start Clock
+            updateTime();
+            setInterval(updateTime, 60000); // Update every minute
+            
+            // Set initial Active Button
+            document.querySelector('.service-btn').classList.add('border-blue-500', 'bg-blue-500/10');
+            document.querySelector('.service-btn').classList.remove('border-white/10', 'bg-white/5');
         });
 
         function copyDiscord() {
             const discordID = "hokpy"; 
             navigator.clipboard.writeText(discordID).then(() => {
-                const btnText = document.getElementById('contact-discord-text'); // Changed ID to match new footer layout
+                const btnText = document.getElementById('contact-discord-text'); 
                 const heroText = document.getElementById('hero-discord-text');
-                
-                if(btnText) {
-                    const original = btnText.innerText;
-                    btnText.innerText = "COPIED!";
-                    setTimeout(() => btnText.innerText = original, 2000);
-                }
-                
-                if(heroText) {
-                    const original = heroText.innerText;
-                    heroText.innerText = "Copied!";
-                    setTimeout(() => heroText.innerText = original, 2000);
-                }
+                if(btnText) { const original = btnText.innerText; btnText.innerText = "COPIED!"; setTimeout(() => btnText.innerText = original, 2000); }
+                if(heroText) { const original = heroText.innerText; heroText.innerText = "Copied!"; setTimeout(() => heroText.innerText = original, 2000); }
             });
         }
     </script>
