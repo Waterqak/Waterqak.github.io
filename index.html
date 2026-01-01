@@ -131,7 +131,7 @@
                 <a href="#projects" class="nav-link hover:text-schale transition-colors flex items-center gap-2"><i data-lucide="folder" class="w-4 h-4"></i> <span data-i18n="nav_work">Work</span></a>
                 <a href="#calculator" class="nav-link hover:text-schale transition-colors flex items-center gap-2"><i data-lucide="calculator" class="w-4 h-4"></i> <span data-i18n="nav_estimator">Estimator</span></a>
                 
-                <button onclick="toggleLanguage()" class="flex items-center gap-1 hover:text-white transition-colors border border-white/10 px-3 py-1 bg-black/30 rounded text-xs">
+                <button onclick="toggleLanguage()" class="flex items-center gap-1 hover:text-white transition-colors border border-white/10 px-3 py-1 bg-black/30 rounded text-xs font-mono">
                     <span id="lang-display">EN</span>
                 </button>
 
@@ -159,10 +159,10 @@
             <i data-lucide="x" class="w-8 h-8"></i>
         </button>
         <div class="flex flex-col gap-8 text-center">
-            <a href="#about" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">About</a>
-            <a href="#projects" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">Projects</a>
-            <a href="#calculator" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">Estimator</a>
-            <a href="#contact" onclick="toggleMobileMenu()" class="px-8 py-3 bg-[#FFA8C5] text-[#4a2c36] rounded-xl font-extrabold">MomoTalk Me</a>
+            <a href="#about" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors" data-i18n="nav_about">About</a>
+            <a href="#projects" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors" data-i18n="nav_work">Projects</a>
+            <a href="#calculator" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors" data-i18n="nav_estimator">Estimator</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="px-8 py-3 bg-[#FFA8C5] text-[#4a2c36] rounded-xl font-extrabold" data-i18n="nav_hire">MomoTalk</a>
         </div>
     </div>
 
@@ -285,17 +285,17 @@
                         <button onclick="selectService(2500, this)" class="service-btn p-5 rounded-lg border border-white/10 bg-[#1E2028] hover:bg-[#252836] text-white transition-all active-service relative overflow-hidden group">
                             <div class="absolute top-0 left-0 w-1 h-full bg-orange-400 group-hover:h-full transition-all"></div>
                             <h4 class="font-bold text-lg mb-1" data-i18n="serv_fix">Bug Fix</h4>
-                            <div class="text-xs text-gray-500 font-mono">From 2.5k R$</div>
+                            <div class="text-xs text-gray-500 font-mono" data-i18n="price_fix">From 2.5k R$</div>
                         </button>
                         <button onclick="selectService(10000, this)" class="service-btn p-5 rounded-lg border border-white/10 bg-[#1E2028] hover:bg-[#252836] text-white transition-all relative overflow-hidden group">
                             <div class="absolute top-0 left-0 w-1 h-full bg-schale transition-all"></div>
                             <h4 class="font-bold text-lg mb-1" data-i18n="serv_sys">System</h4>
-                            <div class="text-xs text-gray-500 font-mono">From 10k R$</div>
+                            <div class="text-xs text-gray-500 font-mono" data-i18n="price_sys">From 10k R$</div>
                         </button>
                         <button onclick="selectService(30000, this)" class="service-btn p-5 rounded-lg border border-white/10 bg-[#1E2028] hover:bg-[#252836] text-white transition-all relative overflow-hidden group">
                             <div class="absolute top-0 left-0 w-1 h-full bg-purple-500 transition-all"></div>
                             <h4 class="font-bold text-lg mb-1" data-i18n="serv_game">Full Game</h4>
-                            <div class="text-xs text-gray-500 font-mono">From 30k R$</div>
+                            <div class="text-xs text-gray-500 font-mono" data-i18n="price_game">From 30k R$</div>
                         </button>
                     </div>
                 </div>
@@ -407,31 +407,33 @@
                 nav_about: "About", nav_work: "Archives", nav_estimator: "Estimator", nav_hire: "MomoTalk",
                 status_online: "System: Online",
                 hero_prefix: "Sensei, I fix",
-                hero_desc: "Roblox Systems Engineer. I specialize in backend architecture, DataStores, and complex mechanics. Like the General Student Council, I keep things running smoothly.",
+                hero_desc: "I'm a Roblox Systems Engineer. I specialize in backend architecture, DataStores, and complex mechanics. Just like the General Student Council, I ensure everything runs perfectly.",
                 btn_see_work: "View Archives", btn_talk: "Request Aid",
                 projects_title: "Mission Reports",
                 calc_title: "Resource Estimator", calc_subtitle: "Calculate required Pyroxenes (Budget) for your request.", calc_type: "Operation Type",
                 serv_fix: "Bug Fix", serv_sys: "System", serv_game: "Full Game",
-                label_complexity: "Logic Complexity", label_timeline: "Urgency",
-                tooltip_complexity: "Math, DataStores, Security levels.",
-                tooltip_timeline: "Rush orders require more energy drinks.",
+                price_fix: "From 2.5k R$", price_sys: "From 10k R$", price_game: "From 30k R$",
+                label_complexity: "System Complexity", label_timeline: "Urgency Level",
+                tooltip_complexity: "How hard is the logic? (Math, DataStores, Security)",
+                tooltip_timeline: "Do you need it done yesterday? Priority tasks cost more.",
                 calc_estimate: "Estimated Cost",
                 contact_title: "MomoTalk", contact_sub: "Sensei, you have a new message request."
             },
             th: {
-                nav_about: "เกี่ยวกับ", nav_work: "ผลงาน", nav_estimator: "ประเมินราคา", nav_hire: "MomoTalk",
-                status_online: "ระบบ: ออนไลน์",
-                hero_prefix: "เซ็นเซย์, ผมซ่อม",
-                hero_desc: "วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend, DataStores และกลไกที่ซับซ้อน เหมือนกับองค์การนักเรียน ผมจะทำให้ทุกอย่างราบรื่น",
-                btn_see_work: "ดูข้อมูล", btn_talk: "ขอความช่วยเหลือ",
+                nav_about: "เกี่ยวกับผม", nav_work: "ผลงาน", nav_estimator: "ประเมินราคา", nav_hire: "MomoTalk",
+                status_online: "สถานะ: พร้อมปฏิบัติงาน",
+                hero_prefix: "เซ็นเซย์ครับ... ผมซ่อม",
+                hero_desc: "ผมคือวิศวกรระบบ Roblox ที่เชี่ยวชาญด้าน Backend และ DataStores รวมถึงระบบที่ซับซ้อน เปรียบเสมือน 'องค์การนักเรียน' ที่คอยดูแลให้คิโวทอสสงบสุขครับ",
+                btn_see_work: "ดูรายงานภารกิจ", btn_talk: "ขอความช่วยเหลือ",
                 projects_title: "รายงานภารกิจ",
-                calc_title: "ประเมินทรัพยากร", calc_subtitle: "คำนวณงบประมาณ (Pyroxenes) สำหรับคำขอของคุณ", calc_type: "ประเภทภารกิจ",
-                serv_fix: "แก้บั๊ก", serv_sys: "ระบบเกม", serv_game: "เกมตัวเต็ม",
-                label_complexity: "ความซับซ้อน", label_timeline: "ความเร่งด่วน",
-                tooltip_complexity: "ความยากของ Logic และความปลอดภัย",
-                tooltip_timeline: "งานด่วนต้องใช้เครื่องดื่มชูกำลังเพิ่ม",
+                calc_title: "คำนวณงบประมาณ", calc_subtitle: "คำนวณงบประมาณ (Pyroxenes) ที่ต้องใช้สำหรับภารกิจนี้", calc_type: "ประเภทภารกิจ",
+                serv_fix: "แก้บั๊ก / ปรับปรุง", serv_sys: "ทำระบบ", serv_game: "ทำเกมเต็มรูปแบบ",
+                price_fix: "เริ่มที่ 2,500 R$", price_sys: "เริ่มที่ 10,000 R$", price_game: "เริ่มที่ 30,000 R$",
+                label_complexity: "ความซับซ้อนของระบบ", label_timeline: "ระดับความเร่งด่วน",
+                tooltip_complexity: "ระบบยากแค่ไหน? (คณิตศาสตร์, DataStores, ความปลอดภัย)",
+                tooltip_timeline: "งานเร่งด่วนต้องใช้เครื่องดื่มชูกำลังเพิ่มครับ",
                 calc_estimate: "ราคาประเมิน",
-                contact_title: "MomoTalk", contact_sub: "เซ็นเซย์ คุณมีข้อความใหม่"
+                contact_title: "MomoTalk", contact_sub: "เซ็นเซย์ คุณมีข้อความใหม่จากนักเรียนครับ"
             }
         };
 
@@ -446,7 +448,7 @@
             });
 
             const typeEl = document.getElementById("typewriter");
-            typeWriterText = currentLang === 'en' ? "Broken Code." : "โค้ดที่พัง";
+            typeWriterText = currentLang === 'en' ? "Broken Code." : "โค้ดที่พังครับ";
             typeEl.innerHTML = typeWriterText;
         }
 
@@ -465,7 +467,7 @@
                 category: "RPG SYSTEM",
                 description: "Visual Novel style interaction system. Features branching dialogue paths, typewriter effects, and quest state tracking.",
                 techStack: ["ModuleScript", "RichText", "UI Tweening"],
-                video: "https://media.discordapp.net/attachments/1352066563213230134/1456235312396238869/2025-12-24_01-16-02.mp4?ex=6957a052&is=69564ed2&hm=4650b140a340527cc17697d793e2555dbbd096068ee690de2be5697ca9323eb8&",
+                video: "https://media.discordapp.net/attachments/1352066563213230134/1456235312396238869/2025-12-24_01-16-02.mp4?ex=6957a052&is=69564ed1&hm=4650b140a340527cc17697d793e2555dbbd096068ee690de2be5697ca9323eb8&",
                 image: "", icon: "message-square", color: "halo"
             },
             {
