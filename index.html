@@ -16,14 +16,14 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Space Grotesk', 'sans-serif'], // Switched to a more "techy/fun" font
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
@@ -35,7 +35,6 @@
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'spin-slow': 'spin 12s linear infinite',
                     },
                     keyframes: {
                         float: {
@@ -50,6 +49,19 @@
     <style>
         body { background-color: #050505; color: #e4e4e7; overflow-x: hidden; }
         
+        /* Grain Texture for "Handmade" feel */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
         /* Glassmorphism */
         .glass { 
             background: rgba(20, 20, 25, 0.7); 
@@ -91,7 +103,9 @@
     </style>
 </head>
 <body class="antialiased selection:bg-blue-500 selection:text-white">
-
+    
+    <!-- Grain Overlay for texture -->
+    <div class="grain-overlay"></div>
     <div class="mesh-bg"></div>
 
     <!-- Navigation -->
@@ -105,14 +119,14 @@
             <!-- Desktop Links -->
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                 <a href="#about" class="hover:text-white hover:text-blue-400 transition-colors">About</a>
-                <a href="#projects" class="hover:text-white hover:text-blue-400 transition-colors">Projects</a>
-                <a href="#skills" class="hover:text-white hover:text-blue-400 transition-colors">Stack</a>
-                <a href="#contact" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:-translate-y-0.5">Hire Me</a>
+                <a href="#projects" class="hover:text-white hover:text-blue-400 transition-colors">Stuff I Made</a>
+                <a href="#skills" class="hover:text-white hover:text-blue-400 transition-colors">My Stack</a>
+                <a href="#contact" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:-translate-y-0.5 font-bold">Hire Me</a>
             </div>
 
             <!-- Mobile Menu Button (Simple) -->
             <div class="md:hidden">
-                <a href="#contact" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-full">Hire Me</a>
+                <a href="#contact" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg">Hire Me</a>
             </div>
         </div>
     </nav>
@@ -128,61 +142,68 @@
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                     </span>
-                    Available for Commissions
+                    Open for Work
                 </div>
                 
                 <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-[1.1]">
-                    Engineering <br>
-                    <span class="text-gradient">The Impossible.</span>
+                    I Write Code That <br>
+                    <span class="text-gradient">Actually Works.</span>
                 </h1>
                 
                 <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
-                    Roblox Systems Engineer specializing in high-performance backends and satisfying gameplay loops. I don't just write code; I fix what others break.
+                    Yo, I'm a Roblox Scripter. I handle the heavy backend stuff like DataStores and math so you can focus on the fun parts. I fix bugs, optimize lag, and make things feel good.
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="#projects" class="flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all hover:-translate-y-1 shadow-lg shadow-white/10">
-                        View Work <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                        See My Stuff <i data-lucide="arrow-down" class="w-5 h-5"></i>
                     </a>
                     <button onclick="copyDiscord()" class="flex items-center justify-center gap-2 px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-all hover:-translate-y-1 group">
-                        <span id="hero-discord-text">Copy Discord</span> 
+                        <span id="hero-discord-text">Grab Discord</span> 
                         <i data-lucide="copy" class="w-5 h-5 group-hover:text-blue-400 transition-colors"></i>
                     </button>
                 </div>
             </div>
             
-            <!-- Right Code Decoration -->
+            <!-- Right Code Decoration - BROWSER WINDOW STYLE -->
             <div class="relative hidden md:block animate-float" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
                 <!-- Glowing Backlight -->
                 <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 rounded-2xl blur-xl opacity-30"></div>
                 
-                <!-- Code Window -->
+                <!-- Browser Window -->
                 <div class="relative bg-[#0d0d0d] rounded-xl border border-white/10 shadow-2xl font-mono text-sm overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                    <!-- Title Bar -->
-                    <div class="flex justify-between items-center px-4 py-3 bg-white/5 border-b border-white/5">
-                        <div class="flex gap-2">
+                    
+                    <!-- Chrome Bar / Address Bar -->
+                    <div class="flex flex-col bg-[#1a1a1a] border-b border-white/5">
+                        <!-- Traffic Lights -->
+                        <div class="flex px-4 py-3 gap-2">
                             <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
                             <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
                             <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
                         </div>
-                        <span class="text-xs text-gray-500 font-sans">RetentionEngine.lua</span>
-                        <div class="w-10"></div> <!-- Spacer -->
+                        <!-- Address Field -->
+                        <div class="px-4 pb-3">
+                            <div class="bg-black/40 rounded flex items-center px-3 py-1.5 text-xs text-gray-500 border border-white/5 gap-2">
+                                <i data-lucide="lock" class="w-3 h-3"></i>
+                                <span>localhost:3000/fix-my-game</span>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Code Content -->
                     <div class="p-6 text-gray-300 code-snippet leading-loose text-xs md:text-sm">
                         <div class="code-line"><span class="text-purple-400">local</span> RetentionEngine = {}</div>
                         <div class="code-line"></div>
-                        <div class="code-line"><span class="text-gray-500">-- Secure Server-Side Verification</span></div>
+                        <div class="code-line"><span class="text-gray-500">-- No more cheaters using client time</span></div>
                         <div class="code-line"><span class="text-purple-400">function</span> RetentionEngine.<span class="text-blue-400">SecureClaim</span>(player)</div>
                         <div class="code-line">    <span class="text-purple-400">local</span> now = <span class="text-yellow-300">os.time</span>()</div>
                         <div class="code-line">    <span class="text-purple-400">local</span> profile = DataManager:Get(player)</div>
                         <div class="code-line">    </div>
                         <div class="code-line">    <span class="text-purple-400">if</span> now - profile.LastClaim < 86400 <span class="text-purple-400">then</span></div>
-                        <div class="code-line">        <span class="text-purple-400">return</span> <span class="text-red-400">false</span>, <span class="text-green-300">"Cooldown Active"</span></div>
+                        <div class="code-line">        <span class="text-purple-400">return</span> <span class="text-red-400">false</span>, <span class="text-green-300">"Bro, wait for the cooldown."</span></div>
                         <div class="code-line">    <span class="text-purple-400">end</span></div>
                         <div class="code-line">    </div>
-                        <div class="code-line">    <span class="text-purple-400">return</span> <span class="text-red-400">true</span>, <span class="text-green-300">"Reward Granted"</span></div>
+                        <div class="code-line">    <span class="text-purple-400">return</span> <span class="text-red-400">true</span>, <span class="text-green-300">"Streak Updated: "</span>..profile.Streak</div>
                         <div class="code-line"><span class="text-purple-400">end</span></div>
                     </div>
                 </div>
@@ -199,16 +220,16 @@
 
                 <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
                     <div>
-                        <h2 class="text-3xl font-bold text-white mb-6">Behind the Code</h2>
-                        <div class="space-y-4 text-gray-400 leading-relaxed">
+                        <h2 class="text-3xl font-bold text-white mb-6">Who am I?</h2>
+                        <div class="space-y-4 text-gray-400 leading-relaxed text-lg">
                             <p>
-                                I started my journey like many others: frustrated by broken scripts and laggy games. I decided to become the solution.
+                                I used to play games that crashed constantly. It was annoying. So I decided to learn how to fix them myself.
                             </p>
                             <p>
-                                Today, I operate as <strong>"The Fixer."</strong> While others write code that works <i>sometimes</i>, I engineer systems that work <i>every time</i>. My philosophy is simple: A script isn't finished until it's bug-free, optimized for 60 FPS, and feels good to play.
+                                Now, I act as <strong>"The Fixer."</strong> While other devs just copy-paste broken scripts, I actually optimize them. My rule is simple: If it doesn't run at 60 FPS, it's not finished.
                             </p>
                             <p>
-                                I specialize in <span class="text-blue-400">System Architecture</span>—bridging the gap between complex backend data and satisfying frontend visuals ("The Juice").
+                                I bridge the gap between "It works on my machine" and "It works for 1,000 players."
                             </p>
                         </div>
                     </div>
@@ -217,22 +238,22 @@
                         <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-blue-500/30 transition-colors">
                             <i data-lucide="wrench" class="w-8 h-8 text-blue-500 mx-auto mb-3"></i>
                             <h3 class="text-2xl font-bold text-white">100+</h3>
-                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Bugs Patched</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Bugs Squashed</p>
                         </div>
                         <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-purple-500/30 transition-colors">
                             <i data-lucide="cpu" class="w-8 h-8 text-purple-500 mx-auto mb-3"></i>
                             <h3 class="text-2xl font-bold text-white">100%</h3>
-                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Uptime Logic</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Uptime</p>
                         </div>
                         <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-green-500/30 transition-colors">
                             <i data-lucide="zap" class="w-8 h-8 text-green-500 mx-auto mb-3"></i>
                             <h3 class="text-2xl font-bold text-white">60 FPS</h3>
-                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Optimized</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Smoothness</p>
                         </div>
                         <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-orange-500/30 transition-colors">
                             <i data-lucide="clock" class="w-8 h-8 text-orange-500 mx-auto mb-3"></i>
                             <h3 class="text-2xl font-bold text-white">24/7</h3>
-                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Reliability</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Reliable</p>
                         </div>
                     </div>
                 </div>
@@ -245,7 +266,7 @@
         <div class="max-w-6xl mx-auto px-6">
             <h2 class="text-4xl font-bold text-white mb-16 flex items-center gap-4" data-aos="fade-up">
                 <div class="w-1.5 h-10 bg-blue-500 rounded-full"></div>
-                Featured Systems
+                Stuff I Made
             </h2>
 
             <!-- This Grid is now populated by JavaScript -->
@@ -258,27 +279,27 @@
     <!-- Skills Section -->
     <section id="skills" class="py-32 px-6 bg-black/10">
         <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold text-white mb-16" data-aos="fade-up">Technical Stack</h2>
+            <h2 class="text-4xl font-bold text-white mb-16" data-aos="fade-up">My Tech Stack</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="0">
                     <i data-lucide="server" class="mx-auto mb-6 text-blue-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">Server Logic</h4>
-                    <p class="text-xs text-gray-400 mt-2">Authoritative State</p>
+                    <h4 class="font-bold text-white text-lg">Server Stuff</h4>
+                    <p class="text-xs text-gray-400 mt-2">I make the logic secure.</p>
                 </div>
                 <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="100">
                     <i data-lucide="database" class="mx-auto mb-6 text-green-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">DataStores</h4>
-                    <p class="text-xs text-gray-400 mt-2">Session Locking</p>
+                    <h4 class="font-bold text-white text-lg">Saving Data</h4>
+                    <p class="text-xs text-gray-400 mt-2">No data loss allowed.</p>
                 </div>
                 <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="200">
                     <i data-lucide="layout" class="mx-auto mb-6 text-purple-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">UI & UX</h4>
-                    <p class="text-xs text-gray-400 mt-2">Procedural Gen</p>
+                    <h4 class="font-bold text-white text-lg">UI Magic</h4>
+                    <p class="text-xs text-gray-400 mt-2">I make menus pop.</p>
                 </div>
                 <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="300">
                     <i data-lucide="shield-check" class="mx-auto mb-6 text-red-400 w-10 h-10"></i>
-                    <h4 class="font-bold text-white text-lg">Security</h4>
-                    <p class="text-xs text-gray-400 mt-2">Input Validation</p>
+                    <h4 class="font-bold text-white text-lg">Anti-Cheat</h4>
+                    <p class="text-xs text-gray-400 mt-2">I stop exploiters.</p>
                 </div>
             </div>
         </div>
@@ -290,8 +311,8 @@
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-64 bg-blue-600/10 blur-[120px] pointer-events-none"></div>
 
         <div class="max-w-4xl mx-auto px-6 text-center relative z-10" data-aos="zoom-in">
-            <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">Ready to stabilize your game?</h2>
-            <p class="text-gray-400 mb-12 text-lg max-w-xl mx-auto">I am currently accepting commissions for Core Systems and Optimization tasks. Let's fix your logic.</p>
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">Want to fix your game?</h2>
+            <p class="text-gray-400 mb-12 text-lg max-w-xl mx-auto">I'm currently taking commissions. If you need a solid backend or just want your bugs gone, hit me up.</p>
             
             <div class="flex justify-center gap-4">
                 <button onclick="copyDiscord()" class="group flex items-center gap-3 px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] hover:-translate-y-2">
@@ -304,7 +325,7 @@
                 <p>&copy; 2026 Water.Logs Development.</p>
                 <div class="flex gap-4">
                     <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span>All Systems Operational</span>
+                    <span>Systems Online</span>
                 </div>
             </div>
         </div>
@@ -316,27 +337,27 @@
         // ==========================================
         const myProjects = [
             {
-                title: "Farming Engine",
+                title: "Big Farming System",
                 category: "CORE SYSTEM",
-                description: "Scalable agriculture system handling 100+ active plots. Features 'Sequential Harvest' animations, multi-use crop logic, and memory-safe interaction guards.",
+                description: "A huge farming system I made. Handles 100+ plots without lagging. Crops pop out one by one (it's super satisfying).",
                 techStack: ["OOP", "Task.spawn", "Attributes"],
                 image: "", // Add image URL here (e.g., "https://imgur.com/example.png"). Leave empty for Icon.
                 icon: "sprout", // If no image, use a Lucide icon name
                 color: "emerald" // Options: emerald, purple, orange, blue, red
             },
             {
-                title: "Retention Suite",
+                title: "Daily Rewards",
                 category: "BACKEND",
-                description: "Enterprise-grade daily reward system. Uses os.time() for secure streak tracking, prevents client clock exploits, and includes a procedural UI generator.",
+                description: "Keeps players coming back. Uses secure server time checks so people can't cheat the system. I also made the UI build itself automatically.",
                 techStack: ["DataStore", "Security", "Procedural UI"],
                 image: "", 
                 icon: "gift",
                 color: "purple"
             },
             {
-                title: "The Fixer",
+                title: "Bug Fixer",
                 category: "OPTIMIZATION",
-                description: "Specialized debugging service. I patch critical RenderStepped crashes, fix race conditions, and resolve 'logic inversion' bugs in existing codebases.",
+                description: "I jump into your game, find why it's crashing, and fix it. I specialize in fixing those annoying RenderStepped crashes and logic errors.",
                 techStack: ["Debugging", "Memory Safety", "Refactoring"],
                 image: "", 
                 icon: "wrench",
@@ -428,7 +449,7 @@
                 
                 setTimeout(() => {
                     if(btnText) btnText.innerText = "Copy Discord User";
-                    if(heroText) heroText.innerText = "Copy Discord";
+                    if(heroText) heroText.innerText = "Grab Discord";
                 }, 2000);
             });
         }
