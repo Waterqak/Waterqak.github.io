@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Systems Engineer | Portfolio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Animations (AOS) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        roblox: '#1e1e1e',
+                        accent: '#3b82f6',
+                        'accent-dark': '#1d4ed8',
+                        surface: '#2d2d30'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #050505; color: #e4e4e7; overflow-x: hidden; }
+        
+        /* Glassmorphism */
+        .glass { 
+            background: rgba(20, 20, 25, 0.7); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 30, 35, 0.9), rgba(20, 20, 25, 0.9));
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        .code-snippet { counter-reset: line; }
+        .code-line::before { counter-increment: line; content: counter(line); display: inline-block; width: 2em; margin-right: 1.5em; color: #52525b; text-align: right; user-select: none;}
+        
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #60a5fa, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Mesh Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+    <div class="mesh-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass border-b border-white/5 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 font-bold text-xl tracking-tighter hover:scale-105 transition-transform cursor-pointer">
+                <i data-lucide="terminal" class="text-blue-500"></i>
+                <span class="text-white">WATER<span class="text-blue-500">.LOGS</span></span>
+            </div>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
+                <a href="#about" class="hover:text-white hover:text-blue-400 transition-colors">About</a>
+                <a href="#projects" class="hover:text-white hover:text-blue-400 transition-colors">Projects</a>
+                <a href="#skills" class="hover:text-white hover:text-blue-400 transition-colors">Stack</a>
+                <a href="#contact" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:-translate-y-0.5">Hire Me</a>
+            </div>
+
+            <!-- Mobile Menu Button (Simple) -->
+            <div class="md:hidden">
+                <a href="#contact" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-full">Hire Me</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="min-h-screen flex items-center relative overflow-hidden pt-20">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+            
+            <!-- Left Content -->
+            <div data-aos="fade-right" data-aos-duration="1000">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold mb-8 uppercase tracking-widest hover:bg-blue-500/20 transition-colors cursor-default">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                    Available for Commissions
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-[1.1]">
+                    Engineering <br>
+                    <span class="text-gradient">The Impossible.</span>
+                </h1>
+                
+                <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
+                    Roblox Systems Engineer specializing in high-performance backends and satisfying gameplay loops. I don't just write code; I fix what others break.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#projects" class="flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all hover:-translate-y-1 shadow-lg shadow-white/10">
+                        View Work <i data-lucide="arrow-down" class="w-5 h-5"></i>
+                    </a>
+                    <button onclick="copyDiscord()" class="flex items-center justify-center gap-2 px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-all hover:-translate-y-1 group">
+                        <span id="hero-discord-text">Copy Discord</span> 
+                        <i data-lucide="copy" class="w-5 h-5 group-hover:text-blue-400 transition-colors"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Right Code Decoration -->
+            <div class="relative hidden md:block animate-float" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+                <!-- Glowing Backlight -->
+                <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 rounded-2xl blur-xl opacity-30"></div>
+                
+                <!-- Code Window -->
+                <div class="relative bg-[#0d0d0d] rounded-xl border border-white/10 shadow-2xl font-mono text-sm overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                    <!-- Title Bar -->
+                    <div class="flex justify-between items-center px-4 py-3 bg-white/5 border-b border-white/5">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                            <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                            <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                        </div>
+                        <span class="text-xs text-gray-500 font-sans">RetentionEngine.lua</span>
+                        <div class="w-10"></div> <!-- Spacer -->
+                    </div>
+                    
+                    <!-- Code Content -->
+                    <div class="p-6 text-gray-300 code-snippet leading-loose text-xs md:text-sm">
+                        <div class="code-line"><span class="text-purple-400">local</span> RetentionEngine = {}</div>
+                        <div class="code-line"></div>
+                        <div class="code-line"><span class="text-gray-500">-- Secure Server-Side Verification</span></div>
+                        <div class="code-line"><span class="text-purple-400">function</span> RetentionEngine.<span class="text-blue-400">SecureClaim</span>(player)</div>
+                        <div class="code-line">    <span class="text-purple-400">local</span> now = <span class="text-yellow-300">os.time</span>()</div>
+                        <div class="code-line">    <span class="text-purple-400">local</span> profile = DataManager:Get(player)</div>
+                        <div class="code-line">    </div>
+                        <div class="code-line">    <span class="text-purple-400">if</span> now - profile.LastClaim < 86400 <span class="text-purple-400">then</span></div>
+                        <div class="code-line">        <span class="text-purple-400">return</span> <span class="text-red-400">false</span>, <span class="text-green-300">"Cooldown Active"</span></div>
+                        <div class="code-line">    <span class="text-purple-400">end</span></div>
+                        <div class="code-line">    </div>
+                        <div class="code-line">    <span class="text-purple-400">return</span> <span class="text-red-400">true</span>, <span class="text-green-300">"Reward Granted"</span></div>
+                        <div class="code-line"><span class="text-purple-400">end</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Me Section -->
+    <section id="about" class="py-24 relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="glass-card rounded-3xl p-8 md:p-12 border border-white/5 relative overflow-hidden" data-aos="fade-up">
+                <!-- Background decoration -->
+                <div class="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                    <div>
+                        <h2 class="text-3xl font-bold text-white mb-6">Behind the Code</h2>
+                        <div class="space-y-4 text-gray-400 leading-relaxed">
+                            <p>
+                                I started my journey like many others: frustrated by broken scripts and laggy games. I decided to become the solution.
+                            </p>
+                            <p>
+                                Today, I operate as <strong>"The Fixer."</strong> While others write code that works <i>sometimes</i>, I engineer systems that work <i>every time</i>. My philosophy is simple: A script isn't finished until it's bug-free, optimized for 60 FPS, and feels good to play.
+                            </p>
+                            <p>
+                                I specialize in <span class="text-blue-400">System Architecture</span>—bridging the gap between complex backend data and satisfying frontend visuals ("The Juice").
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-blue-500/30 transition-colors">
+                            <i data-lucide="wrench" class="w-8 h-8 text-blue-500 mx-auto mb-3"></i>
+                            <h3 class="text-2xl font-bold text-white">100+</h3>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Bugs Patched</p>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-purple-500/30 transition-colors">
+                            <i data-lucide="cpu" class="w-8 h-8 text-purple-500 mx-auto mb-3"></i>
+                            <h3 class="text-2xl font-bold text-white">100%</h3>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Uptime Logic</p>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-green-500/30 transition-colors">
+                            <i data-lucide="zap" class="w-8 h-8 text-green-500 mx-auto mb-3"></i>
+                            <h3 class="text-2xl font-bold text-white">60 FPS</h3>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Optimized</p>
+                        </div>
+                        <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-orange-500/30 transition-colors">
+                            <i data-lucide="clock" class="w-8 h-8 text-orange-500 mx-auto mb-3"></i>
+                            <h3 class="text-2xl font-bold text-white">24/7</h3>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Reliability</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-32 bg-black/20 border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-white mb-16 flex items-center gap-4" data-aos="fade-up">
+                <div class="w-1.5 h-10 bg-blue-500 rounded-full"></div>
+                Featured Systems
+            </h2>
+
+            <!-- This Grid is now populated by JavaScript -->
+            <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Projects will appear here automatically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-32 px-6 bg-black/10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold text-white mb-16" data-aos="fade-up">Technical Stack</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="0">
+                    <i data-lucide="server" class="mx-auto mb-6 text-blue-400 w-10 h-10"></i>
+                    <h4 class="font-bold text-white text-lg">Server Logic</h4>
+                    <p class="text-xs text-gray-400 mt-2">Authoritative State</p>
+                </div>
+                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="100">
+                    <i data-lucide="database" class="mx-auto mb-6 text-green-400 w-10 h-10"></i>
+                    <h4 class="font-bold text-white text-lg">DataStores</h4>
+                    <p class="text-xs text-gray-400 mt-2">Session Locking</p>
+                </div>
+                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="200">
+                    <i data-lucide="layout" class="mx-auto mb-6 text-purple-400 w-10 h-10"></i>
+                    <h4 class="font-bold text-white text-lg">UI & UX</h4>
+                    <p class="text-xs text-gray-400 mt-2">Procedural Gen</p>
+                </div>
+                <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-all hover:-translate-y-1" data-aos="flip-left" data-aos-delay="300">
+                    <i data-lucide="shield-check" class="mx-auto mb-6 text-red-400 w-10 h-10"></i>
+                    <h4 class="font-bold text-white text-lg">Security</h4>
+                    <p class="text-xs text-gray-400 mt-2">Input Validation</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer id="contact" class="bg-black/80 border-t border-white/5 py-24 relative overflow-hidden">
+        <!-- Glow effect behind footer -->
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-64 bg-blue-600/10 blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10" data-aos="zoom-in">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">Ready to stabilize your game?</h2>
+            <p class="text-gray-400 mb-12 text-lg max-w-xl mx-auto">I am currently accepting commissions for Core Systems and Optimization tasks. Let's fix your logic.</p>
+            
+            <div class="flex justify-center gap-4">
+                <button onclick="copyDiscord()" class="group flex items-center gap-3 px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] hover:-translate-y-2">
+                    <i data-lucide="message-square" class="w-6 h-6"></i> 
+                    <span id="discord-btn-text" class="text-lg">Copy Discord User</span>
+                </button>
+            </div>
+
+            <div class="mt-20 pt-8 border-t border-white/5 text-xs text-gray-500 font-mono flex flex-col md:flex-row justify-between items-center gap-4">
+                <p>&copy; 2026 Water.Logs Development.</p>
+                <div class="flex gap-4">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span>All Systems Operational</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        //  USER CONFIGURATION - ADD YOUR WORK HERE
+        // ==========================================
+        const myProjects = [
+            {
+                title: "Farming Engine",
+                category: "CORE SYSTEM",
+                description: "Scalable agriculture system handling 100+ active plots. Features 'Sequential Harvest' animations, multi-use crop logic, and memory-safe interaction guards.",
+                techStack: ["OOP", "Task.spawn", "Attributes"],
+                image: "", // Add image URL here (e.g., "https://imgur.com/example.png"). Leave empty for Icon.
+                icon: "sprout", // If no image, use a Lucide icon name
+                color: "emerald" // Options: emerald, purple, orange, blue, red
+            },
+            {
+                title: "Retention Suite",
+                category: "BACKEND",
+                description: "Enterprise-grade daily reward system. Uses os.time() for secure streak tracking, prevents client clock exploits, and includes a procedural UI generator.",
+                techStack: ["DataStore", "Security", "Procedural UI"],
+                image: "", 
+                icon: "gift",
+                color: "purple"
+            },
+            {
+                title: "The Fixer",
+                category: "OPTIMIZATION",
+                description: "Specialized debugging service. I patch critical RenderStepped crashes, fix race conditions, and resolve 'logic inversion' bugs in existing codebases.",
+                techStack: ["Debugging", "Memory Safety", "Refactoring"],
+                image: "", 
+                icon: "wrench",
+                color: "orange"
+            }
+        ];
+        // ==========================================
+        
+        // Render Projects Function
+        function renderProjects() {
+            const container = document.getElementById('projects-grid');
+            if(!container) return;
+
+            // Define color styles
+            const styles = {
+                emerald: { from: 'from-green-900', text: 'text-emerald-400', border: 'border-emerald-400/20', bg: 'bg-emerald-400/10', hoverBorder: 'hover:border-emerald-500/50' },
+                purple: { from: 'from-purple-900', text: 'text-purple-400', border: 'border-purple-400/20', bg: 'bg-purple-400/10', hoverBorder: 'hover:border-purple-500/50' },
+                orange: { from: 'from-orange-900', text: 'text-orange-400', border: 'border-orange-400/20', bg: 'bg-orange-400/10', hoverBorder: 'hover:border-orange-500/50' },
+                blue: { from: 'from-blue-900', text: 'text-blue-400', border: 'border-blue-400/20', bg: 'bg-blue-400/10', hoverBorder: 'hover:border-blue-500/50' },
+                red: { from: 'from-red-900', text: 'text-red-400', border: 'border-red-400/20', bg: 'bg-red-400/10', hoverBorder: 'hover:border-red-500/50' },
+            };
+
+            const html = myProjects.map((project, index) => {
+                const style = styles[project.color] || styles.blue;
+                
+                // Determine visuals (Image or Icon)
+                let visual = '';
+                if (project.image && project.image.trim() !== "") {
+                    visual = `
+                        <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                    `;
+                } else {
+                    visual = `
+                        <div class="absolute inset-0 bg-${project.color}-500/5 group-hover:bg-${project.color}-500/10 transition-colors"></div>
+                        <i data-lucide="${project.icon}" class="${style.text} w-20 h-20 relative z-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"></i>
+                    `;
+                }
+
+                // Generate Tags
+                const tags = project.techStack.map(tag => 
+                    `<span class="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded border border-white/5">${tag}</span>`
+                ).join('');
+
+                return `
+                <div class="group relative bg-surface rounded-3xl overflow-hidden border border-white/5 ${style.hoverBorder} transition-all duration-500 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="${index * 100}">
+                    <div class="h-56 bg-gradient-to-br ${style.from} to-black flex items-center justify-center relative overflow-hidden group-hover:bg-gray-800 transition-colors">
+                        ${visual}
+                    </div>
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-white group-hover:${style.text} transition-colors">${project.title}</h3>
+                            <span class="text-[10px] font-bold ${style.text} ${style.bg} px-3 py-1 rounded-full border ${style.border}">${project.category}</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-6 leading-relaxed h-20 overflow-hidden text-ellipsis">
+                            ${project.description}
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            ${tags}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // Initialize Everything
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProjects();
+            lucide.createIcons();
+            AOS.init({
+                once: true,
+                offset: 80,
+                duration: 800,
+            });
+        });
+
+        // Copy Discord Function
+        function copyDiscord() {
+            const discordID = "hokpy"; 
+            navigator.clipboard.writeText(discordID).then(() => {
+                const btnText = document.getElementById('discord-btn-text');
+                const heroText = document.getElementById('hero-discord-text');
+                
+                if(btnText) btnText.innerText = "Copied 'hokpy'!";
+                if(heroText) heroText.innerText = "Copied!";
+                
+                setTimeout(() => {
+                    if(btnText) btnText.innerText = "Copy Discord User";
+                    if(heroText) heroText.innerText = "Copy Discord";
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
