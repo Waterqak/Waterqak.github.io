@@ -23,7 +23,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Space Grotesk', 'sans-serif'], // Switched to a more "techy/fun" font
+                        sans: ['Space Grotesk', 'sans-serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
@@ -49,31 +49,15 @@
     <style>
         body { background-color: #050505; color: #e4e4e7; overflow-x: hidden; }
         
-        /* Grain Texture for "Handmade" feel */
+        /* Grain Texture */
         .grain-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.05;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; opacity: 0.05;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* Glassmorphism */
-        .glass { 
-            background: rgba(20, 20, 25, 0.7); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.05); 
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .glass-card {
-            background: linear-gradient(145deg, rgba(30, 30, 35, 0.9), rgba(20, 20, 25, 0.9));
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        .glass { background: rgba(20, 20, 25, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .glass-card { background: linear-gradient(145deg, rgba(30, 30, 35, 0.9), rgba(20, 20, 25, 0.9)); border: 1px solid rgba(255, 255, 255, 0.05); }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
@@ -84,27 +68,17 @@
         .code-snippet { counter-reset: line; }
         .code-line::before { counter-increment: line; content: counter(line); display: inline-block; width: 2em; margin-right: 1.5em; color: #52525b; text-align: right; user-select: none;}
         
-        /* Gradient Text */
-        .text-gradient {
-            background: linear-gradient(to right, #60a5fa, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .text-gradient { background: linear-gradient(to right, #60a5fa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Mesh Background */
         .mesh-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
-                        radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
-            z-index: -1;
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
+            z-index: -1; pointer-events: none;
         }
     </style>
 </head>
 <body class="antialiased selection:bg-blue-500 selection:text-white">
     
-    <!-- Grain Overlay for texture -->
     <div class="grain-overlay"></div>
     <div class="mesh-bg"></div>
 
@@ -115,16 +89,12 @@
                 <i data-lucide="terminal" class="text-blue-500"></i>
                 <span class="text-white">WATER<span class="text-blue-500">.LOGS</span></span>
             </div>
-            
-            <!-- Desktop Links -->
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
                 <a href="#about" class="hover:text-white hover:text-blue-400 transition-colors">About</a>
                 <a href="#projects" class="hover:text-white hover:text-blue-400 transition-colors">Stuff I Made</a>
                 <a href="#skills" class="hover:text-white hover:text-blue-400 transition-colors">My Stack</a>
                 <a href="#contact" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.6)] transform hover:-translate-y-0.5 font-bold">Hire Me</a>
             </div>
-
-            <!-- Mobile Menu Button (Simple) -->
             <div class="md:hidden">
                 <a href="#contact" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg">Hire Me</a>
             </div>
@@ -134,8 +104,6 @@
     <!-- Hero Section -->
     <header class="min-h-screen flex items-center relative overflow-hidden pt-20">
         <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-            
-            <!-- Left Content -->
             <div data-aos="fade-right" data-aos-duration="1000">
                 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold mb-8 uppercase tracking-widest hover:bg-blue-500/20 transition-colors cursor-default">
                     <span class="relative flex h-2 w-2">
@@ -144,16 +112,13 @@
                     </span>
                     Open for Work
                 </div>
-                
                 <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-[1.1]">
                     I Write Code That <br>
                     <span class="text-gradient">Actually Works.</span>
                 </h1>
-                
                 <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed">
                     Yo, I'm a Roblox Scripter. I handle the heavy backend stuff like DataStores and math so you can focus on the fun parts. I fix bugs, optimize lag, and make things feel good.
                 </p>
-                
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="#projects" class="flex items-center justify-center gap-2 px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all hover:-translate-y-1 shadow-lg shadow-white/10">
                         See My Stuff <i data-lucide="arrow-down" class="w-5 h-5"></i>
@@ -164,24 +129,15 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Right Code Decoration - BROWSER WINDOW STYLE -->
             <div class="relative hidden md:block animate-float" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
-                <!-- Glowing Backlight -->
                 <div class="absolute -inset-2 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-500 rounded-2xl blur-xl opacity-30"></div>
-                
-                <!-- Browser Window -->
                 <div class="relative bg-[#0d0d0d] rounded-xl border border-white/10 shadow-2xl font-mono text-sm overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-500">
-                    
-                    <!-- Chrome Bar / Address Bar -->
                     <div class="flex flex-col bg-[#1a1a1a] border-b border-white/5">
-                        <!-- Traffic Lights -->
                         <div class="flex px-4 py-3 gap-2">
                             <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
                             <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
                             <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
                         </div>
-                        <!-- Address Field -->
                         <div class="px-4 pb-3">
                             <div class="bg-black/40 rounded flex items-center px-3 py-1.5 text-xs text-gray-500 border border-white/5 gap-2">
                                 <i data-lucide="lock" class="w-3 h-3"></i>
@@ -189,8 +145,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Code Content -->
                     <div class="p-6 text-gray-300 code-snippet leading-loose text-xs md:text-sm">
                         <div class="code-line"><span class="text-purple-400">local</span> RetentionEngine = {}</div>
                         <div class="code-line"></div>
@@ -215,25 +169,16 @@
     <section id="about" class="py-24 relative">
         <div class="max-w-6xl mx-auto px-6">
             <div class="glass-card rounded-3xl p-8 md:p-12 border border-white/5 relative overflow-hidden" data-aos="fade-up">
-                <!-- Background decoration -->
                 <div class="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
-
                 <div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
                     <div>
                         <h2 class="text-3xl font-bold text-white mb-6">Who am I?</h2>
                         <div class="space-y-4 text-gray-400 leading-relaxed text-lg">
-                            <p>
-                                I used to play games that crashed constantly. It was annoying. So I decided to learn how to fix them myself.
-                            </p>
-                            <p>
-                                Now, I act as <strong>"The Fixer."</strong> While other devs just copy-paste broken scripts, I actually optimize them. My rule is simple: If it doesn't run at 60 FPS, it's not finished.
-                            </p>
-                            <p>
-                                I bridge the gap between "It works on my machine" and "It works for 1,000 players."
-                            </p>
+                            <p>I used to play games that crashed constantly. It was annoying. So I decided to learn how to fix them myself.</p>
+                            <p>Now, I act as <strong>"The Fixer."</strong> While other devs just copy-paste broken scripts, I actually optimize them. My rule is simple: If it doesn't run at 60 FPS, it's not finished.</p>
+                            <p>I bridge the gap between "It works on my machine" and "It works for 1,000 players."</p>
                         </div>
                     </div>
-                    
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-black/40 p-6 rounded-2xl border border-white/5 text-center hover:border-blue-500/30 transition-colors">
                             <i data-lucide="wrench" class="w-8 h-8 text-blue-500 mx-auto mb-3"></i>
@@ -268,11 +213,7 @@
                 <div class="w-1.5 h-10 bg-blue-500 rounded-full"></div>
                 Stuff I Made
             </h2>
-
-            <!-- This Grid is now populated by JavaScript -->
-            <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Projects will appear here automatically -->
-            </div>
+            <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         </div>
     </section>
 
@@ -307,20 +248,16 @@
 
     <!-- Footer / Contact -->
     <footer id="contact" class="bg-black/80 border-t border-white/5 py-24 relative overflow-hidden">
-        <!-- Glow effect behind footer -->
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-64 bg-blue-600/10 blur-[120px] pointer-events-none"></div>
-
         <div class="max-w-4xl mx-auto px-6 text-center relative z-10" data-aos="zoom-in">
             <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">Want to fix your game?</h2>
             <p class="text-gray-400 mb-12 text-lg max-w-xl mx-auto">I'm currently taking commissions. If you need a solid backend or just want your bugs gone, hit me up.</p>
-            
             <div class="flex justify-center gap-4">
                 <button onclick="copyDiscord()" class="group flex items-center gap-3 px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] hover:-translate-y-2">
                     <i data-lucide="message-square" class="w-6 h-6"></i> 
                     <span id="discord-btn-text" class="text-lg">Copy Discord User</span>
                 </button>
             </div>
-
             <div class="mt-20 pt-8 border-t border-white/5 text-xs text-gray-500 font-mono flex flex-col md:flex-row justify-between items-center gap-4">
                 <p>&copy; 2026 Water.Logs Development.</p>
                 <div class="flex gap-4">
@@ -341,15 +278,17 @@
                 category: "CORE SYSTEM",
                 description: "A huge farming system I made. Handles 100+ plots without lagging. Crops pop out one by one (it's super satisfying).",
                 techStack: ["OOP", "Task.spawn", "Attributes"],
-                image: "", // Add image URL here (e.g., "https://imgur.com/example.png"). Leave empty for Icon.
-                icon: "sprout", // If no image, use a Lucide icon name
-                color: "emerald" // Options: emerald, purple, orange, blue, red
+                video: "", // PASTE MP4 LINK HERE (e.g. "https://link.to/video.mp4")
+                image: "", // Fallback Image
+                icon: "sprout", 
+                color: "emerald" 
             },
             {
                 title: "Daily Rewards",
                 category: "BACKEND",
                 description: "Keeps players coming back. Uses secure server time checks so people can't cheat the system. I also made the UI build itself automatically.",
                 techStack: ["DataStore", "Security", "Procedural UI"],
+                video: "",
                 image: "", 
                 icon: "gift",
                 color: "purple"
@@ -359,6 +298,7 @@
                 category: "OPTIMIZATION",
                 description: "I jump into your game, find why it's crashing, and fix it. I specialize in fixing those annoying RenderStepped crashes and logic errors.",
                 techStack: ["Debugging", "Memory Safety", "Refactoring"],
+                video: "",
                 image: "", 
                 icon: "wrench",
                 color: "orange"
@@ -366,12 +306,10 @@
         ];
         // ==========================================
         
-        // Render Projects Function
         function renderProjects() {
             const container = document.getElementById('projects-grid');
             if(!container) return;
 
-            // Define color styles
             const styles = {
                 emerald: { from: 'from-green-900', text: 'text-emerald-400', border: 'border-emerald-400/20', bg: 'bg-emerald-400/10', hoverBorder: 'hover:border-emerald-500/50' },
                 purple: { from: 'from-purple-900', text: 'text-purple-400', border: 'border-purple-400/20', bg: 'bg-purple-400/10', hoverBorder: 'hover:border-purple-500/50' },
@@ -383,12 +321,16 @@
             const html = myProjects.map((project, index) => {
                 const style = styles[project.color] || styles.blue;
                 
-                // Determine visuals (Image or Icon)
                 let visual = '';
-                if (project.image && project.image.trim() !== "") {
+                if (project.video && project.video.trim() !== "") {
+                     visual = `
+                        <video src="${project.video}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"></video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>
+                    `;
+                } else if (project.image && project.image.trim() !== "") {
                     visual = `
                         <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent pointer-events-none"></div>
                     `;
                 } else {
                     visual = `
@@ -397,7 +339,6 @@
                     `;
                 }
 
-                // Generate Tags
                 const tags = project.techStack.map(tag => 
                     `<span class="text-xs text-gray-300 bg-white/5 px-2 py-1 rounded border border-white/5">${tag}</span>`
                 ).join('');
@@ -426,27 +367,19 @@
             container.innerHTML = html;
         }
 
-        // Initialize Everything
         document.addEventListener('DOMContentLoaded', () => {
             renderProjects();
             lucide.createIcons();
-            AOS.init({
-                once: true,
-                offset: 80,
-                duration: 800,
-            });
+            AOS.init({ once: true, offset: 80, duration: 800 });
         });
 
-        // Copy Discord Function
         function copyDiscord() {
             const discordID = "hokpy"; 
             navigator.clipboard.writeText(discordID).then(() => {
                 const btnText = document.getElementById('discord-btn-text');
                 const heroText = document.getElementById('hero-discord-text');
-                
                 if(btnText) btnText.innerText = "Copied 'hokpy'!";
                 if(heroText) heroText.innerText = "Copied!";
-                
                 setTimeout(() => {
                     if(btnText) btnText.innerText = "Copy Discord User";
                     if(heroText) heroText.innerText = "Grab Discord";
