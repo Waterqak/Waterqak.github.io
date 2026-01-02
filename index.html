@@ -15,6 +15,15 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+
+    <!-- FIREBASE LIBRARIES -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        window.FirebaseCore = { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment };
+    </script>
     
     <!-- THEME CONFIGURATION -->
     <script>
@@ -134,13 +143,11 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); 
         }
         
-        /* CARD STRIPS (FIXED) */
         .card-header-strip { height: 3px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .strip-blue { background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
         .strip-purple { background: #a855f7; box-shadow: 0 0 10px #a855f7; }
         .strip-gold { background: #FFA800; box-shadow: 0 0 10px #FFA800; }
         
-        /* Mouse Spotlight Effect */
         .glass-card::after {
             content: "";
             position: absolute;
@@ -397,7 +404,7 @@
         </div>
     </header>
 
-    <!-- 6. PERSONNEL FILE (ABOUT) -->
+    <!-- 6. PERSONNEL FILE (WITH PFP UPDATE) -->
     <section id="file" class="py-24 border-t border-white/5 bg-dark">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid md:grid-cols-12 gap-12 items-center">
@@ -406,18 +413,26 @@
                         <!-- Profile Card -->
                         <div class="bg-panel border border-white/10 rounded-2xl p-6 relative z-10 hover:border-schale/50 transition-colors duration-500">
                             <div class="flex items-center justify-between mb-6">
-                                <div class="w-20 h-20 bg-schale/10 rounded-full flex items-center justify-center border border-schale/30 group-hover:scale-110 transition-transform duration-300">
-                                    <i data-lucide="user" class="w-10 h-10 text-schale"></i>
+                                <div id="pfp-container" onclick="updateProfilePicture()" class="w-24 h-24 bg-schale/10 rounded-full flex items-center justify-center border-2 border-schale/30 group-hover:border-schale cursor-pointer overflow-hidden transition-all duration-300 relative group-hover:scale-105">
+                                    <img id="avatar-img" src="" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden'); document.getElementById('avatar-placeholder').classList.remove('hidden');" />
+                                    <i id="avatar-placeholder" data-lucide="user" class="w-10 h-10 text-schale"></i>
+                                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i data-lucide="edit-2" class="w-6 h-6 text-white"></i>
+                                    </div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-[10px] font-mono text-gray-500 mb-1">CLEARANCE LEVEL</div>
-                                    <div class="text-xl font-black text-white">ADMIN <span class="text-schale">01</span></div>
+                                    <div class="text-xl font-black text-white">PRODIGY <span class="text-schale">01</span></div>
                                 </div>
                             </div>
                             <div class="space-y-4 font-mono text-xs">
                                 <div class="flex justify-between border-b border-white/5 pb-2">
                                     <span class="text-gray-500">CODENAME</span>
                                     <span class="text-white font-bold">WATER</span>
+                                </div>
+                                <div class="flex justify-between border-b border-white/5 pb-2">
+                                    <span class="text-gray-500">AGE</span>
+                                    <span class="text-white font-bold">15</span>
                                 </div>
                                 <div class="flex justify-between border-b border-white/5 pb-2">
                                     <span class="text-gray-500">AFFILIATION</span>
@@ -432,6 +447,7 @@
                                     <span class="text-white font-bold">3+ YEARS</span>
                                 </div>
                             </div>
+                            <div class="mt-4 text-[9px] text-gray-600 text-center uppercase tracking-widest">Click badge to update photo</div>
                         </div>
                         <div class="absolute inset-0 bg-schale/20 blur-2xl -z-10 opacity-0 group-hover:opacity-50 transition-opacity duration-700"></div>
                     </div>
@@ -439,7 +455,7 @@
                 <div class="md:col-span-7" data-aos="fade-left">
                     <h2 class="text-3xl font-black text-white mb-6">PERSONNEL FILE <span class="text-schale">#8080</span></h2>
                     <p class="text-gray-400 leading-relaxed mb-6">
-                        I am a dedicated Roblox Systems Engineer with a passion for creating robust, scalable backend architectures. Unlike typical scripters who just "make it work," I ensure it **keeps working** under high player loads.
+                        I am a 15-year-old Roblox Systems Engineer with a passion for creating robust, scalable backend architectures. Unlike typical scripters who just "make it work," I ensure it **keeps working** under high player loads.
                     </p>
                     <p class="text-gray-400 leading-relaxed mb-8">
                         My philosophy is simple: Clean Code = Less Bugs = Happy Players. I specialize in DataStores, Anti-Exploit measures, and complex game loops that require precise synchronization between the Client and Server.
@@ -687,7 +703,7 @@
                     <span class="text-[10px] font-bold text-green-500 tracking-widest uppercase">My Status: Online</span>
                 </div>
                 <div class="w-px h-3 bg-white/10"></div>
-                <div class="text-[10px] font-mono text-gray-400">UTC+7 <span id="local-time" class="text-white ml-1">--:--</span></div>
+                <div class="text-[10px] font-mono text-gray-400">TOTAL_DATABASE_ACCESSES: <span id="visitor-count" class="text-white font-bold ml-1">---</span></div>
             </div>
 
             <!-- MomoTalk UI -->
@@ -708,7 +724,7 @@
                         <div class="unread-badge animate-bounce">1</div>
                     </div>
                     <!-- Roblox -->
-                    <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momotalk-item group" onclick="playClick()">
+                    <a href="https://www.roblox.com/users/YOUR_ID/profile" target="_blank" class="momotalk-item group" onclick="playClick()">
                         <div class="momotalk-avatar bg-gray-200"><i data-lucide="gamepad-2" class="text-black w-6 h-6 transform group-hover:rotate-12 transition-transform"></i></div>
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-center mb-0.5"><span class="font-bold text-sm text-gray-800">Roblox</span><span class="text-[10px] text-gray-400">1m ago</span></div>
@@ -793,6 +809,81 @@
                 content: `--[[\n    [RETENTION SERVER HANDLER]\n]]\n\nlocal ReplicatedStorage = game:GetService("ReplicatedStorage")\nlocal RetentionEngine = require(script.Parent.RetentionEngine)\n\n--// HANDLE CLIENT REQUESTS\nfunction GetStatusFunc.OnServerInvoke(player)\n    local data = RetentionEngine.LoadProfile(player)\n    local dailyStatus = RetentionEngine.CheckDailyStatus(player, data)\n    \n    return {\n        DailyStatus = dailyStatus,\n        DailyStreak = data.Streak\n    }\nend`
             }
         ];
+
+        // --- FIREBASE LOGIC ---
+        let db, auth, appId;
+        
+        async function initFirebase() {
+            const { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } = window.FirebaseCore;
+            
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+            // Auth Strategy
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if(user) {
+                    setupListeners();
+                    incrementVisits();
+                }
+            });
+        }
+
+        async function incrementVisits() {
+            // Simple session check to prevent spamming the counter on refresh
+            if(sessionStorage.getItem('visited_session')) return;
+            
+            try {
+                const statsRef = window.FirebaseCore.doc(db, 'artifacts', appId, 'public', 'data', 'siteStats', 'counter');
+                await window.FirebaseCore.setDoc(statsRef, { count: window.FirebaseCore.increment(1) }, { merge: true });
+                sessionStorage.setItem('visited_session', 'true');
+            } catch(e) { console.error("Stats Error:", e); }
+        }
+
+        function setupListeners() {
+            const { onSnapshot, doc } = window.FirebaseCore;
+            
+            // 1. Listen for Visitor Count
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'siteStats', 'counter'), (snap) => {
+                if(snap.exists()) {
+                    const count = snap.data().count || 0;
+                    document.getElementById('visitor-count').innerText = count.toLocaleString();
+                }
+            }, (err) => console.log("Stats listener error", err));
+
+            // 2. Listen for Profile Picture Updates
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'settings'), (snap) => {
+                if(snap.exists() && snap.data().avatarUrl) {
+                    const url = snap.data().avatarUrl;
+                    const img = document.getElementById('avatar-img');
+                    const placeholder = document.getElementById('avatar-placeholder');
+                    
+                    img.src = url;
+                    img.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+            }, (err) => console.log("Profile listener error", err));
+        }
+
+        // Global function to update profile
+        window.updateProfilePicture = async () => {
+            if(!auth.currentUser) return;
+            
+            const newUrl = prompt("Enter the URL for your new profile picture:");
+            if(newUrl && (newUrl.startsWith('http') || newUrl.startsWith('data:image'))) {
+                playClick(1000, 0.1);
+                const profileRef = window.FirebaseCore.doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'settings');
+                await window.FirebaseCore.setDoc(profileRef, { avatarUrl: newUrl }, { merge: true });
+            }
+        };
 
         // --- SYSTEM LOGIC ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1147,6 +1238,7 @@
 
         // Init
         document.addEventListener('DOMContentLoaded', () => {
+            initFirebase(); // START FIREBASE
             runBootSequence(); 
             renderProjects(); 
             initParticles(); 
