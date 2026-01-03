@@ -4,45 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water.Logs | Schale Database</title>
-    
-    <!-- LIBRARIES -->
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Prism for Syntax Highlighting -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 
-    <!-- FIREBASE LIBRARIES -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        window.FirebaseCore = { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment };
-    </script>
-    
-    <!-- THEME CONFIGURATION -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        schale: 'var(--accent-color)',      
-                        dark: '#050508',   
-                        panel: '#0F1115',      
-                        alert: '#FF4F4F',
-                        gold: '#FFA800',
-                        momo: '#FFA8C5'
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { schale: 'var(--accent-color)', dark: '#050508', panel: '#0F1115', alert: '#FF4F4F', gold: '#FFA800', momo: '#FFA8C5' },
                     animation: {
                         'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'scanline': 'scanline 8s linear infinite',
@@ -55,1212 +33,318 @@
                     keyframes: {
                         scanline: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } },
                         glitch: { '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' }, '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' }, '62%': { transform: 'translate(0,0) skew(5deg)' } },
-                        crtOff: {
-                            '0%': { opacity: 1, transform: 'scale(1, 1)' },
-                            '40%': { opacity: 1, transform: 'scale(1, 0.05)' },
-                            '100%': { opacity: 0, transform: 'scale(0, 0)' }
-                        },
+                        crtOff: { '0%': { opacity: 1, transform: 'scale(1, 1)' }, '40%': { opacity: 1, transform: 'scale(1, 0.05)' }, '100%': { opacity: 0, transform: 'scale(0, 0)' } },
                         decode: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
-                        shake: {
-                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
+                        shake: { '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' }, '20%, 80%': { transform: 'translate3d(2px, 0, 0)' }, '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' }, '40%, 60%': { transform: 'translate3d(4px, 0, 0)' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
                     }
                 }
             }
         }
     </script>
 
-    <!-- CUSTOM CSS -->
     <style>
-        :root {
-            --accent-color: #00A4FF; /* Default Blue */
-        }
-
-        body { 
-            background-color: #050508; 
-            color: #e4e4e7; 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden;
-            cursor: crosshair;
-            transition: background-color 0.5s ease;
-        }
-        
-        /* --- VISUAL EFFECTS --- */
-        .hex-bg {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 60M0 0l30 30' stroke='%2300A4FF' stroke-width='1' fill='none'/%3E%3C/svg%3E");
-            transition: opacity 0.5s;
-        }
-        #particles-canvas { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.4; 
-        }
-
-        /* --- LOADING SCREEN --- */
-        #start-overlay {
-            position: fixed; inset: 0; background: #050508; z-index: 99999;
-            display: flex; flex-col; align-items: center; justify-content: center;
-        }
-        .boot-status-line { 
-            display: flex; justify-content: space-between; width: 300px; 
-            font-family: 'JetBrains Mono', monospace; font-size: 12px; 
-            margin-bottom: 4px; opacity: 0; animation: decode 0.2s forwards; 
-        }
+        :root { --accent-color: #00A4FF; }
+        body { background-color: #050508; color: #e4e4e7; font-family: 'Inter', sans-serif; overflow-x: hidden; cursor: crosshair; transition: background-color 0.5s ease; }
+        .hex-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.03; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30L60 60M0 0l30 30' stroke='%2300A4FF' stroke-width='1' fill='none'/%3E%3C/svg%3E"); }
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.4; }
+        #start-overlay { position: fixed; inset: 0; background: #050508; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .boot-status-line { display: flex; justify-content: space-between; width: 300px; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 4px; opacity: 0; animation: decode 0.2s forwards; }
         .boot-status-line span.ok { color: var(--accent-color); }
-        .boot-status-line span.check { color: #00ff88; font-weight: bold; }
-
-        /* --- NAVIGATION --- */
-        .nav-bar { 
-            background: rgba(15, 17, 21, 0.85); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(16px); 
-            transition: all 0.3s ease;
-        }
+        .nav-bar { background: rgba(15, 17, 21, 0.85); border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); }
         .nav-link { position: relative; }
-        .nav-link::after {
-            content: ''; position: absolute; bottom: -4px; left: 0; width: 0%; height: 2px; 
-            background: var(--accent-color); transition: width 0.3s ease;
-        }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0%; height: 2px; background: var(--accent-color); transition: width 0.3s ease; }
         .nav-link:hover::after { width: 100%; }
-
-        /* --- CARDS & SPOTLIGHT --- */
-        .glass-card { 
-            background: rgba(20, 23, 28, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            backdrop-filter: blur(12px); 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s;
-            position: relative; overflow: hidden;
-        }
-        .glass-card:hover { 
-            transform: translateY(-8px); 
-            border-color: rgba(var(--accent-rgb), 0.5); 
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); 
-        }
-        
+        .glass-card { background: rgba(20, 23, 28, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+        .glass-card:hover { transform: translateY(-8px); border-color: rgba(0, 164, 255, 0.5); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); }
         .card-header-strip { height: 3px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .strip-blue { background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
-        .strip-purple { background: #a855f7; box-shadow: 0 0 10px #a855f7; }
         .strip-gold { background: #FFA800; box-shadow: 0 0 10px #FFA800; }
-        
-        .glass-card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-        }
-        .glass-card:hover::after { opacity: 1; }
-
-        /* --- TYPOGRAPHY & FX --- */
-        .text-gradient { 
-            background: linear-gradient(135deg, var(--accent-color), #ffffff); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-        .glitch-hover:hover { animation: glitch 0.3s both infinite; color: var(--accent-color); }
-        .scanline {
-            position: absolute; top: 0; left: 0; width: 100%; height: 4px; 
-            background: rgba(0, 164, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 164, 255, 0.6); 
-            animation: scanline 6s linear infinite; pointer-events: none;
-        }
-        .halo-container {
-            position: absolute; top: -50%; left: -20%; width: 140%; height: 200%;
-            background: radial-gradient(circle, rgba(0,164,255,0.03) 0%, transparent 60%);
-            z-index: 0; pointer-events: none;
-        }
-
-        /* --- INTERACTIVE INPUTS --- */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #1a1d24; border-radius: 3px; }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; 
-            background: var(--accent-color); margin-top: -6px;
-            box-shadow: 0 0 10px rgba(0, 164, 255, 0.5); 
-            transition: transform 0.1s; border: 2px solid #fff;
-        }
-        input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
-
-        /* --- MOMOTALK --- */
-        .momotalk-container {
-            background: #fff; border-radius: 20px; overflow: hidden; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 4px solid #2d2d2d; max-width: 450px; margin: 0 auto;
-        }
-        .momotalk-header { 
-            background: #FFA8C5; padding: 14px 20px; color: #4a2c36; font-weight: 900; 
-            display: flex; align-items: center; gap: 8px; border-bottom: 2px solid rgba(0,0,0,0.1);
-        }
-        .momotalk-item {
-            background: white; border-radius: 16px; padding: 12px; 
-            display: flex; align-items: center; gap: 14px; margin-bottom: 8px;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            border: 1px solid #f0f0f0; cursor: pointer;
-        }
+        .text-gradient { background: linear-gradient(135deg, var(--accent-color), #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .scanline { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: rgba(0, 164, 255, 0.2); box-shadow: 0 0 15px rgba(0, 164, 255, 0.6); animation: scanline 6s linear infinite; pointer-events: none; }
+        .momotalk-container { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 4px solid #2d2d2d; max-width: 450px; margin: 0 auto; }
+        .momotalk-header { background: #FFA8C5; padding: 14px 20px; color: #4a2c36; font-weight: 900; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid rgba(0,0,0,0.1); }
+        .momotalk-item { background: white; border-radius: 16px; padding: 12px; display: flex; align-items: center; gap: 14px; margin-bottom: 8px; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid #f0f0f0; cursor: pointer; color: #1f2937;}
         .momotalk-item:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-color: #FFA8C5; }
-        
-        /* --- UTILS --- */
-        .mobile-menu { transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .mobile-menu.open { transform: translateX(0); }
-        
-        /* --- INTERACTIVE TERMINAL --- */
-        .cli-input { background: transparent; border: none; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; outline: none; width: 100%; }
-        .cli-cursor { animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* --- CODE EDITOR --- */
         .code-window { border-radius: 8px; overflow: hidden; background: #1e1e1e; border: 1px solid #333; }
         .code-header { background: #252526; padding: 8px 16px; display: flex; gap: 8px; border-bottom: 1px solid #333; }
         .code-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .code-tab { 
-            padding: 8px 16px; font-size: 12px; font-family: 'JetBrains Mono'; color: #888; cursor: pointer; border-right: 1px solid #333; background: #2d2d2d;
-            transition: all 0.2s;
-        }
+        .code-tab { padding: 8px 16px; font-size: 12px; font-family: 'JetBrains Mono'; color: #888; cursor: pointer; border-right: 1px solid #333; background: #2d2d2d; }
         .code-tab.active { background: #1e1e1e; color: #fff; border-top: 2px solid var(--accent-color); }
         .code-content { padding: 0; font-size: 13px; font-family: 'JetBrains Mono'; overflow-x: auto; max-height: 400px; }
-        /* Custom Scrollbar for Code */
-        .code-content::-webkit-scrollbar { width: 10px; height: 10px; }
-        .code-content::-webkit-scrollbar-track { background: #1e1e1e; }
-        .code-content::-webkit-scrollbar-thumb { background: #333; border-radius: 5px; }
-        .code-content::-webkit-scrollbar-thumb:hover { background: #555; }
-
-        /* --- TIMELINE --- */
-        .timeline-line { position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
-        .timeline-item { position: relative; padding-left: 50px; margin-bottom: 40px; }
-        .timeline-dot { 
-            position: absolute; left: 10px; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--dark); 
-            border: 2px solid var(--accent-color); box-shadow: 0 0 10px var(--accent-color); z-index: 10;
-        }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; cursor: pointer; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: #1a1d24; border-radius: 3px; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--accent-color); margin-top: -6px; border: 2px solid #fff; }
+        .cli-input { background: transparent; border: none; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; outline: none; width: 100%; }
+        .cli-cursor { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body class="antialiased selection:bg-schale selection:text-white">
 
-    <!-- 1. LOADING OVERLAY -->
     <div id="start-overlay">
         <div class="relative z-10 flex flex-col items-center">
-            <div class="w-20 h-20 bg-schale/5 rounded-full flex items-center justify-center border border-schale/30 mb-8 mx-auto animate-pulse-fast">
+            <div class="w-20 h-20 bg-schale/5 rounded-full flex items-center justify-center border border-schale/30 mb-8 animate-pulse-fast">
                 <i data-lucide="database" class="w-10 h-10 text-schale"></i>
             </div>
             <h1 class="text-4xl font-black tracking-tighter mb-8 text-white">SCHALE<span class="text-schale">.DB</span></h1>
-            
-            <!-- Boot Log (JS Injected) -->
             <div id="boot-log-container" class="flex flex-col gap-1 min-h-[140px]"></div>
-
-            <button id="connect-btn" onclick="startExperience()" class="opacity-0 translate-y-4 transition-all duration-700 mt-8 group relative px-10 py-3 bg-schale/10 border border-schale/50 hover:bg-schale hover:text-white text-schale font-bold tracking-widest text-sm overflow-hidden">
-                <span class="relative z-10">CONNECT_TO_SERVER</span>
+            <button id="connect-btn" onclick="startExperience()" class="opacity-0 translate-y-4 transition-all duration-700 mt-8 px-10 py-3 bg-schale/10 border border-schale/50 hover:bg-schale hover:text-white text-schale font-bold tracking-widest text-sm">
+                CONNECT_TO_SERVER
             </button>
         </div>
-        <div class="absolute bottom-10 text-xs font-mono text-gray-600">SYSTEM VER 11.0 // READY</div>
     </div>
 
-    <!-- 2. AUDIO SYSTEM -->
     <audio id="bgm" loop></audio>
-    <div id="music-player-ui" class="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-3 bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg hover:border-schale/50 transition-colors group">
-        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        <div class="flex flex-col">
-            <span class="text-[8px] font-mono text-gray-400">AUDIO OUTPUT</span>
-            <span id="track-name" class="text-[10px] text-white font-bold group-hover:text-schale transition-colors">SCHALE RADIO</span>
-        </div>
-    </div>
 
-    <!-- 3. BACKGROUND EFFECTS -->
-    <div id="scroll-progress" class="fixed top-0 left-0 h-[3px] bg-schale z-[100] transition-all duration-75 w-0 shadow-[0_0_15px_rgba(0,164,255,0.8)]"></div>
-    <div class="hex-bg"></div>
     <canvas id="particles-canvas"></canvas>
 
-    <!-- 4. NAVIGATION BAR -->
     <nav class="fixed w-full z-50 nav-bar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <div class="flex items-center gap-3 cursor-pointer group" onclick="playClick(); window.scrollTo(0,0)">
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="window.scrollTo(0,0)">
                 <div class="bg-schale/10 text-schale p-2 rounded border border-schale/20 group-hover:bg-schale group-hover:text-white transition-all">
                     <i data-lucide="database" class="w-5 h-5"></i>
                 </div>
                 <span class="font-black text-xl tracking-tight text-white">SCHALE<span class="text-schale">.DB</span></span>
             </div>
-            
-            <!-- Desktop Links -->
             <div class="hidden md:flex items-center gap-8 text-sm font-bold text-gray-400">
-                <a href="#about" class="nav-link hover:text-white transition-colors" onclick="playClick()">Home</a>
-                <a href="#code" class="nav-link hover:text-white transition-colors" onclick="playClick()">Code Vault</a>
-                <a href="#history" class="nav-link hover:text-white transition-colors" onclick="playClick()">History</a>
-                <a href="#projects" class="nav-link hover:text-white transition-colors" onclick="playClick()">Projects</a>
-                <a href="#calculator" class="nav-link hover:text-white transition-colors" onclick="playClick()">Estimator</a>
+                <a href="#about" class="nav-link hover:text-white">Home</a>
+                <a href="#code" class="nav-link hover:text-white">Code Vault</a>
+                <a href="#projects" class="nav-link hover:text-white">Projects</a>
+                <a href="#calculator" class="nav-link hover:text-white">Estimator</a>
             </div>
-
-            <!-- Action Buttons -->
             <div class="hidden md:flex items-center gap-4">
-                <button onclick="toggleLanguage(); playClick()" class="text-xs font-mono text-schale border border-schale/30 px-3 py-1 hover:bg-schale/10 transition-colors rounded">
-                    <span id="lang-display">EN</span>
-                </button>
-                <button onclick="toggleMute(); playClick()" class="text-gray-400 hover:text-white hover:scale-110 transition-transform">
-                    <i id="mute-icon" data-lucide="volume-2" class="w-5 h-5"></i>
-                </button>
-                <a href="#contact" onclick="playClick()" class="bg-[#FFA8C5] hover:bg-[#ff8fae] text-[#4a2c36] px-5 py-2.5 rounded-lg text-xs font-black shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2 border border-white/20">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="nav_hire">MomoTalk</span>
+                <button onclick="toggleMute()" class="text-gray-400 hover:text-white"><i id="mute-icon" data-lucide="volume-2" class="w-5 h-5"></i></button>
+                <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="bg-[#FFA8C5] text-[#4a2c36] px-5 py-2.5 rounded-lg text-xs font-black shadow-lg flex items-center gap-2">
+                    <i data-lucide="user" class="w-4 h-4"></i> Profile
                 </a>
             </div>
-            
-            <!-- Mobile Toggle -->
-            <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 bg-white/5 rounded"><i data-lucide="menu" class="w-6 h-6"></i></button>
         </div>
     </nav>
 
-    <!-- MOBILE MENU -->
-    <div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-[#050508] md:hidden flex flex-col pt-24 px-8 gap-8 border-l border-schale/30">
-        <button onclick="toggleMobileMenu(); playClick()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i data-lucide="x" class="w-8 h-8"></i></button>
-        <div class="flex flex-col gap-6 text-2xl font-black text-white">
-            <a href="#about" onclick="toggleMobileMenu()">HOME</a>
-            <a href="#code" onclick="toggleMobileMenu()">CODE VAULT</a>
-            <a href="#history" onclick="toggleMobileMenu()">HISTORY</a>
-            <a href="#projects" onclick="toggleMobileMenu()">PROJECTS</a>
-            <a href="#calculator" onclick="toggleMobileMenu()">ESTIMATOR</a>
-        </div>
-        <div class="h-px bg-white/10 w-full"></div>
-        <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-400">LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span></button>
-    </div>
-
-    <!-- 5. HERO SECTION (WITH NEW TERMINAL) -->
     <header class="min-h-screen flex items-center relative overflow-hidden pt-20" id="about">
-        <div id="halo-bg" class="halo-container"></div>
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full z-10">
-            <!-- Text Content -->
-            <div data-aos="fade-right" data-aos-duration="1000">
-                <!-- Status Badge (Click to Override) -->
-                <button onclick="toggleSystemOverride()" class="inline-flex items-center gap-3 px-4 py-2 bg-schale/5 border border-schale/20 rounded-full mb-8 hover:bg-schale/10 cursor-pointer transition-all">
-                    <span class="relative flex h-2 w-2">
-                        <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                        <span id="status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    <span id="system-status-text" class="text-green-500 text-[10px] font-bold tracking-widest uppercase" data-i18n="status_online">System Online</span>
-                </button>
-                
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tight glitch-hover cursor-default">
-                    <span data-i18n="hero_prefix">Sensei, I fix</span><br>
-                    <span id="typewriter" class="text-gradient"></span>
+            <div data-aos="fade-right">
+                <div class="inline-flex items-center gap-3 px-4 py-2 bg-schale/5 border border-schale/20 rounded-full mb-8">
+                    <span class="relative flex h-2 w-2"><span class="animate-ping absolute h-full w-full rounded-full bg-green-500 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span></span>
+                    <span class="text-green-500 text-[10px] font-bold tracking-widest uppercase">System Online</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tight glitch-hover">
+                    Sensei, I fix<br><span id="typewriter" class="text-gradient"></span>
                 </h1>
-                
-                <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed pl-6 border-l-2 border-schale/50" data-i18n="hero_desc">
+                <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed pl-6 border-l-2 border-schale/50">
                     Specialized Roblox Systems Engineer. Focusing on backend stability, data integrity, and complex game mechanics.
                 </p>
-                
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#projects" onclick="playClick()" class="bg-white text-black font-black px-8 py-4 rounded hover:bg-gray-200 transition-transform hover:-translate-y-1 shadow-[4px_4px_0px_#00A4FF] flex items-center justify-center gap-2">
-                        <span data-i18n="btn_see_work">VIEW DATABASE</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </a>
-                </div>
+                <a href="#projects" class="inline-block bg-white text-black font-black px-8 py-4 rounded hover:bg-gray-200 transition-transform shadow-[4px_4px_0px_#00A4FF]">
+                    VIEW DATABASE <i data-lucide="arrow-right" class="w-4 h-4 inline ml-2"></i>
+                </a>
             </div>
-            
-            <!-- NEW INTERACTIVE HUD -->
-            <div class="relative hidden md:block" data-aos="zoom-in" data-aos-delay="200">
-                <div class="bg-panel border border-white/10 p-1 rounded-xl relative shadow-2xl overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-b from-schale/5 to-transparent pointer-events-none"></div>
+            <div class="relative hidden md:block" data-aos="zoom-in">
+                <div class="bg-panel border border-white/10 p-1 rounded-xl relative shadow-2xl overflow-hidden">
                     <div class="scanline"></div>
-                    
-                    <!-- Header -->
-                    <div class="bg-black/60 p-4 flex justify-between items-center border-b border-white/5 backdrop-blur-sm">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="terminal" class="w-4 h-4 text-schale"></i>
-                            <span class="text-xs font-bold text-gray-300 tracking-widest">INTERACTIVE_TERMINAL</span>
-                        </div>
-                        <div class="flex gap-1.5"><div class="w-2 h-2 bg-red-500 rounded-full"></div><div class="w-2 h-2 bg-yellow-500 rounded-full"></div><div class="w-2 h-2 bg-green-500 rounded-full"></div></div>
+                    <div class="bg-black/60 p-4 flex justify-between items-center border-b border-white/5">
+                        <div class="flex items-center gap-2"><i data-lucide="terminal" class="w-4 h-4 text-schale"></i><span class="text-xs font-bold text-gray-300">INTERACTIVE_TERMINAL</span></div>
                     </div>
-
-                    <!-- Body -->
-                    <div class="p-6 font-mono text-xs text-gray-400 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span>CORE_LOAD</span>
-                            <div class="flex items-center gap-2"><div class="w-20 h-1.5 bg-black rounded-full overflow-hidden"><div class="h-full bg-green-500 w-[40%] animate-pulse"></div></div> <span class="text-green-400">OK</span></div>
+                    <div class="p-6 font-mono text-xs text-gray-400">
+                        <div class="bg-black/40 rounded border border-white/5 p-4 h-48 overflow-y-auto" id="cli-output">
+                            <span class="text-schale">System initialized. Type 'help' for commands.</span><br>
                         </div>
-                        
-                        <div class="h-px bg-white/5 my-2"></div>
-                        
-                        <!-- Playable CLI -->
-                        <div class="bg-black/40 rounded border border-white/5 p-4 h-48 relative font-mono text-[10px] leading-relaxed flex flex-col" onclick="document.getElementById('cli-input').focus()">
-                            <div id="cli-output" class="flex-1 overflow-y-auto mb-2 text-gray-300 scrollbar-hide">
-                                <span class="text-schale">System initialized. Type 'help' for commands.</span><br>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-schale mr-2">visitor@schale:~$</span>
-                                <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false">
-                                <span class="cli-cursor w-2 h-4 bg-schale block"></span>
-                            </div>
+                        <div class="flex items-center mt-2">
+                            <span class="text-schale mr-2">visitor@schale:~$</span>
+                            <input id="cli-input" type="text" class="cli-input" autocomplete="off">
                         </div>
                     </div>
                 </div>
-                <!-- Decor -->
-                <div class="absolute -z-10 -top-6 -right-6 w-32 h-32 border-t-2 border-r-2 border-schale/30 rounded-tr-3xl"></div>
-                <div class="absolute -z-10 -bottom-6 -left-6 w-32 h-32 border-b-2 border-l-2 border-schale/30 rounded-bl-3xl"></div>
             </div>
         </div>
     </header>
 
-    <!-- 6. PERSONNEL FILE (WITH PFP UPDATE) -->
     <section id="file" class="py-24 border-t border-white/5 bg-dark">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid md:grid-cols-12 gap-12 items-center">
                 <div class="md:col-span-5" data-aos="fade-right">
-                    <div class="relative group">
-                        <!-- Profile Card -->
-                        <div class="bg-panel border border-white/10 rounded-2xl p-6 relative z-10 hover:border-schale/50 transition-colors duration-500">
-                            <div class="flex items-center justify-between mb-6">
-                                <div id="pfp-container" onclick="updateProfilePicture()" class="w-24 h-24 bg-schale/10 rounded-full flex items-center justify-center border-2 border-schale/30 group-hover:border-schale cursor-pointer overflow-hidden transition-all duration-300 relative group-hover:scale-105">
-                                    <img id="avatar-img" src="" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden'); document.getElementById('avatar-placeholder').classList.remove('hidden');" />
-                                    <i id="avatar-placeholder" data-lucide="user" class="w-10 h-10 text-schale"></i>
-                                    <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <i data-lucide="edit-2" class="w-6 h-6 text-white"></i>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-[10px] font-mono text-gray-500 mb-1">CLEARANCE LEVEL</div>
-                                    <div class="text-xl font-black text-white">PRODIGY <span class="text-schale">01</span></div>
-                                </div>
+                    <div class="bg-panel border border-white/10 rounded-2xl p-6 relative">
+                        <div class="flex items-center justify-between mb-6">
+                            <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="w-24 h-24 bg-schale/10 rounded-full border-2 border-schale/30 overflow-hidden hover:scale-105 transition-transform">
+                                <img src="https://www.roblox.com/headshot-thumbnail/image?userId=2878666652&width=420&height=420&format=png" class="w-full h-full object-cover" />
+                            </a>
+                            <div class="text-right">
+                                <div class="text-[10px] font-mono text-gray-500">CLEARANCE LEVEL</div>
+                                <div class="text-xl font-black text-white">PRODIGY <span class="text-schale">01</span></div>
                             </div>
-                            <div class="space-y-4 font-mono text-xs">
-                                <div class="flex justify-between border-b border-white/5 pb-2">
-                                    <span class="text-gray-500">CODENAME</span>
-                                    <span class="text-white font-bold">WATER</span>
-                                </div>
-                                <div class="flex justify-between border-b border-white/5 pb-2">
-                                    <span class="text-gray-500">AGE</span>
-                                    <span class="text-white font-bold">15</span>
-                                </div>
-                                <div class="flex justify-between border-b border-white/5 pb-2">
-                                    <span class="text-gray-500">AFFILIATION</span>
-                                    <span class="text-schale font-bold">SCHALE (INDEPENDENT)</span>
-                                </div>
-                                <div class="flex justify-between border-b border-white/5 pb-2">
-                                    <span class="text-gray-500">SPECIALTY</span>
-                                    <span class="text-white font-bold">BACKEND ENGINEERING</span>
-                                </div>
-                                <div class="flex justify-between pb-2">
-                                    <span class="text-gray-500">EXPERIENCE</span>
-                                    <span class="text-white font-bold">3+ YEARS</span>
-                                </div>
-                            </div>
-                            <div class="mt-4 text-[9px] text-gray-600 text-center uppercase tracking-widest">Click badge to update photo</div>
                         </div>
-                        <div class="absolute inset-0 bg-schale/20 blur-2xl -z-10 opacity-0 group-hover:opacity-50 transition-opacity duration-700"></div>
+                        <div class="space-y-4 font-mono text-xs">
+                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">CODENAME</span><span class="text-white font-bold uppercase">Water</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">ROBLOX_ID</span><span class="text-schale font-bold">2878666652</span></div>
+                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">SPECIALTY</span><span class="text-white font-bold">BACKEND</span></div>
+                            <div class="flex justify-between"><span class="text-gray-500">STATUS</span><span class="text-green-400 font-bold">AVAILABLE</span></div>
+                        </div>
                     </div>
                 </div>
                 <div class="md:col-span-7" data-aos="fade-left">
                     <h2 class="text-3xl font-black text-white mb-6">PERSONNEL FILE <span class="text-schale">#8080</span></h2>
-                    <p class="text-gray-400 leading-relaxed mb-6">
-                        I am a 15-year-old Roblox Systems Engineer with a passion for creating robust, scalable backend architectures. Unlike typical scripters who just "make it work," I ensure it **keeps working** under high player loads.
-                    </p>
-                    <p class="text-gray-400 leading-relaxed mb-8">
-                        My philosophy is simple: Clean Code = Less Bugs = Happy Players. I specialize in DataStores, Anti-Exploit measures, and complex game loops that require precise synchronization between the Client and Server.
-                    </p>
+                    <p class="text-gray-400 leading-relaxed mb-6">I am a Roblox Systems Engineer specializing in robust backend architectures. I focus on ensuring games stay stable under high player loads using efficient code and secure data handling.</p>
                     <div class="flex gap-4">
-                        <div class="bg-panel border border-white/10 px-4 py-2 rounded flex items-center gap-2 text-xs font-mono text-gray-300">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div> LuaU Expert
-                        </div>
-                        <div class="bg-panel border border-white/10 px-4 py-2 rounded flex items-center gap-2 text-xs font-mono text-gray-300">
-                            <div class="w-2 h-2 bg-purple-500 rounded-full"></div> Rojo Workflow
-                        </div>
+                        <div class="bg-panel border border-white/10 px-4 py-2 rounded text-xs font-mono text-gray-300">LuaU Expert</div>
+                        <div class="bg-panel border border-white/10 px-4 py-2 rounded text-xs font-mono text-gray-300">Optimization</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 7. SKILLS SECTION -->
-    <section id="skills" class="py-24 border-t border-white/5 bg-panel">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex items-center gap-3 mb-12" data-aos="fade-up">
-                <div class="p-2 bg-schale/10 rounded"><i data-lucide="cpu" class="text-schale w-6 h-6"></i></div>
-                <h2 class="text-2xl font-black text-white tracking-tight">SYSTEM SPECIFICATIONS</h2>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Luau -->
-                <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="0">
-                    <div class="flex justify-between items-end mb-4">
-                        <h3 class="font-bold text-white text-lg">Luau</h3>
-                        <span class="font-mono text-schale text-xs">v5.0</span>
-                    </div>
-                    <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[98%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                    <p class="text-xs text-gray-500">OOP, Metatables, Parallel Luau</p>
-                </div>
-                 <!-- DataStores -->
-                 <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="100">
-                    <div class="flex justify-between items-end mb-4">
-                        <h3 class="font-bold text-white text-lg">DataStores</h3>
-                        <span class="font-mono text-schale text-xs">SECURE</span>
-                    </div>
-                    <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[95%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                    <p class="text-xs text-gray-500">ProfileService, Session Locking</p>
-                </div>
-                 <!-- UI -->
-                 <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="200">
-                    <div class="flex justify-between items-end mb-4">
-                        <h3 class="font-bold text-white text-lg">Interface</h3>
-                        <span class="font-mono text-schale text-xs">FLUID</span>
-                    </div>
-                    <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[85%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                    <p class="text-xs text-gray-500">Roact, Fusion, TweenService</p>
-                </div>
-                 <!-- Architecture -->
-                 <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="300">
-                    <div class="flex justify-between items-end mb-4">
-                        <h3 class="font-bold text-white text-lg">Systems</h3>
-                        <span class="font-mono text-schale text-xs">MODULAR</span>
-                    </div>
-                    <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[92%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                    <p class="text-xs text-gray-500">Knit Framework, ECS Pattern</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 8. NEW: SERVICE HISTORY -->
-    <section id="history" class="py-24 border-t border-white/5 bg-dark relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-schale/5 to-transparent pointer-events-none"></div>
-        <div class="max-w-4xl mx-auto px-6 relative z-10">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <span class="text-schale font-mono text-xs tracking-widest uppercase mb-2 block">Career Timeline</span>
-                <h2 class="text-4xl font-black text-white">MISSION LOG</h2>
-            </div>
-
-            <div class="relative" data-aos="fade-up" data-aos-delay="200">
-                <div class="timeline-line"></div>
-
-                <!-- Item 1 -->
-                <div class="timeline-item group">
-                    <div class="timeline-dot group-hover:bg-schale transition-colors"></div>
-                    <div class="bg-panel border border-white/10 p-6 rounded-xl hover:border-schale/30 transition-all">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                            <h3 class="text-xl font-bold text-white">Freelance Systems Engineer</h3>
-                            <span class="text-schale font-mono text-xs">2022 - PRESENT</span>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">Architecting scalable backend solutions for high-traffic simulator games. Delivered 50+ commissions ranging from UI systems to full game loops over a 3-year career.</p>
-                        <div class="flex gap-2">
-                            <span class="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-300">DataStore2</span>
-                            <span class="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-300">ProfileService</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item 2 -->
-                <div class="timeline-item group">
-                    <div class="timeline-dot group-hover:bg-schale transition-colors"></div>
-                    <div class="bg-panel border border-white/10 p-6 rounded-xl hover:border-schale/30 transition-all">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                            <h3 class="text-xl font-bold text-white">Junior Developer</h3>
-                            <span class="text-gray-500 font-mono text-xs">2021 - 2022</span>
-                        </div>
-                        <p class="text-gray-400 text-sm">Started journey with Lua. Created several open-source modules and contributed to community resources.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 9. NEW: CODE VAULT -->
     <section id="code" class="py-24 border-t border-white/5 bg-panel">
         <div class="max-w-6xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6" data-aos="fade-up">
-                <div>
-                    <h2 class="text-4xl font-black text-white mb-2">CODE VAULT</h2>
-                    <p class="text-gray-400">Direct access to my open-source modules.</p>
-                </div>
-                <div class="flex gap-2 text-xs font-mono text-gray-500">
-                    <span class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> CLEAN</span>
-                    <span class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> OPTIMIZED</span>
-                    <span class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> DOCUMENTED</span>
-                </div>
-            </div>
-
-            <div class="code-window shadow-2xl" data-aos="fade-up" data-aos-delay="200">
+            <h2 class="text-4xl font-black text-white mb-12">CODE VAULT</h2>
+            <div class="code-window">
                 <div class="code-header">
-                    <div class="flex gap-1.5 items-center mr-4">
-                        <div class="code-dot bg-red-500"></div>
-                        <div class="code-dot bg-yellow-500"></div>
-                        <div class="code-dot bg-green-500"></div>
-                    </div>
-                    <div class="flex overflow-x-auto no-scrollbar">
-                        <div class="code-tab active" onclick="switchTab(0, this)">RetentionEngine.lua</div>
-                        <div class="code-tab" onclick="switchTab(1, this)">NotificationSystem.lua</div>
-                        <div class="code-tab" onclick="switchTab(2, this)">DataHandler.server.lua</div>
-                    </div>
+                    <div class="code-tab active" onclick="switchTab(0, this)">RetentionEngine.lua</div>
+                    <div class="code-tab" onclick="switchTab(1, this)">DataHandler.lua</div>
                 </div>
-                <div class="relative group">
-                    <button onclick="copyCode()" class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                        <i data-lucide="copy" class="w-4 h-4"></i>
-                    </button>
-                    <pre class="code-content line-numbers"><code id="code-display" class="language-lua"></code></pre>
-                </div>
+                <pre class="code-content"><code id="code-display" class="language-lua"></code></pre>
             </div>
         </div>
     </section>
 
-    <!-- 10. PROJECTS SECTION -->
-    <section id="projects" class="py-32 relative border-t border-white/5 bg-dark">
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6" data-aos="fade-up">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <i data-lucide="folder-open" class="text-schale w-6 h-6"></i>
-                        <span class="text-schale font-bold text-sm tracking-widest">DATABASE</span>
-                    </div>
-                    <h2 class="text-4xl md:text-5xl font-black text-white" data-i18n="projects_title">MISSION REPORTS</h2>
-                </div>
-                <!-- Filters -->
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="filterProjects('all')" class="filter-btn active px-5 py-2 bg-schale text-white text-xs font-bold rounded shadow-lg shadow-schale/20 hover:scale-105 transition-all">ALL</button>
-                    <button onclick="filterProjects('GAMEPLAY')" class="filter-btn px-5 py-2 bg-panel text-gray-400 border border-white/10 text-xs font-bold rounded hover:border-schale hover:text-white transition-all">SYSTEMS</button>
-                    <button onclick="filterProjects('FULL GAME')" class="filter-btn px-5 py-2 bg-panel text-gold border border-gold/20 text-xs font-bold rounded hover:bg-gold hover:text-black transition-all">GAMES</button>
-                    <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn px-5 py-2 bg-panel text-gray-400 border border-white/10 text-xs font-bold rounded hover:border-schale hover:text-white transition-all">FIXES</button>
-                </div>
-            </div>
-            
+    <section id="projects" class="py-32 border-t border-white/5 bg-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-black text-white mb-16 uppercase">Mission Reports</h2>
             <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         </div>
     </section>
 
-    <!-- 11. CALCULATOR -->
-    <section id="calculator" class="py-32 relative border-t border-white/5 bg-panel">
-        <div class="max-w-5xl mx-auto px-6" data-aos="fade-up">
-            <div class="grid md:grid-cols-12 gap-12 items-start">
-                <!-- Controls -->
+    <section id="calculator" class="py-32 border-t border-white/5 bg-panel">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="grid md:grid-cols-12 gap-12">
                 <div class="md:col-span-7 space-y-8">
-                    <div>
-                        <h2 class="text-3xl font-black text-white mb-2" data-i18n="calc_title">RESOURCE ESTIMATOR</h2>
-                        <p class="text-gray-400 text-sm" data-i18n="calc_subtitle">Calculate budget requirements.</p>
+                    <h2 class="text-3xl font-black text-white">RESOURCE ESTIMATOR</h2>
+                    <div class="grid grid-cols-2 gap-3" id="service-grid">
+                        <button onclick="selectService(2500, this)" class="p-4 bg-dark border border-schale rounded-lg text-white font-bold text-sm">Bug Fix<br><span class="text-xs text-gray-500">2,500+ R$</span></button>
+                        <button onclick="selectService(10000, this)" class="p-4 bg-dark border border-white/10 rounded-lg text-white font-bold text-sm">Systems<br><span class="text-xs text-gray-500">10k+ R$</span></button>
                     </div>
-                    
-                    <div class="space-y-4">
-                        <label class="text-schale text-[10px] font-bold tracking-widest mb-3 block" data-i18n="calc_type">OPERATION TYPE</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="selectService(500, this); playClick()" class="service-btn p-4 bg-dark border border-white/10 rounded-lg hover:border-white/30 text-left transition-all">
-                                <div class="text-white font-bold text-sm" data-i18n="serv_quick">Quick Task</div><div class="text-gray-500 text-[10px] font-mono mt-1">500+ R$</div>
-                            </button>
-                            <button onclick="selectService(2500, this); playClick()" class="service-btn active-service p-4 bg-dark border border-schale rounded-lg text-left transition-all relative overflow-hidden">
-                                <div class="absolute inset-0 bg-schale/5 pointer-events-none"></div><div class="text-white font-bold text-sm" data-i18n="serv_fix">Bug Fix</div><div class="text-gray-500 text-[10px] font-mono mt-1">2,500+ R$</div>
-                            </button>
-                            <button onclick="selectService(10000, this); playClick()" class="service-btn p-4 bg-dark border border-white/10 rounded-lg hover:border-white/30 text-left transition-all">
-                                <div class="text-white font-bold text-sm" data-i18n="serv_sys">System</div><div class="text-gray-500 text-[10px] font-mono mt-1">10k+ R$</div>
-                            </button>
-                            <button onclick="selectService(30000, this); playClick()" class="service-btn p-4 bg-dark border border-white/10 rounded-lg hover:border-white/30 text-left transition-all">
-                                <div class="text-white font-bold text-sm" data-i18n="serv_game">Full Game</div><div class="text-gray-500 text-[10px] font-mono mt-1">30k+ R$</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-black/20 p-6 rounded-xl border border-white/5 space-y-6">
-                        <div><div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_complexity">Complexity</label><span id="complexity-val" class="text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded">Standard</span></div><input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()"></div>
-                        <div><div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_timeline">Urgency</label><span id="rush-val" class="text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded">Standard</span></div><input type="range" min="1" max="1.5" step="0.1" value="1" id="rush-range" oninput="calculateBudget()"></div>
-                    </div>
+                    <input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()">
                 </div>
-
-                <!-- Receipt -->
-                <div class="md:col-span-5 bg-dark border border-white/10 rounded-xl p-8 relative overflow-hidden shadow-2xl">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-schale/10 to-transparent rounded-bl-full pointer-events-none"></div>
-                    
-                    <div class="flex justify-between items-center mb-8">
-                        <span class="text-xs font-bold text-gray-500 tracking-widest">INVOICE PREVIEW</span>
-                        <select id="currency-select" onchange="calculateBudget(); playClick()" class="bg-black/40 text-white text-xs font-bold px-3 py-1.5 rounded border border-white/10 outline-none hover:border-schale/50"><option value="R$">R$</option><option value="USD">USD</option><option value="THB">THB</option><option value="VND">VND</option></select>
-                    </div>
-
-                    <div class="space-y-3 mb-8 border-b border-white/5 pb-8 font-mono text-sm">
-                        <div class="flex justify-between text-gray-400"><span>Base Cost</span><span class="text-white" id="receipt-base">--</span></div>
-                        <div class="flex justify-between text-gray-400"><span>Complexity Multiplier</span><span class="text-schale" id="receipt-comp">x1.0</span></div>
-                        <div class="flex justify-between text-gray-400"><span>Rush Fee</span><span class="text-alert" id="receipt-rush">x1.0</span></div>
-                    </div>
-
-                    <div class="text-right mb-8">
-                        <span class="text-[10px] text-schale font-bold uppercase block mb-1">Total Estimated Cost</span>
-                        <div id="total-price" class="text-4xl font-black text-white tracking-tight">2,500 R$</div>
-                        <div id="sub-price" class="text-xs text-gray-500 font-mono mt-1">approx $8.75 USD</div>
-                    </div>
-
-                    <button class="w-full bg-schale hover:bg-white hover:text-schale text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,164,255,0.3)] hover:shadow-[0_4px_30px_rgba(255,255,255,0.4)]">
-                        <i data-lucide="message-square" class="w-4 h-4"></i> DISCUSS QUOTE
-                    </button>
+                <div class="md:col-span-5 bg-dark border border-white/10 p-8 rounded-xl text-center">
+                    <div class="text-xs font-bold text-gray-500 mb-2">ESTIMATED TOTAL</div>
+                    <div id="total-price" class="text-4xl font-black text-white">2,500 R$</div>
+                    <button class="w-full bg-schale text-white font-bold py-4 rounded-lg mt-8">CONTACT FOR QUOTE</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 12. FOOTER -->
-    <footer id="contact" class="bg-[#050508] border-t border-white/5 py-24 relative overflow-hidden">
-        <div class="max-w-3xl mx-auto px-6 text-center z-10 relative">
-            <h2 class="text-5xl font-black text-white mb-2 tracking-tighter" data-i18n="contact_title">MomoTalk</h2>
-            <p class="text-gray-400 mb-12" data-i18n="contact_sub">Sensei, you have a new message.</p>
-
-            <div class="inline-flex items-center gap-6 px-6 py-2 bg-white/5 rounded-full border border-white/5 mb-12 backdrop-blur-sm">
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-bold text-green-500 tracking-widest uppercase">My Status: Online</span>
+    <footer id="contact" class="py-24 border-t border-white/5 bg-dark text-center">
+        <h2 class="text-5xl font-black text-white mb-12">MomoTalk</h2>
+        <div class="momotalk-container text-left">
+            <div class="momotalk-header">MomoTalk</div>
+            <div class="p-3 bg-[#f0f0f0]">
+                <div class="momotalk-item" onclick="navigator.clipboard.writeText('hokpy'); alert('Discord copied!')">
+                    <div class="bg-indigo-100 p-2 rounded-full"><i data-lucide="message-square" class="text-[#5865F2]"></i></div>
+                    <div><div class="font-bold text-sm">Discord</div><div class="text-xs text-gray-500">Username: hokpy</div></div>
                 </div>
-                <div class="w-px h-3 bg-white/10"></div>
-                <div class="text-[10px] font-mono text-gray-400">TOTAL_DATABASE_ACCESSES: <span id="visitor-count" class="text-white font-bold ml-1">---</span></div>
+                <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momotalk-item">
+                    <div class="bg-gray-200 p-2 rounded-full"><i data-lucide="gamepad-2" class="text-black"></i></div>
+                    <div><div class="font-bold text-sm">Roblox</div><div class="text-xs text-gray-500">Visit Profile</div></div>
+                </a>
             </div>
-
-            <!-- MomoTalk UI -->
-            <div class="momotalk-container text-left mx-auto transform transition-all hover:scale-105 duration-500" data-aos="zoom-in">
-                <div class="momotalk-header">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i>
-                    <span>MomoTalk</span>
-                    <span class="ml-auto text-[10px] bg-white text-momo px-2 py-0.5 rounded-full font-bold shadow-sm">2</span>
-                </div>
-                <div class="p-3 bg-[#f0f0f0] min-h-[200px]">
-                    <!-- Discord -->
-                    <div class="momotalk-item group" onclick="copyDiscord(); playClick()">
-                        <div class="momotalk-avatar bg-indigo-100"><i data-lucide="message-square" class="text-[#5865F2] w-6 h-6 transform group-hover:scale-110 transition-transform"></i></div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex justify-between items-center mb-0.5"><span class="font-bold text-sm text-gray-800">Discord</span><span class="text-[10px] text-gray-400">Now</span></div>
-                            <div class="text-xs text-gray-500 truncate font-medium" id="contact-discord-text">Username: hokpy</div>
-                        </div>
-                        <div class="unread-badge animate-bounce">1</div>
-                    </div>
-                    <!-- Roblox -->
-                    <a href="https://www.roblox.com/users/YOUR_ID/profile" target="_blank" class="momotalk-item group" onclick="playClick()">
-                        <div class="momotalk-avatar bg-gray-200"><i data-lucide="gamepad-2" class="text-black w-6 h-6 transform group-hover:rotate-12 transition-transform"></i></div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex justify-between items-center mb-0.5"><span class="font-bold text-sm text-gray-800">Roblox</span><span class="text-[10px] text-gray-400">1m ago</span></div>
-                            <div class="text-xs text-gray-500 truncate font-medium">Let's build something awesome!</div>
-                        </div>
-                        <div class="unread-badge">1</div>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="mt-20 text-[10px] text-gray-600 font-mono uppercase tracking-widest opacity-50">
-                SCHALE DATABASE V11.0 // AUTH: HOKPY // KIVOTOS ADMIN
-            </div>
+        </div>
+        <div class="mt-20 text-[10px] text-gray-600 font-mono uppercase tracking-widest">
+            SCHALE DATABASE V11.0 // ROBLOX: 2878666652 // OFFLINE STORAGE
         </div>
     </footer>
 
-    <!-- SCRIPT LOGIC -->
     <script>
-        // ===========================================
-        //  🎛️ CONFIGURATION
-        // ===========================================
-        const config = {
-            bgmUrl: "https://jetta.vgmtreasurechest.com/soundtracks/blue-archive-gamerip/lvulxede/12%20KARUT%2004%20Shooting%20Stars.mp3", 
-            haloUrl: "https://cdn.discordapp.com/attachments/1352066563213230134/1456328947535970387/SCHALELogo_W.png?ex=6959f1c6&is=6958a046&hm=66fb2db1407b122785c9eeb52964e329b244df954e2a7289007f58149cde7440", 
-            volume: 0.15 
-        };
-        
-        // ===========================================
-        //  📂 DATA
-        // ===========================================
-        const myProjects = [
-            {
-                title: "Chillin Place", 
-                category: "FULL GAME", 
-                description: "A complete Hangout place.",
-                techStack: ["Game Design", "Hangout", "DataStore"],
-                mediaType: "image",
-                source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456328761074122762/RobloxScreenShot20251215_022652029.png?ex=6957f759&is=6956a5d9&hm=bb6f5b4550db1891a74b51695d3fcbcd06541d61678eae242aa2c2a22431a881", 
-                icon: "gamepad-2", color: "gold" 
-            },
-            {
-                title: "Blind Mode Logic",
-                category: "GAMEPLAY",
-                description: "Immersive vision restriction mechanic with dynamic spawn handling.",
-                techStack: ["Lighting", "SpawnLocation", "Camera"],
-                mediaType: "video",
-                source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456235313247817809/2025-12-27_17-31-18.mp4?ex=69599a92&is=69584912&hm=5209ff5081b8303d17103a3b46cf7412fd428d92cb78011cf3389944cc135659&", 
-                icon: "eye-off", color: "schale"
-            },
-            {
-                title: "Quest Engine",
-                category: "RPG SYSTEM",
-                description: "Visual Novel style interaction system with branching dialogue paths.",
-                techStack: ["ModuleScript", "RichText", "UI Tweening"],
-                mediaType: "video",
-                source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456235312396238869/2025-12-24_01-16-02.mp4?ex=69599a92&is=69584912&hm=0dddefccffefb5e37a61ea7e3de26d0fd7da12c6b50589302ac6fdde1f3f98ec&",
-                icon: "message-square", color: "halo"
-            },
-            {
-                title: "Farm Optimization",
-                category: "OPTIMIZATION",
-                description: "Fixed critical bugs and optimized backend logic, reducing server lag by 40%.",
-                techStack: ["Refactoring", "Optimization", "Memory"],
-                mediaType: "video",
-                source: "https://media.discordapp.net/attachments/1352066563213230134/1456235314111578112/2025-12-31_01-49-03.mp4?ex=6957a052&is=69564ed2&hm=10e9360873f7105c9894f895222d79ceb5ca4b1b76d605ba71bcd6e85f04fcff&",
-                icon: "sprout", color: "momo" 
-            }
-        ];
-
-        // --- CODE SNIPPETS (REAL DATA) ---
-        const codeSnippets = [
-            {
-                name: "RetentionEngine.lua",
-                content: `--[[\n    [RETENTION ENGINE CORE]\n    Author: Carzycaft4S\n    Description: Centralized server-side manager for Daily Rewards and Playtime Gifts.\n]]\n\nlocal RetentionEngine = {}\nlocal DataStoreService = game:GetService("DataStoreService")\nlocal Players = game:GetService("Players")\n\n--// CORE LOGIC: DAILY REWARDS\nfunction RetentionEngine.CheckDailyStatus(player, data)\n    local now = os.time()\n    local lastLogin = data.LastLogin\n    local timeDiff = now - lastLogin\n    local oneDay = 86400\n    \n    if timeDiff >= oneDay then\n        return "Ready", data.Streak\n    else\n        local timeLeft = oneDay - timeDiff\n        return "Waiting", timeLeft\n    end\nend\n\nreturn RetentionEngine`
-            },
-            {
-                name: "NotificationSystem.lua",
-                content: `--[[\n    [UNIFIED NOTIFICATION SYSTEM]\n    Description: Modular UI system using TweenService.\n]]\n\nlocal NotificationSystem = {}\nlocal TweenService = game:GetService("TweenService")\n\nfunction NotificationSystem:Notify(player, text, color)\n    local PlayerGui = player:FindFirstChild("PlayerGui")\n    local frame = self:_BuildNotificationFrame(text, color)\n    \n    -- Visual Animation\n    frame.Position = UDim2.new(1.5, 0, 0, 0)\n    local enterTween = TweenService:Create(frame, TWEEN_INFO, {Position = UDim2.new(0, 0, 0, 0)})\n    enterTween:Play()\nend\n\nreturn NotificationSystem`
-            },
-            {
-                name: "DataHandler.server.lua",
-                content: `--[[\n    [RETENTION SERVER HANDLER]\n]]\n\nlocal ReplicatedStorage = game:GetService("ReplicatedStorage")\nlocal RetentionEngine = require(script.Parent.RetentionEngine)\n\n--// HANDLE CLIENT REQUESTS\nfunction GetStatusFunc.OnServerInvoke(player)\n    local data = RetentionEngine.LoadProfile(player)\n    local dailyStatus = RetentionEngine.CheckDailyStatus(player, data)\n    \n    return {\n        DailyStatus = dailyStatus,\n        DailyStreak = data.Streak\n    }\nend`
-            }
-        ];
-
-        // --- FIREBASE LOGIC ---
-        let db, auth, appId;
-        
-        async function initFirebase() {
-            const { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } = window.FirebaseCore;
-            
-            const firebaseConfig = JSON.parse(__firebase_config);
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-            // Auth Strategy
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-
-            onAuthStateChanged(auth, (user) => {
-                if(user) {
-                    setupListeners();
-                    incrementVisits();
-                }
-            });
-        }
-
-        async function incrementVisits() {
-            // Simple session check to prevent spamming the counter on refresh
-            if(sessionStorage.getItem('visited_session')) return;
-            
-            try {
-                const statsRef = window.FirebaseCore.doc(db, 'artifacts', appId, 'public', 'data', 'siteStats', 'counter');
-                await window.FirebaseCore.setDoc(statsRef, { count: window.FirebaseCore.increment(1) }, { merge: true });
-                sessionStorage.setItem('visited_session', 'true');
-            } catch(e) { console.error("Stats Error:", e); }
-        }
-
-        function setupListeners() {
-            const { onSnapshot, doc } = window.FirebaseCore;
-            
-            // 1. Listen for Visitor Count
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'siteStats', 'counter'), (snap) => {
-                if(snap.exists()) {
-                    const count = snap.data().count || 0;
-                    document.getElementById('visitor-count').innerText = count.toLocaleString();
-                }
-            }, (err) => console.log("Stats listener error", err));
-
-            // 2. Listen for Profile Picture Updates
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'settings'), (snap) => {
-                if(snap.exists() && snap.data().avatarUrl) {
-                    const url = snap.data().avatarUrl;
-                    const img = document.getElementById('avatar-img');
-                    const placeholder = document.getElementById('avatar-placeholder');
-                    
-                    img.src = url;
-                    img.classList.remove('hidden');
-                    placeholder.classList.add('hidden');
-                }
-            }, (err) => console.log("Profile listener error", err));
-        }
-
-        // Global function to update profile
-        window.updateProfilePicture = async () => {
-            if(!auth.currentUser) return;
-            
-            const newUrl = prompt("Enter the URL for your new profile picture:");
-            if(newUrl && (newUrl.startsWith('http') || newUrl.startsWith('data:image'))) {
-                playClick(1000, 0.1);
-                const profileRef = window.FirebaseCore.doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'settings');
-                await window.FirebaseCore.setDoc(profileRef, { avatarUrl: newUrl }, { merge: true });
-            }
-        };
-
-        // --- SYSTEM LOGIC ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let isMuted = false;
-        let isSystemOverride = false;
+        let basePrice = 2500;
 
-        // 1. Boot & Audio
+        const projects = [
+            { title: "Chillin Place", category: "GAME", source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456328761074122762/RobloxScreenShot20251215_022652029.png?ex=6957f759&is=6956a5d9&hm=bb6f5b4550db1891a74b51695d3fcbcd06541d61678eae242aa2c2a22431a881", tech: "Environment" },
+            { title: "Blind Mode", category: "LOGIC", source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456235313247817809/2025-12-27_17-31-18.mp4", tech: "Raycasting" }
+        ];
+
+        const codes = [
+            { name: "RetentionEngine.lua", content: "local Retention = {}\nfunction Retention.Check(player)\n  -- Check daily login logic\n  return true\nend\nreturn Retention" },
+            { name: "DataHandler.lua", content: "local DataStore = game:GetService('DataStoreService')\nfunction Save(id, val)\n  -- Save logic here\nend" }
+        ];
+
         function startExperience() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            playClick(880, 0.3);
-            const overlay = document.getElementById('start-overlay');
-            overlay.classList.add('animate-crt-off');
-            setTimeout(() => {
-                overlay.style.display = 'none';
+            document.getElementById('start-overlay').style.display = 'none';
+            if (!isMuted) {
                 const bgm = document.getElementById('bgm');
-                bgm.src = config.bgmUrl; bgm.volume = config.volume;
-                bgm.play().catch(e => console.log("Audio requires interaction"));
-            }, 500);
+                bgm.src = "https://jetta.vgmtreasurechest.com/soundtracks/blue-archive-gamerip/lvulxede/12%20KARUT%2004%20Shooting%20Stars.mp3";
+                bgm.volume = 0.15;
+                bgm.play();
+            }
         }
 
         function runBootSequence() {
             const container = document.getElementById('boot-log-container');
-            const checks = [
-                { id: "bios", text: "BIOS_CHECK" },
-                { id: "mem", text: "MEMORY_INTEGRITY" },
-                { id: "net", text: "NETWORK_UPLINK" },
-                { id: "sec", text: "SECURITY_PROTOCOL" }
-            ];
-            let i = 0;
-            function runCheck() {
-                if(i < checks.length) {
-                    const check = checks[i];
+            const lines = ["DISK_SCAN... OK", "UPLINK_ESTABLISHED... OK", "CLEARANCE_VERIFIED... OK"];
+            lines.forEach((l, i) => {
+                setTimeout(() => {
                     const div = document.createElement('div');
                     div.className = "boot-status-line";
-                    div.innerHTML = `<span>${check.text}...</span> <span class="check">OK</span>`;
+                    div.innerHTML = `<span>${l}</span>`;
                     container.appendChild(div);
-                    playClick(800 + (i*100), 0.05); 
-                    i++;
-                    setTimeout(runCheck, 300);
-                } else {
-                    setTimeout(() => {
-                        const btn = document.getElementById('connect-btn');
-                        btn.classList.remove('opacity-0', 'translate-y-4');
-                    }, 400);
-                }
-            }
-            setTimeout(runCheck, 500);
+                }, i * 300);
+            });
+            setTimeout(() => document.getElementById('connect-btn').style.opacity = "1", 1200);
         }
 
-        // 2. Project Rendering
-        function renderProjects(filter = 'all') {
-            const container = document.getElementById('projects-grid');
-            if(!container) return;
-            const filtered = filter === 'all' ? myProjects : myProjects.filter(p => p.category === filter);
-            
-            const styles = {
-                schale: { strip: 'strip-blue', text: 'text-schale' },
-                halo: { strip: 'strip-purple', text: 'text-purple-400' },
-                momo: { strip: 'bg-gray-500', text: 'text-gray-400' },
-                gold: { strip: 'strip-gold', text: 'text-gold' }
-            };
-
-            container.innerHTML = filtered.map((p) => {
-                const s = styles[p.color] || styles.schale;
-                const isGold = p.category === "FULL GAME" ? "border-gold/30 box-shadow-gold" : "";
-                
-                let visual = '';
-                if(p.mediaType === "video") visual = `<video src="${p.source}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"></video>`;
-                else if(p.mediaType === "image") visual = `<img src="${p.source}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500">`;
-                else if(p.mediaType === "youtube") visual = `<iframe class="w-full h-full opacity-60 group-hover:opacity-100" src="${p.source}?autoplay=1&mute=1&controls=0&loop=1" frameborder="0"></iframe>`;
-                else visual = `<div class="w-full h-full flex items-center justify-center bg-[#1a1d24]"><i data-lucide="${p.icon}" class="${s.text} w-12 h-12"></i></div>`;
-                
-                return `
-                <div onmouseenter="playHover()" class="glass-card group rounded-xl overflow-hidden ${isGold}" data-aos="fade-up">
-                    <div class="card-header-strip ${s.strip}"></div>
-                    <div class="h-48 relative overflow-hidden bg-black/50 border-b border-white/5">
-                        ${visual}
-                        <div class="absolute bottom-2 left-2 bg-black/80 px-2 py-1 text-[10px] font-mono text-white rounded border border-white/10 backdrop-blur-md">
-                            ${p.techStack[0]}
-                        </div>
+        function renderProjects() {
+            const grid = document.getElementById('projects-grid');
+            grid.innerHTML = projects.map(p => `
+                <div class="glass-card rounded-xl">
+                    <div class="h-48 bg-black">
+                        ${p.source.endsWith('mp4') ? `<video src="${p.source}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${p.source}" class="w-full h-full object-cover">`}
                     </div>
                     <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-lg font-black text-white group-hover:${s.text} transition-colors uppercase tracking-tight">${p.title}</h3>
-                            <span class="text-[9px] font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded border border-white/10 uppercase">${p.category}</span>
-                        </div>
-                        <p class="text-gray-400 text-xs mb-4 leading-relaxed line-clamp-2">${p.description}</p>
+                        <h3 class="font-black text-white">${p.title}</h3>
+                        <p class="text-xs text-gray-500 mt-2">${p.tech} | ${p.category}</p>
                     </div>
-                </div>`;
-            }).join('');
-            lucide.createIcons();
-            
-            // Re-apply hover effect for new elements
-            document.querySelectorAll('.glass-card').forEach(card => {
-                card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--mouse-x', `${x}px`);
-                    card.style.setProperty('--mouse-y', `${y}px`);
-                });
-            });
+                </div>
+            `).join('');
         }
 
-        function filterProjects(cat) {
-            playClick();
-            document.querySelectorAll('.filter-btn').forEach(b => {
-                b.classList.remove('bg-schale', 'text-white');
-                b.classList.add('bg-panel', 'text-gray-400');
-            });
-            event.target.classList.remove('bg-panel', 'text-gray-400');
-            event.target.classList.add('bg-schale', 'text-white');
-            renderProjects(cat);
-        }
-
-        // 3. Interactive Terminal (CLI)
-        const cliInput = document.getElementById('cli-input');
-        const cliOutput = document.getElementById('cli-output');
-        const commands = {
-            help: "Available commands: help, clear, about, skills, projects, date, whoami",
-            about: "Navigating to personnel file...",
-            skills: "Loading system specifications...",
-            projects: "Accessing mission reports...",
-            date: () => new Date().toLocaleString(),
-            whoami: "User: Guest [Access Level: 1]",
-            clear: () => { cliOutput.innerHTML = ""; return ""; }
-        };
-
-        if(cliInput) {
-            cliInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    const cmd = this.value.toLowerCase().trim();
-                    if(cmd) {
-                        playClick(1200, 0.05); // Keystroke sound
-                        cliOutput.innerHTML += `<div><span class="text-schale">visitor@schale:~$</span> ${this.value}</div>`;
-                        if (commands[cmd]) {
-                            const response = typeof commands[cmd] === 'function' ? commands[cmd]() : commands[cmd];
-                            if(response) cliOutput.innerHTML += `<div class="text-gray-400 mb-2">${response}</div>`;
-                            if(cmd === 'about') window.location.href = "#file";
-                            if(cmd === 'skills') window.location.href = "#skills";
-                            if(cmd === 'projects') window.location.href = "#projects";
-                        } else {
-                            cliOutput.innerHTML += `<div class="text-red-400 mb-2">Command not found: ${cmd}</div>`;
-                        }
-                    }
-                    this.value = '';
-                    cliOutput.scrollTop = cliOutput.scrollHeight;
-                }
-            });
-        }
-
-        // 4. System Override & Konami Code
-        function toggleSystemOverride(forceState = null) {
-            // If forceState provided, match it. Else toggle.
-            if (forceState !== null) isSystemOverride = !forceState;
-            isSystemOverride = !isSystemOverride;
-            
-            const root = document.documentElement;
-            const statusText = document.getElementById('system-status-text');
-            const statusDot = document.getElementById('status-dot');
-            const statusPing = document.getElementById('status-ping');
-            
-            if(isSystemOverride) {
-                // RED ALERT
-                root.style.setProperty('--accent-color', '#FF4F4F');
-                document.body.classList.add('animate-shake'); // Shake effect
-                setTimeout(() => document.body.classList.remove('animate-shake'), 500);
-                
-                statusText.innerText = "SYSTEM CRITICAL";
-                statusText.classList.replace('text-green-500', 'text-red-500');
-                statusDot.classList.replace('bg-green-500', 'bg-red-500');
-                statusPing.classList.replace('bg-green-500', 'bg-red-500');
-                playClick(150, 0.5); // Low error sound
-            } else {
-                // NORMAL BLUE
-                root.style.setProperty('--accent-color', '#00A4FF');
-                statusText.innerText = "SYSTEM ONLINE";
-                statusText.classList.replace('text-red-500', 'text-green-500');
-                statusDot.classList.replace('bg-red-500', 'bg-green-500');
-                statusPing.classList.replace('bg-red-500', 'bg-green-500');
-                playClick(1200, 0.3); // High success sound
-            }
-        }
-
-        // KONAMI CODE LISTENER
-        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        let konamiIndex = 0;
-        document.addEventListener('keydown', (e) => {
-            // Reset if key doesn't match sequence
-            if (e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase()) {
-                konamiIndex++;
-                if (konamiIndex === konamiCode.length) {
-                    toggleSystemOverride(true); // Force trigger red alert
-                    konamiIndex = 0;
-                    // Optional: Show a secret message in terminal
-                    if(cliOutput) cliOutput.innerHTML += `<div class="text-red-500 font-bold mb-2">>> KONAMI CODE DETECTED. OVERRIDE AUTHORIZED.</div>`;
-                }
-            } else {
-                konamiIndex = 0;
-            }
-        });
-
-        // 5. Code Vault Logic
-        function switchTab(index, el) {
-            playClick(800, 0.05);
+        function switchTab(idx, el) {
             document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            
-            const codeEl = document.getElementById('code-display');
-            codeEl.textContent = codeSnippets[index].content;
-            Prism.highlightElement(codeEl);
-        }
-        function copyCode() {
-            const code = document.getElementById('code-display').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                // Flash effect
-                document.querySelector('.code-window').style.borderColor = "#00ff88";
-                setTimeout(() => document.querySelector('.code-window').style.borderColor = "#333", 300);
-            });
+            const display = document.getElementById('code-display');
+            display.textContent = codes[idx].content;
+            Prism.highlightElement(display);
         }
 
-        // 6. Core Utils
-        window.addEventListener('resize', () => {
-            const canvas = document.getElementById('particles-canvas');
-            if(canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        });
-
-        function playHover() { if(!isMuted) { const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(400,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(600,audioCtx.currentTime+0.05);g.gain.setValueAtTime(0.02,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.05);o.start();o.stop(audioCtx.currentTime+0.05); }}
-        
-        function playClick(f=600,d=0.1) { if(!isMuted) { const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='square';o.frequency.setValueAtTime(f,audioCtx.currentTime);g.gain.setValueAtTime(0.03,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+d);o.start();o.stop(audioCtx.currentTime+d); }}
-        
-        function toggleMute() { isMuted=!isMuted; const b=document.getElementById('bgm'); const i=document.getElementById('mute-icon'); isMuted ? (b.pause(),i.setAttribute('data-lucide','volume-x')) : (b.play(),i.setAttribute('data-lucide','volume-2')); lucide.createIcons(); }
-
-        function initParticles() {
-            const c=document.getElementById('particles-canvas'),x=c.getContext('2d');
-            c.width=window.innerWidth;c.height=window.innerHeight;
-            let m={x:null,y:null},p=Array.from({length:60},()=>({x:Math.random()*c.width,y:Math.random()*c.height,s:Math.random()*2,bx:Math.random()*c.width,by:Math.random()*c.height}));
-            window.addEventListener('mousemove',e=>{m.x=e.x;m.y=e.y});
-            function a(){
-                x.clearRect(0,0,c.width,c.height);
-                // Use computed style to get current accent color for particles
-                x.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-                p.forEach(i=>{
-                    let dx=m.x-i.x,dy=m.y-i.y,d=Math.sqrt(dx*dx+dy*dy);
-                    if(d<100){i.x-=(dx/d);i.y-=(dy/d);}else{if(i.x!==i.bx)i.x-=(i.x-i.bx)/20;if(i.y!==i.by)i.y-=(i.y-i.by)/20;}
-                    x.globalAlpha=0.5;x.fillRect(i.x,i.y,i.s,i.s);
-                });requestAnimationFrame(a);
-            }a();
+        function selectService(p, btn) {
+            basePrice = p;
+            document.querySelectorAll('#service-grid button').forEach(b => b.classList.replace('border-schale', 'border-white/10'));
+            btn.classList.replace('border-white/10', 'border-schale');
+            calculateBudget();
         }
 
-        // Typewriter Effect
-        let typeWriterTimeout;
-        function typeWriter() { 
-            const e=document.getElementById("typewriter");
-            if(typeWriterTimeout) clearTimeout(typeWriterTimeout);
-            let i=0;
-            let t="Broken Code.";
-            if(document.getElementById('lang-display').innerText!=="EN") t="โค้ดที่พังครับ";
-            e.innerText="";
-            function tp(){
-                if(i<t.length){
-                    e.innerHTML+=t.charAt(i);
-                    i++;
-                    typeWriterTimeout = setTimeout(tp, 80);
-                }
-            }
-            tp(); 
+        function calculateBudget() {
+            const comp = document.getElementById('complexity-range').value;
+            document.getElementById('total-price').innerText = Math.ceil(basePrice * comp).toLocaleString() + " R$";
         }
 
-        // Calculator Logic
-        let basePrice=2500; const RATES={'R$':{r:1,s:' R$',rev:false},'USD':{r:0.0035,s:'$',rev:true},'THB':{r:0.12,s:'฿',rev:true},'VND':{r:90,s:'₫',rev:false}};
-        function selectService(p,b){basePrice=p;document.querySelectorAll('.service-btn').forEach(x=>{x.classList.remove('border-schale');x.classList.add('border-white/10');x.querySelector('div').classList.remove('bg-schale/5')});b.classList.remove('border-white/10');b.classList.add('border-schale');b.querySelector('div').classList.add('bg-schale/5');calculateBudget();}
-        
-        function calculateBudget(){
-            const complexityInput = document.getElementById('complexity-range');
-            const rushInput = document.getElementById('rush-range');
-            
-            const c = parseFloat(complexityInput.value);
-            const r = parseFloat(rushInput.value);
-            const cu = document.getElementById('currency-select').value;
+        function toggleMute() { isMuted = !isMuted; const b = document.getElementById('bgm'); isMuted ? b.pause() : b.play(); }
 
-            // Update Complexity Label
-            const compLabel = document.getElementById('complexity-val');
-            if(c < 1.3) { 
-                compLabel.innerText = "Standard"; 
-                compLabel.className = "text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded"; 
-            } else if(c < 1.7) { 
-                compLabel.innerText = "Complex"; 
-                compLabel.className = "text-schale text-xs font-mono bg-schale/10 px-2 py-0.5 rounded"; 
-            } else { 
-                compLabel.innerText = "Architect Level"; 
-                compLabel.className = "text-gold text-xs font-mono bg-gold/10 px-2 py-0.5 rounded"; 
-            }
-
-            // Update Urgency Label
-            const rushLabel = document.getElementById('rush-val');
-            if(r < 1.2) { 
-                rushLabel.innerText = "Standard"; 
-                rushLabel.className = "text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded"; 
-            } else if(r < 1.4) { 
-                rushLabel.innerText = "Priority"; 
-                rushLabel.className = "text-schale text-xs font-mono bg-schale/10 px-2 py-0.5 rounded"; 
-            } else { 
-                rushLabel.innerText = "ASAP"; 
-                rushLabel.className = "text-alert text-xs font-mono bg-alert/10 px-2 py-0.5 rounded"; 
-            }
-
-            // Calculations
-            let t = basePrice * c * r;
-            let f = t * RATES[cu].r;
-            let d = RATES[cu].rev ? RATES[cu].s + Math.ceil(f).toLocaleString() : Math.ceil(f).toLocaleString() + RATES[cu].s;
-            
-            document.getElementById('receipt-base').innerText = basePrice.toLocaleString();
-            document.getElementById('receipt-comp').innerText = `x${c.toFixed(1)}`; 
-            document.getElementById('receipt-rush').innerText = `x${r.toFixed(1)}`;
-            document.getElementById('total-price').innerText = d;
-            
-            if(cu !== 'USD') {
-                document.getElementById('sub-price').innerText = `approx ~$${Math.ceil(t*RATES['USD'].r)} USD`;
-            } else {
-                document.getElementById('sub-price').innerText = `approx ${Math.ceil(t).toLocaleString()} R$`;
-            }
-        }
-
-        // Language & UI Toggles
-        function toggleLanguage(){
-            const cur=document.getElementById('lang-display').innerText;const n=cur==='EN'?'TH':'EN';
-            document.getElementById('lang-display').innerText=n;
-            const tr={
-                EN:{nav_about:"Home",nav_work:"Projects",nav_estimator:"Estimator",nav_hire:"MomoTalk",hero_prefix:"Sensei, I fix",hero_desc:"Specialized Roblox Systems Engineer...",status_online:"System Online",btn_see_work:"VIEW DATABASE",contact_title:"MomoTalk",contact_sub:"Sensei, you have a new message.",calc_title:"RESOURCE ESTIMATOR",calc_subtitle:"Calculate budget requirements.",calc_type:"OPERATION TYPE",serv_quick:"Quick Task",serv_fix:"Bug Fix",serv_sys:"System",serv_game:"Full Game",label_complexity:"Complexity",label_timeline:"Urgency"},
-                TH:{nav_about:"หน้าหลัก",nav_work:"ผลงาน",nav_estimator:"ราคา",nav_hire:"MomoTalk",hero_prefix:"เซ็นเซย์ครับ... ผมซ่อม",hero_desc:"วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend...",status_online:"สถานะ: ออนไลน์",btn_see_work:"ดูฐานข้อมูล",contact_title:"MomoTalk",contact_sub:"เซ็นเซย์ มีข้อความใหม่ครับ",calc_title:"ประเมินงบประมาณ",calc_subtitle:"คำนวณงบประมาณที่ต้องใช้",calc_type:"ประเภทภารกิจ",serv_quick:"งานด่วน",serv_fix:"แก้บั๊ก",serv_sys:"ทำระบบ",serv_game:"เกมเต็ม",label_complexity:"ความซับซ้อน",label_timeline:"ความเร่งด่วน"}
-            };
-            document.querySelectorAll('[data-i18n]').forEach(e=>{if(tr[n][e.getAttribute('data-i18n')])e.innerText=tr[n][e.getAttribute('data-i18n')]});
-            typeWriter();
-        }
-
-        function copyDiscord(){navigator.clipboard.writeText("hokpy").then(()=>{const e=document.getElementById('contact-discord-text'),o=e.innerText;e.innerText="COPIED!";setTimeout(()=>e.innerText=o,2000)})}
-        
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('open');
-        }
-        
-        // Auto-close mobile menu on link click
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('mobile-menu').classList.remove('open');
-            });
-        });
-
-        function updateTime(){const d=new Date(new Date().getTime()+(new Date().getTimezoneOffset()*60000)+(3600000*7));document.getElementById('local-time').innerText=`${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')} ${d.getHours()>=12?'PM':'AM'}`}
-
-        // Init
         document.addEventListener('DOMContentLoaded', () => {
-            initFirebase(); // START FIREBASE
-            runBootSequence(); 
-            renderProjects(); 
-            initParticles(); 
-            lucide.createIcons(); 
-            AOS.init({ once: true, offset: 50 }); 
-            typeWriter();
-            // Initialize Code Vault
+            runBootSequence();
+            renderProjects();
             switchTab(0, document.querySelector('.code-tab'));
-            window.addEventListener("scroll", () => document.getElementById("scroll-progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%");
-            updateTime(); setInterval(updateTime, 60000); calculateBudget();
-            document.querySelector('.service-btn').click();
+            lucide.createIcons();
+            AOS.init();
             
-            // Add card spotlight effect for static cards too
-            document.querySelectorAll('.glass-card').forEach(card => {
-                card.addEventListener('mousemove', e => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--mouse-x', `${x}px`);
-                    card.style.setProperty('--mouse-y', `${y}px`);
-                });
-            });
+            // Typewriter
+            const words = ["Code.", "Systems.", "Backend."];
+            let i = 0, j = 0, cur = "";
+            function type() {
+                if (j < words[i].length) { cur += words[i][j]; j++; setTimeout(type, 150); }
+                else { setTimeout(() => { cur = ""; j = 0; i = (i + 1) % words.length; type(); }, 1000); }
+                document.getElementById('typewriter').innerText = cur;
+            }
+            type();
         });
     </script>
 </body>
