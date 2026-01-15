@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water.Logs | Schale Database</title>
-
+    
     <!-- LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,15 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 
-    <!-- FIREBASE LIBRARIES -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        window.FirebaseCore = { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment };
-    </script>
-
+    <!-- NO FIREBASE CONFIG NEEDED - LOCAL STORAGE SYSTEM ACTIVE -->
+    
     <!-- THEME CONFIGURATION -->
     <script>
         tailwind.config = {
@@ -91,7 +84,7 @@
             cursor: crosshair;
             transition: background-color 0.5s ease;
         }
-
+        
         /* --- VISUAL EFFECTS --- */
         .hex-bg {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.03;
@@ -142,12 +135,12 @@
             border-color: rgba(var(--accent-rgb), 0.5); 
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); 
         }
-
+        
         .card-header-strip { height: 3px; width: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
         .strip-blue { background: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
         .strip-purple { background: #a855f7; box-shadow: 0 0 10px #a855f7; }
         .strip-gold { background: #FFA800; box-shadow: 0 0 10px #FFA800; }
-
+        
         .glass-card::after {
             content: "";
             position: absolute;
@@ -207,11 +200,11 @@
             border: 1px solid #f0f0f0; cursor: pointer;
         }
         .momotalk-item:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-color: #FFA8C5; }
-
+        
         /* --- UTILS --- */
         .mobile-menu { transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .mobile-menu.open { transform: translateX(0); }
-
+        
         /* --- INTERACTIVE TERMINAL --- */
         .cli-input { background: transparent; border: none; color: #e4e4e7; font-family: 'JetBrains Mono', monospace; outline: none; width: 100%; }
         .cli-cursor { animation: blink 1s step-end infinite; }
@@ -251,7 +244,7 @@
                 <i data-lucide="database" class="w-10 h-10 text-schale"></i>
             </div>
             <h1 class="text-4xl font-black tracking-tighter mb-8 text-white">SCHALE<span class="text-schale">.DB</span></h1>
-
+            
             <!-- Boot Log (JS Injected) -->
             <div id="boot-log-container" class="flex flex-col gap-1 min-h-[140px]"></div>
 
@@ -287,7 +280,7 @@
                 </div>
                 <span class="font-black text-xl tracking-tight text-white">SCHALE<span class="text-schale">.DB</span></span>
             </div>
-
+            
             <!-- Desktop Links -->
             <div class="hidden md:flex items-center gap-8 text-sm font-bold text-gray-400">
                 <a href="#about" class="nav-link hover:text-white transition-colors" onclick="playClick()">Home</a>
@@ -309,7 +302,7 @@
                     <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="nav_hire">MomoTalk</span>
                 </a>
             </div>
-
+            
             <!-- Mobile Toggle -->
             <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 bg-white/5 rounded"><i data-lucide="menu" class="w-6 h-6"></i></button>
         </div>
@@ -343,29 +336,29 @@
                     </span>
                     <span id="system-status-text" class="text-green-500 text-[10px] font-bold tracking-widest uppercase" data-i18n="status_online">System Online</span>
                 </button>
-
+                
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tight glitch-hover cursor-default">
                     <span data-i18n="hero_prefix">Sensei, I fix</span><br>
                     <span id="typewriter" class="text-gradient"></span>
                 </h1>
-
+                
                 <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed pl-6 border-l-2 border-schale/50" data-i18n="hero_desc">
                     Specialized Roblox Systems Engineer. Focusing on backend stability, data integrity, and complex game mechanics.
                 </p>
-
+                
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="#projects" onclick="playClick()" class="bg-white text-black font-black px-8 py-4 rounded hover:bg-gray-200 transition-transform hover:-translate-y-1 shadow-[4px_4px_0px_#00A4FF] flex items-center justify-center gap-2">
                         <span data-i18n="btn_see_work">VIEW DATABASE</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </a>
                 </div>
             </div>
-
+            
             <!-- NEW INTERACTIVE HUD -->
             <div class="relative hidden md:block" data-aos="zoom-in" data-aos-delay="200">
                 <div class="bg-panel border border-white/10 p-1 rounded-xl relative shadow-2xl overflow-hidden group">
                     <div class="absolute inset-0 bg-gradient-to-b from-schale/5 to-transparent pointer-events-none"></div>
                     <div class="scanline"></div>
-
+                    
                     <!-- Header -->
                     <div class="bg-black/60 p-4 flex justify-between items-center border-b border-white/5 backdrop-blur-sm">
                         <div class="flex items-center gap-2">
@@ -381,9 +374,9 @@
                             <span>CORE_LOAD</span>
                             <div class="flex items-center gap-2"><div class="w-20 h-1.5 bg-black rounded-full overflow-hidden"><div class="h-full bg-green-500 w-[40%] animate-pulse"></div></div> <span class="text-green-400">OK</span></div>
                         </div>
-
+                        
                         <div class="h-px bg-white/5 my-2"></div>
-
+                        
                         <!-- Playable CLI -->
                         <div class="bg-black/40 rounded border border-white/5 p-4 h-48 relative font-mono text-[10px] leading-relaxed flex flex-col" onclick="document.getElementById('cli-input').focus()">
                             <div id="cli-output" class="flex-1 overflow-y-auto mb-2 text-gray-300 scrollbar-hide">
@@ -480,7 +473,7 @@
                 <div class="p-2 bg-schale/10 rounded"><i data-lucide="cpu" class="text-schale w-6 h-6"></i></div>
                 <h2 class="text-2xl font-black text-white tracking-tight">SYSTEM SPECIFICATIONS</h2>
             </div>
-
+            
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Luau -->
                 <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="0">
@@ -622,7 +615,7 @@
                     <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn px-5 py-2 bg-panel text-gray-400 border border-white/10 text-xs font-bold rounded hover:border-schale hover:text-white transition-all">FIXES</button>
                 </div>
             </div>
-
+            
             <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         </div>
     </section>
@@ -637,7 +630,7 @@
                         <h2 class="text-3xl font-black text-white mb-2" data-i18n="calc_title">RESOURCE ESTIMATOR</h2>
                         <p class="text-gray-400 text-sm" data-i18n="calc_subtitle">Calculate budget requirements.</p>
                     </div>
-
+                    
                     <div class="space-y-4">
                         <label class="text-schale text-[10px] font-bold tracking-widest mb-3 block" data-i18n="calc_type">OPERATION TYPE</label>
                         <div class="grid grid-cols-2 gap-3">
@@ -665,7 +658,7 @@
                 <!-- Receipt -->
                 <div class="md:col-span-5 bg-dark border border-white/10 rounded-xl p-8 relative overflow-hidden shadow-2xl">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-schale/10 to-transparent rounded-bl-full pointer-events-none"></div>
-
+                    
                     <div class="flex justify-between items-center mb-8">
                         <span class="text-xs font-bold text-gray-500 tracking-widest">INVOICE PREVIEW</span>
                         <select id="currency-select" onchange="calculateBudget(); playClick()" class="bg-black/40 text-white text-xs font-bold px-3 py-1.5 rounded border border-white/10 outline-none hover:border-schale/50"><option value="R$">R$</option><option value="USD">USD</option><option value="THB">THB</option><option value="VND">VND</option></select>
@@ -734,7 +727,7 @@
                     </a>
                 </div>
             </div>
-
+            
             <div class="mt-20 text-[10px] text-gray-600 font-mono uppercase tracking-widest opacity-50">
                 SCHALE DATABASE V11.0 // AUTH: HOKPY // KIVOTOS ADMIN
             </div>
@@ -748,10 +741,10 @@
         // ===========================================
         const config = {
             bgmUrl: "https://jetta.vgmtreasurechest.com/soundtracks/blue-archive-gamerip/lvulxede/12%20KARUT%2004%20Shooting%20Stars.mp3", 
-            haloUrl: "https://cdn.discordapp.com/attachments/1352066563213230134/1456328947535970387/SCHALELogo_W.png?ex=6959f1c6&is=6958a046&hm=66fb2db1407b122785c9eeb52964e329b244df954e2a7289007f58149cde7440", 
+            haloUrl: "https://cdn.discordapp.com/attachments/1352066563213230134/1456328947535970387/SCHALELogo_W.png?ex=6957f786&is=6956a606&hm=9cdd92b32af5c7a44573e7c052b313f6f5d2c54658a17ec465ea0d82571f1c4b", 
             volume: 0.15 
         };
-
+        
         // ===========================================
         //  📂 DATA
         // ===========================================
@@ -771,7 +764,7 @@
                 description: "Immersive vision restriction mechanic with dynamic spawn handling.",
                 techStack: ["Lighting", "SpawnLocation", "Camera"],
                 mediaType: "video",
-                source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456235313247817809/2025-12-27_17-31-18.mp4?ex=69599a92&is=69584912&hm=5209ff5081b8303d17103a3b46cf7412fd428d92cb78011cf3389944cc135659&", 
+                source: "https://youtu.be/k8hV66kJ8cc", 
                 icon: "eye-off", color: "schale"
             },
             {
@@ -780,7 +773,7 @@
                 description: "Visual Novel style interaction system with branching dialogue paths.",
                 techStack: ["ModuleScript", "RichText", "UI Tweening"],
                 mediaType: "video",
-                source: "https://cdn.discordapp.com/attachments/1352066563213230134/1456235312396238869/2025-12-24_01-16-02.mp4?ex=69599a92&is=69584912&hm=0dddefccffefb5e37a61ea7e3de26d0fd7da12c6b50589302ac6fdde1f3f98ec&",
+                source: "https://www.youtube.com/watch?v=_HTzGpFwIiU",
                 icon: "message-square", color: "halo"
             },
             {
@@ -789,7 +782,7 @@
                 description: "Fixed critical bugs and optimized backend logic, reducing server lag by 40%.",
                 techStack: ["Refactoring", "Optimization", "Memory"],
                 mediaType: "video",
-                source: "https://media.discordapp.net/attachments/1352066563213230134/1456235314111578112/2025-12-31_01-49-03.mp4?ex=6957a052&is=69564ed2&hm=10e9360873f7105c9894f895222d79ceb5ca4b1b76d605ba71bcd6e85f04fcff&",
+                source: "https://youtu.be/YyX5ma58v2Q",
                 icon: "sprout", color: "momo" 
             }
         ];
@@ -810,78 +803,55 @@
             }
         ];
 
-        // --- FIREBASE LOGIC ---
-        let db, auth, appId;
-
-        async function initFirebase() {
-            const { initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } = window.FirebaseCore;
-
-            const firebaseConfig = JSON.parse(__firebase_config);
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-
-            // Auth Strategy
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-
-            onAuthStateChanged(auth, (user) => {
-                if(user) {
-                    setupListeners();
-                    incrementVisits();
-                }
-            });
-        }
-
-        async function incrementVisits() {
-            // Simple session check to prevent spamming the counter on refresh
-            if(sessionStorage.getItem('visited_session')) return;
-
-            try {
-                const statsRef = window.FirebaseCore.doc(db, 'artifacts', appId, 'public', 'data', 'siteStats', 'counter');
-                await window.FirebaseCore.setDoc(statsRef, { count: window.FirebaseCore.increment(1) }, { merge: true });
-                sessionStorage.setItem('visited_session', 'true');
-            } catch(e) { console.error("Stats Error:", e); }
-        }
-
-        function setupListeners() {
-            const { onSnapshot, doc } = window.FirebaseCore;
-
-            // 1. Listen for Visitor Count
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'siteStats', 'counter'), (snap) => {
-                if(snap.exists()) {
-                    const count = snap.data().count || 0;
-                    document.getElementById('visitor-count').innerText = count.toLocaleString();
-                }
-            }, (err) => console.log("Stats listener error", err));
-
-            // 2. Listen for Profile Picture Updates
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'settings'), (snap) => {
-                if(snap.exists() && snap.data().avatarUrl) {
-                    const url = snap.data().avatarUrl;
-                    const img = document.getElementById('avatar-img');
-                    const placeholder = document.getElementById('avatar-placeholder');
-
-                    img.src = url;
+        // --- LOCAL STORAGE LOGIC (REPLACING FIREBASE) ---
+        function initLocalSystem() {
+            // 1. Profile Picture System
+            const savedPfp = localStorage.getItem('schale_db_pfp');
+            if(savedPfp) {
+                const img = document.getElementById('avatar-img');
+                const placeholder = document.getElementById('avatar-placeholder');
+                if(img && placeholder) {
+                    img.src = savedPfp;
                     img.classList.remove('hidden');
                     placeholder.classList.add('hidden');
                 }
-            }, (err) => console.log("Profile listener error", err));
+            }
+
+            // 2. Visitor Counter (Simulated for No-Config)
+            // Since we removed the backend, we can't count *actual* other people.
+            // We will simulate a live database counter using a base number + local visits + time-based increment.
+            let visits = parseInt(localStorage.getItem('schale_db_visits') || '0');
+            visits++;
+            localStorage.setItem('schale_db_visits', visits);
+            
+            // Create a "fake" global number based on date to make it look active/consistent across refreshes
+            const baseCount = 14200; 
+            const timeFactor = Math.floor(Date.now() / 3600000); // Increases every hour
+            const totalDisplay = baseCount + timeFactor + visits;
+            
+            const counterEl = document.getElementById('visitor-count');
+            if(counterEl) {
+                counterEl.innerText = totalDisplay.toLocaleString();
+            }
         }
 
         // Global function to update profile
-        window.updateProfilePicture = async () => {
-            if(!auth.currentUser) return;
-
+        window.updateProfilePicture = () => {
             const newUrl = prompt("Enter the URL for your new profile picture:");
             if(newUrl && (newUrl.startsWith('http') || newUrl.startsWith('data:image'))) {
                 playClick(1000, 0.1);
-                const profileRef = window.FirebaseCore.doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'settings');
-                await window.FirebaseCore.setDoc(profileRef, { avatarUrl: newUrl }, { merge: true });
+                
+                // Save to LocalStorage
+                localStorage.setItem('schale_db_pfp', newUrl);
+                
+                // Update UI immediately
+                const img = document.getElementById('avatar-img');
+                const placeholder = document.getElementById('avatar-placeholder');
+                if(img && placeholder) {
+                    img.src = newUrl;
+                    img.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
             }
         };
 
@@ -938,7 +908,7 @@
             const container = document.getElementById('projects-grid');
             if(!container) return;
             const filtered = filter === 'all' ? myProjects : myProjects.filter(p => p.category === filter);
-
+            
             const styles = {
                 schale: { strip: 'strip-blue', text: 'text-schale' },
                 halo: { strip: 'strip-purple', text: 'text-purple-400' },
@@ -949,13 +919,13 @@
             container.innerHTML = filtered.map((p) => {
                 const s = styles[p.color] || styles.schale;
                 const isGold = p.category === "FULL GAME" ? "border-gold/30 box-shadow-gold" : "";
-
+                
                 let visual = '';
                 if(p.mediaType === "video") visual = `<video src="${p.source}" autoplay loop muted playsinline class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"></video>`;
                 else if(p.mediaType === "image") visual = `<img src="${p.source}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500">`;
                 else if(p.mediaType === "youtube") visual = `<iframe class="w-full h-full opacity-60 group-hover:opacity-100" src="${p.source}?autoplay=1&mute=1&controls=0&loop=1" frameborder="0"></iframe>`;
                 else visual = `<div class="w-full h-full flex items-center justify-center bg-[#1a1d24]"><i data-lucide="${p.icon}" class="${s.text} w-12 h-12"></i></div>`;
-
+                
                 return `
                 <div onmouseenter="playHover()" class="glass-card group rounded-xl overflow-hidden ${isGold}" data-aos="fade-up">
                     <div class="card-header-strip ${s.strip}"></div>
@@ -975,7 +945,7 @@
                 </div>`;
             }).join('');
             lucide.createIcons();
-
+            
             // Re-apply hover effect for new elements
             document.querySelectorAll('.glass-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
@@ -1040,18 +1010,18 @@
             // If forceState provided, match it. Else toggle.
             if (forceState !== null) isSystemOverride = !forceState;
             isSystemOverride = !isSystemOverride;
-
+            
             const root = document.documentElement;
             const statusText = document.getElementById('system-status-text');
             const statusDot = document.getElementById('status-dot');
             const statusPing = document.getElementById('status-ping');
-
+            
             if(isSystemOverride) {
                 // RED ALERT
                 root.style.setProperty('--accent-color', '#FF4F4F');
                 document.body.classList.add('animate-shake'); // Shake effect
                 setTimeout(() => document.body.classList.remove('animate-shake'), 500);
-
+                
                 statusText.innerText = "SYSTEM CRITICAL";
                 statusText.classList.replace('text-green-500', 'text-red-500');
                 statusDot.classList.replace('bg-green-500', 'bg-red-500');
@@ -1091,7 +1061,7 @@
             playClick(800, 0.05);
             document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-
+            
             const codeEl = document.getElementById('code-display');
             codeEl.textContent = codeSnippets[index].content;
             Prism.highlightElement(codeEl);
@@ -1112,9 +1082,9 @@
         });
 
         function playHover() { if(!isMuted) { const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.setValueAtTime(400,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(600,audioCtx.currentTime+0.05);g.gain.setValueAtTime(0.02,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.05);o.start();o.stop(audioCtx.currentTime+0.05); }}
-
+        
         function playClick(f=600,d=0.1) { if(!isMuted) { const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.type='square';o.frequency.setValueAtTime(f,audioCtx.currentTime);g.gain.setValueAtTime(0.03,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+d);o.start();o.stop(audioCtx.currentTime+d); }}
-
+        
         function toggleMute() { isMuted=!isMuted; const b=document.getElementById('bgm'); const i=document.getElementById('mute-icon'); isMuted ? (b.pause(),i.setAttribute('data-lucide','volume-x')) : (b.play(),i.setAttribute('data-lucide','volume-2')); lucide.createIcons(); }
 
         function initParticles() {
@@ -1156,11 +1126,11 @@
         // Calculator Logic
         let basePrice=2500; const RATES={'R$':{r:1,s:' R$',rev:false},'USD':{r:0.0035,s:'$',rev:true},'THB':{r:0.12,s:'฿',rev:true},'VND':{r:90,s:'₫',rev:false}};
         function selectService(p,b){basePrice=p;document.querySelectorAll('.service-btn').forEach(x=>{x.classList.remove('border-schale');x.classList.add('border-white/10');x.querySelector('div').classList.remove('bg-schale/5')});b.classList.remove('border-white/10');b.classList.add('border-schale');b.querySelector('div').classList.add('bg-schale/5');calculateBudget();}
-
+        
         function calculateBudget(){
             const complexityInput = document.getElementById('complexity-range');
             const rushInput = document.getElementById('rush-range');
-
+            
             const c = parseFloat(complexityInput.value);
             const r = parseFloat(rushInput.value);
             const cu = document.getElementById('currency-select').value;
@@ -1195,12 +1165,12 @@
             let t = basePrice * c * r;
             let f = t * RATES[cu].r;
             let d = RATES[cu].rev ? RATES[cu].s + Math.ceil(f).toLocaleString() : Math.ceil(f).toLocaleString() + RATES[cu].s;
-
+            
             document.getElementById('receipt-base').innerText = basePrice.toLocaleString();
             document.getElementById('receipt-comp').innerText = `x${c.toFixed(1)}`; 
             document.getElementById('receipt-rush').innerText = `x${r.toFixed(1)}`;
             document.getElementById('total-price').innerText = d;
-
+            
             if(cu !== 'USD') {
                 document.getElementById('sub-price').innerText = `approx ~$${Math.ceil(t*RATES['USD'].r)} USD`;
             } else {
@@ -1221,12 +1191,12 @@
         }
 
         function copyDiscord(){navigator.clipboard.writeText("hokpy").then(()=>{const e=document.getElementById('contact-discord-text'),o=e.innerText;e.innerText="COPIED!";setTimeout(()=>e.innerText=o,2000)})}
-
+        
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('open');
         }
-
+        
         // Auto-close mobile menu on link click
         document.querySelectorAll('#mobile-menu a').forEach(link => {
             link.addEventListener('click', () => {
@@ -1238,7 +1208,7 @@
 
         // Init
         document.addEventListener('DOMContentLoaded', () => {
-            initFirebase(); // START FIREBASE
+            initLocalSystem(); // CHANGED FROM initFirebase()
             runBootSequence(); 
             renderProjects(); 
             initParticles(); 
@@ -1250,7 +1220,7 @@
             window.addEventListener("scroll", () => document.getElementById("scroll-progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%");
             updateTime(); setInterval(updateTime, 60000); calculateBudget();
             document.querySelector('.service-btn').click();
-
+            
             // Add card spotlight effect for static cards too
             document.querySelectorAll('.glass-card').forEach(card => {
                 card.addEventListener('mousemove', e => {
