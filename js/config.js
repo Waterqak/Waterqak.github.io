@@ -13,7 +13,7 @@ const config = {
     discordHandle: "hokpy",
 
     // 🌐 Your Roblox profile URL
-    robloxProfileUrl: "https://www.roblox.com/users/YOUR_ID/profile",
+    robloxProfileUrl: "https://www.roblox.com/users/2878666652/profile",
 
     // 📊 Visitor counter base number (cosmetic)
     visitorBase: 14200,
