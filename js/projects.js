@@ -36,9 +36,21 @@ const myProjects = [
         category:    "FULL GAME",
         description: "A complete hangout place with full DataStore persistence.",
         techStack:   ["Game Design", "Hangout", "DataStore"],
-        gameLink:    "https://www.roblox.com/games/YOUR_GAME_ID",  // ← paste your game link
+        gameLink:    "https://www.roblox.com/games/17290214724/Chillin-Place",  // ← paste your game link
         mediaType:   "image",
-        source:      "https://cdn.discordapp.com/attachments/1352066563213230134/1456328761074122762/RobloxScreenShot20251215_022652029.png?ex=6957f759&is=6956a5d9&hm=bb6f5b4550db1891a74b51695d3fcbcd06541d61678eae242aa2c2a22431a881",
+        source:      "https://tr.rbxcdn.com/180DAY-c69740761a8556385075f48b5b71147a/768/432/Image/Png/noFilter",
+        icon:        "gamepad-2",
+        color:       "gold",
+    },
+
+    {
+        title:       "Escape Lava to collect brainrots",
+        category:    "FULL GAME",
+        description: "A complete brainrot game with full DataStore persistence.",
+        techStack:   ["Game Design", "Escape", "DataStore"],
+        gameLink:    "https://www.roblox.com/games/85862915773488/Escape-Lava-to-collect-brainrots",  // ← paste your game link
+        mediaType:   "image",
+        source:      "https://tr.rbxcdn.com/180DAY-1f5e4f49f3ff9eddbf732387c8b19cd7/768/432/Image/Webp/noFilter",
         icon:        "gamepad-2",
         color:       "gold",
     },
