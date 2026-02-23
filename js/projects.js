@@ -28,6 +28,8 @@
 
    ============================================================ */
 
+
+
 const myProjects = [
 
     // ── PROJECT 1 ────────────────────────────────────────────
@@ -92,6 +94,19 @@ const myProjects = [
         source:      "https://youtu.be/YyX5ma58v2Q",
         icon:        "sprout",
         color:       "momo",
+    },
+
+   // ── PROJECT 5 ────────────────────────────────────────────
+    {
+        title:       "Door Kicking Engine",
+        category:    "SYSTEM",
+        description: "Door Kicking System.",
+        techStack:   ["ModuleScript", "CFrame"],
+        gameLink:    "",
+        mediaType:   "youtube",
+        source:      "https://youtu.be/FjZHsIuzUlY",
+        icon:        "message-square",
+        color:       "halo",
     },
 
     // ── ADD NEW PROJECT HERE — copy and paste this block ─────
