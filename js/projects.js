@@ -111,7 +111,7 @@ const myProjects = [
    // ── PROJECT 5 ────────────────────────────────────────────
     {
         title:       "Door Kicking Engine",
-        category:    "SYSTEM",
+        category:    "GAMEPLAY",
         description: "Door Kicking System.",
         techStack:   ["ModuleScript", "CFrame"],
         gameLink:    "",
