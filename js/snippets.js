@@ -1,3 +1,7 @@
+/* ============================================================
+   ✏️  SNIPPETS.JS — Your Code Vault showcased snippets
+   ============================================================ */
+
 const codeSnippets = [
 
     // ── SNIPPET 1 ─────────────────────────────────────────────
@@ -260,3 +264,38 @@ end)
 return DataManager`,
     }
 ];
+
+/* ============================================================
+   CODE VAULT LOGIC — don't edit below this line
+   ============================================================ */
+
+function buildCodeTabs() {
+    const tabsEl = document.getElementById('code-tabs');
+    if (!tabsEl) return;
+    tabsEl.innerHTML = codeSnippets.map((s, i) =>
+        `<div class="code-tab${i === 0 ? ' active' : ''}" onclick="switchTab(${i}, this)">${s.name}</div>`
+    ).join('');
+}
+
+function switchTab(index, el) {
+    if (typeof playClick === 'function') playClick(800, 0.05);
+    document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const codeEl = document.getElementById('code-display');
+    if (codeEl) {
+        codeEl.textContent = codeSnippets[index].content;
+        if (typeof Prism !== 'undefined') Prism.highlightElement(codeEl);
+    }
+}
+
+function copyCode() {
+    const codeEl = document.getElementById('code-display');
+    if (!codeEl) return;
+    navigator.clipboard.writeText(codeEl.textContent).then(() => {
+        const win = document.querySelector('.code-window');
+        if (win) {
+            win.style.borderColor = '#00ff88';
+            setTimeout(() => win.style.borderColor = '#333', 300);
+        }
+    });
+}
