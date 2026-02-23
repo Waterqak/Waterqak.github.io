@@ -57,6 +57,18 @@ const myProjects = [
         color:       "gold",
     },
 
+     {
+        title:       "Operation: Azure Rift",
+        category:    "FULL GAME",
+        description: "A complete Story game based from Blue archive",
+        techStack:   ["Game Design", "FPS", "Story"],
+        gameLink:    "https://www.roblox.com/games/140471518514522/Operation-Azure-Rift",  // ← paste your game link
+        mediaType:   "image",
+        source:      "https://tr.rbxcdn.com/180DAY-1384a973e73995479b5db690aa51e902/768/432/Image/Png/noFilter",
+        icon:        "gamepad-2",
+        color:       "schale",
+    },
+
     // ── PROJECT 2 ────────────────────────────────────────────
     {
         title:       "Blind Mode Logic",
