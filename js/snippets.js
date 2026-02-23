@@ -147,7 +147,7 @@ ClaimEvent.OnServerEvent:Connect(function(player)
 end)`,
     },
 
-    // ── SNIPPET 4 (NEW) ────────────────────────────────────────
+    // ── SNIPPET 4 ────────────────────────────────────────
     {
         name: "ClientController.local.lua",
         content:
@@ -184,10 +184,9 @@ local function InitializeDailyRewards()
 end
 
 InitializeDailyRewards()`,
-    }
-];
+    },
 
-// ── SNIPPET 5 ────────────────────────────────────────
+    // ── SNIPPET 5 ────────────────────────────────────────
     {
         name: "DataManager.server.lua",
         content:
@@ -260,3 +259,4 @@ end)
 
 return DataManager`,
     }
+];
