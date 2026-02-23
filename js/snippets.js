@@ -6,7 +6,7 @@ const codeSnippets = [
         content:
 `--[[
     [RETENTION ENGINE CORE]
-    Author: YourNameHere
+    Author: Water
     Description: Centralized server-side manager for Daily Rewards.
 ]]
 
