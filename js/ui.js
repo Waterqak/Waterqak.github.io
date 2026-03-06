@@ -1,49 +1,55 @@
 /* ============================================================
-   UI.JS — All UI logic: boot, terminal, particles, overrides
+   UI.JS v2.0 — Upgraded interactions & animations
    ============================================================ */
 
-// ── BOOT SEQUENCE ────────────────────────────────────────────
+// ── BOOT SEQUENCE ───────────────────────────────────────────
 
 function startExperience() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
     playClick(880, 0.3);
     const overlay = document.getElementById('start-overlay');
-    overlay.classList.add('animate-crt-off');
+    overlay.style.animation = 'crtOff 0.5s forwards';
     setTimeout(() => {
         overlay.style.display = 'none';
         const bgm = document.getElementById('bgm');
-        bgm.src    = config.bgmUrl;
+        bgm.src = config.bgmUrl;
         bgm.volume = config.volume;
         bgm.play().catch(() => {});
-    }, 500);
+    }, 480);
 }
 
 function runBootSequence() {
     const container = document.getElementById('boot-log-container');
-    const checks    = ["BIOS_CHECK", "MEMORY_INTEGRITY", "NETWORK_UPLINK", "SECURITY_PROTOCOL"];
+    const checks = [
+        { label: "BIOS_CHECK",         status: "OK" },
+        { label: "MEMORY_INTEGRITY",    status: "OK" },
+        { label: "NETWORK_UPLINK",      status: "OK" },
+        { label: "SECURITY_PROTOCOL",   status: "OK" },
+        { label: "SCHALE_DB_MOUNT",     status: "OK" },
+    ];
     let i = 0;
     function next() {
         if (i < checks.length) {
             const div = document.createElement('div');
             div.className = 'boot-status-line';
-            div.innerHTML = `<span>${checks[i]}...</span><span class="check">OK</span>`;
+            div.innerHTML = `<span>${checks[i].label}...</span><span class="check">${checks[i].status}</span>`;
             container.appendChild(div);
-            playClick(800 + i * 100, 0.05);
+            playClick(800 + i * 80, 0.05);
             i++;
-            setTimeout(next, 300);
+            setTimeout(next, 260);
         } else {
             setTimeout(() => {
-                document.getElementById('connect-btn').classList.remove('opacity-0', 'translate-y-4');
-            }, 400);
+                const btn = document.getElementById('connect-btn');
+                btn.classList.remove('opacity-0', 'translate-y-4');
+            }, 350);
         }
     }
-    setTimeout(next, 500);
+    setTimeout(next, 400);
 }
 
-// ── LOCAL STORAGE ────────────────────────────────────────────
+// ── LOCAL STORAGE ───────────────────────────────────────────
 
 function initLocalSystem() {
-    // Restore saved profile picture
     const pfp = localStorage.getItem('schale_db_pfp');
     if (pfp) {
         const img = document.getElementById('avatar-img');
@@ -53,12 +59,11 @@ function initLocalSystem() {
         ph.classList.add('hidden');
     }
 
-    // Simulated visitor counter
     let visits = parseInt(localStorage.getItem('schale_db_visits') || '0');
     visits++;
     localStorage.setItem('schale_db_visits', visits);
     const total = config.visitorBase + Math.floor(Date.now() / 3_600_000) + visits;
-    const el    = document.getElementById('visitor-count');
+    const el = document.getElementById('visitor-count');
     if (el) el.innerText = total.toLocaleString();
 }
 
@@ -75,7 +80,7 @@ window.updateProfilePicture = () => {
     }
 };
 
-// ── TYPEWRITER ────────────────────────────────────────────────
+// ── TYPEWRITER ──────────────────────────────────────────────
 
 let twTimeout;
 function typeWriter() {
@@ -89,19 +94,19 @@ function typeWriter() {
     function tick() {
         if (i < text.length) {
             el.innerHTML += text.charAt(i++);
-            twTimeout = setTimeout(tick, 80);
+            twTimeout = setTimeout(tick, 85);
         }
     }
     tick();
 }
 
-// ── MOBILE MENU ───────────────────────────────────────────────
+// ── MOBILE MENU ──────────────────────────────────────────────
 
 function toggleMobileMenu() {
     document.getElementById('mobile-menu').classList.toggle('open');
 }
 
-// ── DISCORD COPY ──────────────────────────────────────────────
+// ── DISCORD COPY ─────────────────────────────────────────────
 
 function copyDiscord() {
     navigator.clipboard.writeText(config.discordHandle).then(() => {
@@ -112,48 +117,177 @@ function copyDiscord() {
     });
 }
 
-// ── PARTICLES ─────────────────────────────────────────────────
+// ── PARTICLES (with connecting lines) ───────────────────────
 
 function initParticles() {
     const canvas = document.getElementById('particles-canvas');
-    const ctx    = canvas.getContext('2d');
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
 
-    const mouse     = { x: null, y: null };
-    const particles = Array.from({ length: 60 }, () => ({
-        x: Math.random() * canvas.width,  y: Math.random() * canvas.height,
-        s: Math.random() * 2,
-        bx: Math.random() * canvas.width, by: Math.random() * canvas.height,
-    }));
+    function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+
+    const mouse = { x: null, y: null };
+    let particles = [];
+
+    function createParticles() {
+        const count = Math.min(50, Math.floor(window.innerWidth / 24));
+        particles = Array.from({ length: count }, () => ({
+            x:  Math.random() * canvas.width,
+            y:  Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: (Math.random() - 0.5) * 0.25,
+            s:  Math.random() * 1.5 + 0.5,
+        }));
+    }
+    createParticles();
 
     window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-        particles.forEach(p => {
-            const dx = mouse.x - p.x, dy = mouse.y - p.y;
-            const d  = Math.sqrt(dx * dx + dy * dy);
-            if (d < 100) { p.x -= dx / d; p.y -= dy / d; }
-            else {
-                if (p.x !== p.bx) p.x -= (p.x - p.bx) / 20;
-                if (p.y !== p.by) p.y -= (p.y - p.by) / 20;
+        const accentRgb = '0,164,255';
+
+        particles.forEach((p, i) => {
+            // Move
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height)  p.vy *= -1;
+
+            // Mouse repel
+            if (mouse.x !== null) {
+                const dx = mouse.x - p.x, dy = mouse.y - p.y;
+                const d  = Math.sqrt(dx * dx + dy * dy);
+                if (d < 120) {
+                    p.x -= (dx / d) * 1.5;
+                    p.y -= (dy / d) * 1.5;
+                }
             }
-            ctx.globalAlpha = 0.5;
-            ctx.fillRect(p.x, p.y, p.s, p.s);
+
+            // Draw dot
+            ctx.globalAlpha = 0.55;
+            ctx.fillStyle = `rgba(${accentRgb},0.8)`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Connect nearby particles
+            for (let j = i + 1; j < particles.length; j++) {
+                const q  = particles[j];
+                const dx = p.x - q.x, dy = p.y - q.y;
+                const d  = Math.sqrt(dx * dx + dy * dy);
+                if (d < 130) {
+                    ctx.globalAlpha = (1 - d / 130) * 0.12;
+                    ctx.strokeStyle = `rgba(${accentRgb},1)`;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(q.x, q.y);
+                    ctx.stroke();
+                }
+            }
         });
+
+        ctx.globalAlpha = 1;
         requestAnimationFrame(draw);
     }
     draw();
+
+    window.addEventListener('resize', () => { resize(); createParticles(); });
 }
 
-window.addEventListener('resize', () => {
-    const canvas = document.getElementById('particles-canvas');
-    if (canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-});
+// ── ACTIVE NAV TRACKING ──────────────────────────────────────
 
-// ── SYSTEM OVERRIDE ───────────────────────────────────────────
+function initActiveNav() {
+    const sections = document.querySelectorAll('section[id], header[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href').slice(1);
+                    link.classList.toggle('active', href === id);
+                });
+            }
+        });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+}
+
+// ── SKILL BAR ANIMATION ──────────────────────────────────────
+
+function initSkillBars() {
+    const bars = document.querySelectorAll('.skill-bar-fill');
+    if (!bars.length) return;
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const fill = entry.target;
+                const target = fill.getAttribute('data-width');
+                setTimeout(() => {
+                    fill.style.width = target;
+                    fill.classList.add('animated');
+                }, 100);
+                observer.unobserve(fill);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    bars.forEach(bar => observer.observe(bar));
+}
+
+// ── COUNTER ANIMATION ────────────────────────────────────────
+
+function animateCounter(el, target, duration = 1500, suffix = '') {
+    const start = 0;
+    const step = (timestamp) => {
+        if (!el._startTime) el._startTime = timestamp;
+        const progress = Math.min((timestamp - el._startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
+        el.innerText = Math.floor(eased * target) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+}
+
+function initCounters() {
+    const counters = document.querySelectorAll('[data-counter]');
+    if (!counters.length) return;
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el     = entry.target;
+                const target = parseInt(el.getAttribute('data-counter'));
+                const suffix = el.getAttribute('data-suffix') || '';
+                el._startTime = null;
+                animateCounter(el, target, 1400, suffix);
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(c => observer.observe(c));
+}
+
+// ── NAV SCROLL STYLE ─────────────────────────────────────────
+
+function initNavScroll() {
+    const nav = document.querySelector('.nav-bar');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+}
+
+// ── SYSTEM OVERRIDE ──────────────────────────────────────────
 
 let isOverride = false;
 
@@ -165,27 +299,34 @@ function toggleSystemOverride(force = null) {
     const st   = document.getElementById('system-status-text');
     const sd   = document.getElementById('status-dot');
     const sp   = document.getElementById('status-ping');
+    const badge = document.querySelector('.hero-badge');
 
     if (isOverride) {
-        root.style.setProperty('--accent-color', '#FF4F4F');
+        root.style.setProperty('--accent', '#FF4F4F');
+        root.style.setProperty('--accent-dim', 'rgba(255,79,79,0.1)');
+        root.style.setProperty('--accent-glow', 'rgba(255,79,79,0.35)');
         document.body.classList.add('animate-shake');
         setTimeout(() => document.body.classList.remove('animate-shake'), 500);
         st.innerText = 'SYSTEM CRITICAL';
-        st.classList.replace('text-green-500', 'text-red-500');
-        sd.classList.replace('bg-green-500',   'bg-red-500');
-        sp.classList.replace('bg-green-500',   'bg-red-500');
+        st.className = st.className.replace('text-green-500', 'text-red-500');
+        sd.className = sd.className.replace('bg-green-500', 'bg-red-500');
+        sp.className = sp.className.replace('bg-green-500', 'bg-red-500');
+        badge?.classList.add('critical');
         playClick(150, 0.5);
     } else {
-        root.style.setProperty('--accent-color', '#00A4FF');
+        root.style.setProperty('--accent', '#00A4FF');
+        root.style.setProperty('--accent-dim', 'rgba(0,164,255,0.1)');
+        root.style.setProperty('--accent-glow', 'rgba(0,164,255,0.35)');
         st.innerText = 'SYSTEM ONLINE';
-        st.classList.replace('text-red-500', 'text-green-500');
-        sd.classList.replace('bg-red-500',   'bg-green-500');
-        sp.classList.replace('bg-red-500',   'bg-green-500');
+        st.className = st.className.replace('text-red-500', 'text-green-500');
+        sd.className = sd.className.replace('bg-red-500', 'bg-green-500');
+        sp.className = sp.className.replace('bg-red-500', 'bg-green-500');
+        badge?.classList.remove('critical');
         playClick(1200, 0.3);
     }
 }
 
-// ── KONAMI CODE ───────────────────────────────────────────────
+// ── KONAMI CODE ──────────────────────────────────────────────
 
 let konamiIdx = 0;
 document.addEventListener('keydown', e => {
@@ -197,12 +338,10 @@ document.addEventListener('keydown', e => {
             const out = document.getElementById('cli-output');
             if (out) out.innerHTML += `<div class="text-red-500 font-bold mb-2">>> KONAMI CODE DETECTED. OVERRIDE AUTHORIZED.</div>`;
         }
-    } else {
-        konamiIdx = 0;
-    }
+    } else { konamiIdx = 0; }
 });
 
-// ── TERMINAL (CLI) ────────────────────────────────────────────
+// ── TERMINAL ─────────────────────────────────────────────────
 
 function initCLI() {
     const inp = document.getElementById('cli-input');
@@ -210,12 +349,14 @@ function initCLI() {
     if (!inp) return;
 
     const commands = {
-        help:     'Available commands: help, clear, about, skills, projects, date, whoami',
+        help:     'Commands: help, clear, about, skills, projects, reviews, date, whoami, status',
         about:    'Navigating to personnel file...',
         skills:   'Loading system specifications...',
         projects: 'Accessing mission reports...',
-        date:     () => new Date().toLocaleString(),
-        whoami:   'User: Guest [Access Level: 1]',
+        reviews:  'Loading field reports...',
+        date:     () => `[${new Date().toLocaleString()}]`,
+        whoami:   'User: Guest [Access Level: 1] | Node: Kivotos-Alpha',
+        status:   () => isOverride ? '⚠ SYSTEM CRITICAL — Override Active' : '✓ SYSTEM NOMINAL — All nodes online',
         clear:    () => { out.innerHTML = ''; return ''; },
     };
 
@@ -230,19 +371,19 @@ function initCLI() {
         if (commands[cmd] !== undefined) {
             const response = typeof commands[cmd] === 'function' ? commands[cmd]() : commands[cmd];
             if (response) out.innerHTML += `<div class="text-gray-400 mb-2">${response}</div>`;
-            if (cmd === 'about')    location.href = '#file';
-            if (cmd === 'skills')   location.href = '#skills';
-            if (cmd === 'projects') location.href = '#projects';
+            if (cmd === 'about')    { setTimeout(() => location.href = '#file',    200); }
+            if (cmd === 'skills')   { setTimeout(() => location.href = '#skills',  200); }
+            if (cmd === 'projects') { setTimeout(() => location.href = '#projects',200); }
+            if (cmd === 'reviews')  { setTimeout(() => location.href = '#reviews', 200); }
         } else {
-            out.innerHTML += `<div class="text-red-400 mb-2">Command not found: ${cmd}</div>`;
+            out.innerHTML += `<div class="text-red-400 mb-2">Command not found: "${cmd}". Type 'help'.</div>`;
         }
-
         this.value = '';
         out.scrollTop = out.scrollHeight;
     });
 }
 
-// ── CARD SPOTLIGHT ────────────────────────────────────────────
+// ── CARD SPOTLIGHT ───────────────────────────────────────────
 
 function initCardSpotlight() {
     document.querySelectorAll('.glass-card').forEach(card => {
