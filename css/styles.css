@@ -320,3 +320,184 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.3);}
 @keyframes shake{10%,90%{transform:translate3d(-1px,0,0);}20%,80%{transform:translate3d(2px,0,0);}30%,50%,70%{transform:translate3d(-4px,0,0);}40%,60%{transform:translate3d(4px,0,0);}}
 @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 @keyframes counter-up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── NEW v3 ADDITIONS ── */
+
+/* Ripple animation */
+@keyframes ripple-anim {
+    to { transform: scale(4); opacity: 0; }
+}
+
+/* Tilt cards */
+.tilt-card {
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+.tilt-card .tilt-inner {
+    transform: translateZ(20px);
+}
+
+/* Section number badge */
+.section-num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 80px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.025);
+    line-height: 1;
+    position: absolute;
+    top: -10px;
+    right: 0;
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Animated underline text */
+.underline-anim {
+    position: relative;
+    display: inline-block;
+}
+.underline-anim::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0;
+    width: 0%; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 99px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.underline-anim:hover::after { width: 100%; }
+
+/* Floating badge */
+.float-badge {
+    animation: floatBadge 3s ease-in-out infinite;
+}
+@keyframes floatBadge {
+    0%,100% { transform: translateY(0px) rotate(-1deg); }
+    50%      { transform: translateY(-6px) rotate(1deg); }
+}
+
+/* Glow pulse on hover */
+.hover-glow {
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.hover-glow:hover {
+    box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(0,164,255,0.1);
+    transform: translateY(-2px);
+}
+
+/* Stats row hover */
+.hero-stat {
+    cursor: default;
+    transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+.hero-stat:hover {
+    background: var(--accent-dim);
+    border-color: rgba(0,164,255,0.25);
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* Live dot pulse */
+.live-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 0 0 rgba(0,255,136,0.4);
+    animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse {
+    0%   { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
+    50%  { box-shadow: 0 0 0 8px rgba(0,255,136,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,255,136,0); }
+}
+
+/* Hover reveal details on timeline */
+.timeline-item .reveal-detail {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s;
+    opacity: 0;
+}
+.timeline-item:hover .reveal-detail {
+    max-height: 80px; opacity: 1;
+}
+
+/* Fun hover on skill percentage */
+.skill-pct {
+    transition: all 0.2s;
+    cursor: default;
+}
+.skill-pct:hover {
+    color: white !important;
+    transform: scale(1.2);
+    display: inline-block;
+}
+
+/* Smooth fade-in for toasts */
+.toast-enter { animation: toastIn 0.35s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
+@keyframes toastIn { from { opacity:0; transform:translateY(20px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+
+/* Secret uptime widget */
+.uptime-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #00ff88;
+    letter-spacing: 0.1em;
+}
+
+/* Highlight on scroll */
+.highlight-on-scroll {
+    transition: border-color 0.5s, box-shadow 0.5s;
+}
+.highlight-on-scroll.highlighted {
+    border-color: rgba(0,164,255,0.3) !important;
+    box-shadow: 0 0 30px rgba(0,164,255,0.1) !important;
+}
+
+/* Terminal wrap hover */
+.terminal-wrap {
+    background:rgba(4,5,7,0.9);
+    border:1px solid rgba(0,164,255,0.15);
+    border-radius:16px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(0,164,255,0.05);
+    transition:border-color 0.3s,box-shadow 0.3s;
+}
+.terminal-wrap:hover {
+    border-color:rgba(0,164,255,0.3);
+    box-shadow:0 30px 80px rgba(0,0,0,0.7),0 0 40px rgba(0,164,255,0.08);
+}
+
+/* Nav slide indicator */
+.nav-slide-indicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 99px;
+    transition: left 0.3s var(--transition), width 0.3s var(--transition);
+}
+
+/* Animated gradient border */
+.grad-border {
+    position: relative;
+}
+.grad-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(0,164,255,0.3), rgba(255,168,0,0.2), rgba(0,164,255,0.1));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.grad-border:hover::before { opacity: 1; }
+
+/* Blinking text */
+.blink-text {
+    animation: blinkText 1.5s step-end infinite;
+}
+@keyframes blinkText {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0; }
+}
