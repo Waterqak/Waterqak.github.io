@@ -6,7 +6,7 @@
 const config = {
 
     // 🎵 Background music URL
-    bgmUrl: "https://jetta.vgmtreasurechest.com/soundtracks/blue-archive-gamerip/lvulxede/12%20KARUT%2004%20Shooting%20Stars.mp3",
+    bgmUrl: "https://lambda.vgmtreasurechest.com/soundtracks/blue-archive-original-soundtrack-vol7%EF%BD%9Eharmonizing-for-the-hearts-of-each%EF%BD%9E-2025/atwfeoodlk/2-14.%20Miracle.mp3",
     volume: 0.15,
 
     // 💬 Your Discord username (shown in MomoTalk footer)
