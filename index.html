@@ -1,98 +1,107 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth cursor-crosshair">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="css/styles.css?v=1.1">
 <title>Water.Logs | Schale Database</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <!-- Libraries -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <link  href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<link  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 
-<!-- Tailwind theme -->
 <script>
 tailwind.config = {
     darkMode: 'class',
     theme: { extend: {
-        fontFamily: { sans:['Inter','sans-serif'], mono:['JetBrains Mono','monospace'] },
-        colors: { schale:'var(--accent-color)', dark:'#050508', panel:'#0F1115', alert:'#FF4F4F', gold:'#FFA800', momo:'#FFA8C5' },
+        fontFamily: { sans:['Plus Jakarta Sans','Inter','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Rajdhani','sans-serif'] },
+        colors: { schale:'var(--accent)', dark:'#040507', panel:'#090B10', alert:'#FF4F4F', gold:'#FFA800', momo:'#FFA8C5' },
         animation: {
             'pulse-fast':'pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite',
-            'scanline':'scanline 8s linear infinite', 'glitch':'glitch 1s linear infinite',
-            'crt-off':'crtOff 0.5s forwards', 'decode':'decode 0.5s steps(10) forwards',
-            'shake':'shake 0.5s cubic-bezier(.36,.07,.19,.97) both', 'float':'float 6s ease-in-out infinite'
+            'scanline':'scanline 8s linear infinite',
+            'glitch':'glitch 1s linear infinite',
+            'crt-off':'crtOff 0.5s forwards',
+            'decode':'decode 0.5s steps(10) forwards',
+            'shake':'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+            'float':'float 6s ease-in-out infinite',
         },
         keyframes: {
-            scanline:{'0%':{transform:'translateY(-100%)'},'100%':{transform:'translateY(100%)'}},
+            scanline:{'0%':{transform:'translateY(-100vh)'},'100%':{transform:'translateY(100vh)'}},
             glitch:{'2%,64%':{transform:'translate(2px,0) skew(0deg)'},'4%,60%':{transform:'translate(-2px,0) skew(0deg)'},'62%':{transform:'translate(0,0) skew(5deg)'}},
             crtOff:{'0%':{opacity:1,transform:'scale(1,1)'},'40%':{opacity:1,transform:'scale(1,0.05)'},'100%':{opacity:0,transform:'scale(0,0)'}},
             decode:{'0%':{opacity:0},'100%':{opacity:1}},
             shake:{'10%,90%':{transform:'translate3d(-1px,0,0)'},'20%,80%':{transform:'translate3d(2px,0,0)'},'30%,50%,70%':{transform:'translate3d(-4px,0,0)'},'40%,60%':{transform:'translate3d(4px,0,0)'}},
-            float:{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-10px)'}}
+            float:{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-8px)'}},
         }
     }}
 };
 </script>
-
-<!-- Your styles -->
-<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/styles.css?v=2.0">
 </head>
-<body class="antialiased selection:bg-schale selection:text-white">
+<body class="antialiased selection:bg-schale/30 selection:text-white">
 
 <!-- ══════════════════════════════════════════════
      LOADING SCREEN
 ══════════════════════════════════════════════ -->
 <div id="start-overlay">
     <div class="relative z-10 flex flex-col items-center">
-        <div class="w-20 h-20 bg-schale/5 rounded-full flex items-center justify-center border border-schale/30 mb-8 animate-pulse-fast">
+        <div class="w-20 h-20 bg-schale/5 rounded-2xl flex items-center justify-center border border-schale/20 mb-8 animate-pulse-fast" style="box-shadow:0 0 40px rgba(0,164,255,0.15)">
             <i data-lucide="database" class="w-10 h-10 text-schale"></i>
         </div>
-        <h1 class="text-4xl font-black tracking-tighter mb-8 text-white">SCHALE<span class="text-schale">.DB</span></h1>
+        <h1 class="text-4xl font-black tracking-tighter mb-1 text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.05em;">SCHALE<span class="text-schale">.DB</span></h1>
+        <p class="text-[10px] font-mono text-gray-600 mb-8 tracking-widest">INITIALIZING SYSTEM...</p>
         <div id="boot-log-container" class="flex flex-col gap-1 min-h-[140px]"></div>
         <button id="connect-btn" onclick="startExperience()"
-            class="opacity-0 translate-y-4 transition-all duration-700 mt-8 px-10 py-3 bg-schale/10 border border-schale/50 hover:bg-schale hover:text-white text-schale font-bold tracking-widest text-sm">
+            class="opacity-0 translate-y-4 transition-all duration-700 mt-8 px-12 py-3.5 bg-schale/10 border border-schale/40 hover:bg-schale hover:text-white text-schale font-bold tracking-[0.15em] text-xs"
+            style="border-radius:6px;">
             CONNECT_TO_SERVER
         </button>
     </div>
-    <div class="absolute bottom-10 text-xs font-mono text-gray-600">SYSTEM VER 11.0 // READY</div>
+    <div class="absolute bottom-10 text-[10px] font-mono text-gray-700 tracking-widest">SYSTEM VER 2.0 // SCHALE RESEARCH INSTITUTE</div>
 </div>
 
 <audio id="bgm" loop></audio>
 
+<!-- Fixed elements -->
+<div id="scroll-progress"></div>
+<div class="mesh-bg"></div>
+<div class="grid-bg"></div>
+<canvas id="particles-canvas"></canvas>
+
 <!-- Music pill -->
-<div class="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-3 bg-black/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg hover:border-schale/50 transition-colors group">
+<div class="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-3 px-4 py-2.5 rounded-full border border-white/8 hover:border-schale/40 transition-all group cursor-pointer" style="background:rgba(4,5,7,0.85);backdrop-filter:blur(20px);" onclick="toggleMute()">
     <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
     <div class="flex flex-col">
-        <span class="text-[8px] font-mono text-gray-400">AUDIO OUTPUT</span>
+        <span class="text-[8px] font-mono text-gray-500 tracking-widest">NOW PLAYING</span>
         <span class="text-[10px] text-white font-bold group-hover:text-schale transition-colors">SCHALE RADIO</span>
     </div>
+    <i id="mute-icon" data-lucide="volume-2" class="w-4 h-4 text-gray-500 group-hover:text-schale transition-colors"></i>
 </div>
-
-<!-- Scroll progress + BG -->
-<div id="scroll-progress" class="fixed top-0 left-0 h-[3px] bg-schale z-[100] w-0 shadow-[0_0_15px_rgba(0,164,255,0.8)]"></div>
-<div class="hex-bg"></div>
-<canvas id="particles-canvas"></canvas>
 
 <!-- ══════════════════════════════════════════════
      NAVIGATION
 ══════════════════════════════════════════════ -->
 <nav class="fixed w-full z-50 nav-bar">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <div class="flex items-center gap-3 cursor-pointer group" onclick="playClick(); window.scrollTo(0,0)">
-            <div class="bg-schale/10 text-schale p-2 rounded border border-schale/20 group-hover:bg-schale group-hover:text-white transition-all">
-                <i data-lucide="database" class="w-5 h-5"></i>
+    <div class="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between" style="height:68px;">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="playClick(); window.scrollTo({top:0,behavior:'smooth'})">
+            <div class="bg-schale/10 text-schale p-2 rounded-lg border border-schale/15 group-hover:bg-schale group-hover:text-white transition-all duration-300">
+                <i data-lucide="database" class="w-4 h-4"></i>
             </div>
-            <span class="font-black text-xl tracking-tight text-white">SCHALE<span class="text-schale">.DB</span></span>
+            <span class="font-black text-lg tracking-tight text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.05em;">SCHALE<span class="text-schale">.DB</span></span>
         </div>
-        <div class="hidden md:flex items-center gap-8 text-sm font-bold text-gray-400">
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center gap-8 text-sm font-bold text-gray-500">
             <a href="#about"      class="nav-link hover:text-white transition-colors" onclick="playClick()">Home</a>
             <a href="#code"       class="nav-link hover:text-white transition-colors" onclick="playClick()">Code Vault</a>
             <a href="#history"    class="nav-link hover:text-white transition-colors" onclick="playClick()">History</a>
@@ -100,36 +109,41 @@ tailwind.config = {
             <a href="#calculator" class="nav-link hover:text-white transition-colors" onclick="playClick()">Estimator</a>
             <a href="#reviews"    class="nav-link hover:text-white transition-colors" onclick="playClick()">Reviews</a>
         </div>
-        <div class="hidden md:flex items-center gap-4">
-            <button onclick="toggleLanguage(); playClick()" class="text-xs font-mono text-schale border border-schale/30 px-3 py-1 hover:bg-schale/10 transition-colors rounded">
+
+        <!-- Desktop actions -->
+        <div class="hidden md:flex items-center gap-3">
+            <button onclick="toggleLanguage(); playClick()" class="text-[10px] font-mono font-bold text-schale border border-schale/25 px-3 py-1.5 hover:bg-schale/10 transition-all rounded-md" style="letter-spacing:0.1em;">
                 <span id="lang-display">EN</span>
             </button>
-            <button onclick="toggleMute(); playClick()" class="text-gray-400 hover:text-white hover:scale-110 transition-transform">
-                <i id="mute-icon" data-lucide="volume-2" class="w-5 h-5"></i>
-            </button>
-            <a href="#contact" onclick="playClick()" class="bg-[#FFA8C5] hover:bg-[#ff8fae] text-[#4a2c36] px-5 py-2.5 rounded-lg text-xs font-black shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2">
-                <i data-lucide="message-circle" class="w-4 h-4"></i>
+            <a href="#contact" onclick="playClick()"
+               class="bg-momo hover:bg-[#ff8fae] text-[#3d1f2c] px-5 py-2 rounded-xl text-xs font-black shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
+               style="letter-spacing:0.05em;">
+                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                 <span data-i18n="nav_hire">MomoTalk</span>
             </a>
         </div>
-        <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 bg-white/5 rounded">
-            <i data-lucide="menu" class="w-6 h-6"></i>
+
+        <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 bg-white/5 rounded-lg border border-white/8">
+            <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
     </div>
 </nav>
 
-<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-[#050508] md:hidden flex flex-col pt-24 px-8 gap-8 border-l border-schale/30">
-    <button onclick="toggleMobileMenu(); playClick()" class="absolute top-6 right-6 text-gray-400 hover:text-white"><i data-lucide="x" class="w-8 h-8"></i></button>
-    <div class="flex flex-col gap-6 text-2xl font-black text-white">
-        <a href="#about"      onclick="toggleMobileMenu()">HOME</a>
-        <a href="#code"       onclick="toggleMobileMenu()">CODE VAULT</a>
-        <a href="#history"    onclick="toggleMobileMenu()">HISTORY</a>
-        <a href="#projects"   onclick="toggleMobileMenu()">PROJECTS</a>
-        <a href="#calculator" onclick="toggleMobileMenu()">ESTIMATOR</a>
-        <a href="#reviews"    onclick="toggleMobileMenu()">REVIEWS</a>
+<!-- Mobile menu -->
+<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-dark md:hidden flex flex-col pt-24 px-8 gap-8 border-l border-schale/20" style="background:#040507;">
+    <button onclick="toggleMobileMenu(); playClick()" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-7 h-7"></i>
+    </button>
+    <div class="flex flex-col gap-6 text-2xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
+        <a href="#about"      onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">HOME</a>
+        <a href="#code"       onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">CODE VAULT</a>
+        <a href="#history"    onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">HISTORY</a>
+        <a href="#projects"   onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">PROJECTS</a>
+        <a href="#calculator" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">ESTIMATOR</a>
+        <a href="#reviews"    onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">REVIEWS</a>
     </div>
-    <div class="h-px bg-white/10 w-full"></div>
-    <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-400">LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span></button>
+    <div class="h-px bg-white/8 w-full"></div>
+    <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-500" style="font-family:'Rajdhani',sans-serif;">LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span></button>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -137,67 +151,122 @@ tailwind.config = {
 ══════════════════════════════════════════════ -->
 <header class="min-h-screen flex items-center relative overflow-hidden pt-20" id="about">
     <div class="halo-container"></div>
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full z-10">
-        <div data-aos="fade-right" data-aos-duration="1000">
-            <button onclick="toggleSystemOverride()" class="inline-flex items-center gap-3 px-4 py-2 bg-schale/5 border border-schale/20 rounded-full mb-8 hover:bg-schale/10 transition-all">
+
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full z-10 py-16">
+
+        <!-- Left: Text -->
+        <div data-aos="fade-right" data-aos-duration="900">
+            <!-- Status badge -->
+            <button onclick="toggleSystemOverride()" class="hero-badge mb-8">
                 <span class="relative flex h-2 w-2">
-                    <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                    <span id="status-dot"  class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    <span id="status-ping"  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                    <span id="status-dot"   class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                 </span>
-                <span id="system-status-text" class="text-green-500 text-[10px] font-bold tracking-widest uppercase" data-i18n="status_online">System Online</span>
+                <span id="system-status-text" class="tracking-widest" data-i18n="status_online">System Online</span>
             </button>
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.1] tracking-tight glitch-hover cursor-default">
-                <span data-i18n="hero_prefix">Sensei, I fix</span><br>
-                <span id="typewriter" class="text-gradient"></span>
+
+            <!-- Headline -->
+            <h1 class="hero-title mb-6 glitch-hover cursor-default">
+                <span data-i18n="hero_prefix" class="block">Sensei, I fix</span>
+                <span id="typewriter" class="text-gradient block"></span>
             </h1>
-            <p class="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed pl-6 border-l-2 border-schale/50" data-i18n="hero_desc">
+
+            <!-- Bio -->
+            <p class="text-gray-400 mb-10 max-w-lg leading-relaxed pl-5 border-l-2 border-schale/40 text-sm" data-i18n="hero_desc">
                 Specialized Roblox Systems Engineer. Focusing on backend stability, data integrity, and complex game mechanics.
             </p>
-            <a href="#projects" onclick="playClick()" class="inline-flex items-center gap-2 bg-white text-black font-black px-8 py-4 rounded hover:bg-gray-200 transition-transform hover:-translate-y-1 shadow-[4px_4px_0px_#00A4FF]">
-                <span data-i18n="btn_see_work">VIEW DATABASE</span>
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
+
+            <!-- CTA + stats -->
+            <div class="flex flex-wrap gap-4 mb-10">
+                <a href="#projects" onclick="playClick()"
+                   class="inline-flex items-center gap-2 bg-white text-black font-black px-8 py-3.5 rounded-lg hover:bg-gray-100 transition-all hover:-translate-y-1"
+                   style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:0.08em;box-shadow:4px 4px 0 var(--accent);">
+                    <span data-i18n="btn_see_work">VIEW DATABASE</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <a href="#contact" onclick="playClick()"
+                   class="inline-flex items-center gap-2 border border-white/15 text-gray-300 px-8 py-3.5 rounded-lg hover:border-schale/50 hover:text-white hover:bg-schale/8 transition-all"
+                   style="font-size:12px;font-weight:700;letter-spacing:0.1em;">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                    HIRE ME
+                </a>
+            </div>
+
+            <!-- Stats row -->
+            <div class="grid grid-cols-3 gap-3 max-w-sm">
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-counter="50" data-suffix="+">50+</div>
+                    <div class="hero-stat-label">Commissions</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-counter="4" data-suffix="yrs">4yrs</div>
+                    <div class="hero-stat-label">Experience</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-counter="40" data-suffix="%">40%</div>
+                    <div class="hero-stat-label">Avg Lag Fix</div>
+                </div>
+            </div>
         </div>
 
-        <!-- Terminal HUD -->
+        <!-- Right: Terminal -->
         <div class="relative hidden md:block" data-aos="zoom-in" data-aos-delay="200">
-            <div class="bg-panel border border-white/10 p-1 rounded-xl relative shadow-2xl overflow-hidden group">
-                <div class="absolute inset-0 bg-gradient-to-b from-schale/5 to-transparent pointer-events-none"></div>
+            <div class="terminal-wrap" style="border-radius:16px;">
                 <div class="scanline"></div>
-                <div class="bg-black/60 p-4 flex justify-between items-center border-b border-white/5">
+
+                <!-- Terminal top bar -->
+                <div style="background:rgba(8,10,14,0.97);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="terminal" class="w-4 h-4 text-schale"></i>
-                        <span class="text-xs font-bold text-gray-300 tracking-widest">INTERACTIVE_TERMINAL</span>
+                        <i data-lucide="terminal" class="w-3.5 h-3.5 text-schale"></i>
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;letter-spacing:0.1em;">INTERACTIVE_TERMINAL</span>
                     </div>
                     <div class="flex gap-1.5">
-                        <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div class="w-2.5 h-2.5 bg-red-500 rounded-full opacity-80"></div>
+                        <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full opacity-80"></div>
+                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full opacity-80"></div>
                     </div>
                 </div>
-                <div class="p-6 font-mono text-xs text-gray-400 space-y-4">
-                    <div class="flex justify-between items-center">
+
+                <!-- Status lines -->
+                <div style="padding:16px 20px 0;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;">
+                    <div class="flex justify-between items-center mb-2">
                         <span>CORE_LOAD</span>
                         <div class="flex items-center gap-2">
-                            <div class="w-20 h-1.5 bg-black rounded-full overflow-hidden"><div class="h-full bg-green-500 w-[40%] animate-pulse"></div></div>
-                            <span class="text-green-400">OK</span>
+                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                                <div style="width:40%;height:100%;background:#00ff88;box-shadow:0 0 6px #00ff88;animation:pulse 2s ease-in-out infinite;"></div>
+                            </div>
+                            <span style="color:#00ff88;font-weight:700;">OK</span>
                         </div>
                     </div>
-                    <div class="h-px bg-white/5"></div>
-                    <div class="bg-black/40 rounded border border-white/5 p-4 h-48 font-mono text-[10px] leading-relaxed flex flex-col" onclick="document.getElementById('cli-input').focus()">
-                        <div id="cli-output" class="flex-1 overflow-y-auto mb-2 text-gray-300">
-                            <span class="text-schale">System initialized. Type 'help' for commands.</span><br>
+                    <div class="flex justify-between items-center mb-2">
+                        <span>NET_UPLINK</span>
+                        <div class="flex items-center gap-2">
+                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                                <div style="width:72%;height:100%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 2.5s ease-in-out infinite;"></div>
+                            </div>
+                            <span style="color:var(--accent);font-weight:700;">OK</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="text-schale mr-2">visitor@schale:~$</span>
-                            <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false">
-                            <span class="cli-cursor w-2 h-4 bg-schale block"></span>
-                        </div>
+                    </div>
+                    <div style="height:1px;background:rgba(255,255,255,0.05);margin:12px 0;"></div>
+                </div>
+
+                <!-- CLI -->
+                <div style="padding:0 20px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;"
+                     onclick="document.getElementById('cli-input').focus()">
+                    <div id="cli-output" style="height:160px;overflow-y:auto;margin-bottom:10px;color:#888;line-height:1.8;">
+                        <span style="color:var(--accent);">System initialized. Type 'help' for commands.</span><br>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;">
+                        <span style="color:var(--accent);">visitor@schale:~$</span>
+                        <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false">
+                        <span class="cli-cursor" style="width:7px;height:14px;background:var(--accent);display:block;border-radius:1px;"></span>
                     </div>
                 </div>
             </div>
-            <div class="absolute -z-10 -top-6 -right-6 w-32 h-32 border-t-2 border-r-2 border-schale/30 rounded-tr-3xl"></div>
-            <div class="absolute -z-10 -bottom-6 -left-6 w-32 h-32 border-b-2 border-l-2 border-schale/30 rounded-bl-3xl"></div>
+
+            <!-- Corner accents -->
+            <div class="absolute -z-10 -top-6 -right-6 w-28 h-28 border-t-2 border-r-2 border-schale/20 rounded-tr-3xl pointer-events-none"></div>
+            <div class="absolute -z-10 -bottom-6 -left-6 w-28 h-28 border-b-2 border-l-2 border-schale/20 rounded-bl-3xl pointer-events-none"></div>
         </div>
     </div>
 </header>
@@ -205,44 +274,83 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      PERSONNEL FILE
 ══════════════════════════════════════════════ -->
-<section id="file" class="py-24 border-t border-white/5 bg-dark">
+<section id="file" class="py-24 bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid md:grid-cols-12 gap-12 items-center">
+
+            <!-- Profile card -->
             <div class="md:col-span-5" data-aos="fade-right">
                 <div class="relative group">
-                    <div class="bg-panel border border-white/10 rounded-2xl p-6 relative z-10 hover:border-schale/50 transition-colors duration-500">
+                    <div class="glass-card rounded-2xl p-7 relative z-10 hover:border-schale/30 transition-colors duration-500">
+                        <div class="card-header-strip strip-blue"></div>
                         <div class="flex items-center justify-between mb-6">
-                            <div id="pfp-container" onclick="updateProfilePicture()" class="w-24 h-24 bg-schale/10 rounded-full flex items-center justify-center border-2 border-schale/30 group-hover:border-schale cursor-pointer overflow-hidden transition-all duration-300 relative group-hover:scale-105">
+                            <div id="pfp-container" onclick="updateProfilePicture()" class="w-24 h-24 rounded-2xl flex items-center justify-center border border-schale/20 group-hover:border-schale cursor-pointer overflow-hidden transition-all duration-300 relative"
+                                 style="background:rgba(0,164,255,0.06);">
                                 <img id="avatar-img" src="" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden');document.getElementById('avatar-placeholder').classList.remove('hidden');"/>
                                 <i id="avatar-placeholder" data-lucide="user" class="w-10 h-10 text-schale"></i>
-                                <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <i data-lucide="edit-2" class="w-6 h-6 text-white"></i>
+                                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style="background:rgba(0,0,0,0.55);">
+                                    <i data-lucide="edit-2" class="w-5 h-5 text-white"></i>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="text-[10px] font-mono text-gray-500 mb-1">CLEARANCE LEVEL</div>
-                                <div class="text-xl font-black text-white">PRODIGY <span class="text-schale">01</span></div>
+                                <div class="text-[9px] font-mono text-gray-600 mb-1 tracking-widest">CLEARANCE LEVEL</div>
+                                <div class="text-xl font-black text-white" style="font-family:'Rajdhani',sans-serif;">PRODIGY <span class="text-schale">01</span></div>
                             </div>
                         </div>
-                        <div class="space-y-4 font-mono text-xs">
-                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">CODENAME</span>    <span class="text-white font-bold">WATER</span></div>
-                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">AGE</span>          <span class="text-white font-bold">15</span></div>
-                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">AFFILIATION</span> <span class="text-schale font-bold">SCHALE (INDEPENDENT)</span></div>
-                            <div class="flex justify-between border-b border-white/5 pb-2"><span class="text-gray-500">SPECIALTY</span>   <span class="text-white font-bold">BACKEND ENGINEERING</span></div>
-                            <div class="flex justify-between pb-2">                         <span class="text-gray-500">EXPERIENCE</span> <span class="text-white font-bold">4+ YEARS</span></div>
+                        <div class="space-y-3 font-mono text-xs">
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <span class="text-gray-600">CODENAME</span><span class="text-white font-bold">WATER</span>
+                            </div>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <span class="text-gray-600">AGE</span><span class="text-white font-bold">15</span>
+                            </div>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <span class="text-gray-600">AFFILIATION</span><span class="text-schale font-bold">SCHALE (INDEPENDENT)</span>
+                            </div>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <span class="text-gray-600">SPECIALTY</span><span class="text-white font-bold">BACKEND ENGINEERING</span>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <span class="text-gray-600">EXPERIENCE</span><span class="text-white font-bold">4+ YEARS</span>
+                            </div>
                         </div>
-                        <div class="mt-4 text-[9px] text-gray-600 text-center uppercase tracking-widest">Click badge to update photo</div>
+                        <div class="mt-5 text-[9px] text-gray-700 text-center uppercase tracking-widest">Click avatar to update photo</div>
                     </div>
-                    <div class="absolute inset-0 bg-schale/20 blur-2xl -z-10 opacity-0 group-hover:opacity-50 transition-opacity duration-700"></div>
+                    <div class="absolute inset-0 bg-schale/10 blur-3xl -z-10 opacity-0 group-hover:opacity-40 transition-opacity duration-700 rounded-2xl"></div>
                 </div>
             </div>
+
+            <!-- Bio -->
             <div class="md:col-span-7" data-aos="fade-left">
-                <h2 class="text-3xl font-black text-white mb-6">PERSONNEL FILE <span class="text-schale">#8080</span></h2>
-                <p class="text-gray-400 leading-relaxed mb-6">I am a 15-year-old Roblox Systems Engineer with a passion for creating robust, scalable backend architectures. Unlike typical scripters who just "make it work" I ensure it <strong class="text-white">keeps working</strong> under high player loads.</p>
-                <p class="text-gray-400 leading-relaxed mb-8">My philosophy is simple: Clean Code = Less Bugs = Happy Players. I specialise in DataStores, Anti-Exploit measures, and complex game loops that require precise synchronisation between client and server.</p>
-                <div class="flex gap-4">
-                    <div class="bg-panel border border-white/10 px-4 py-2 rounded flex items-center gap-2 text-xs font-mono text-gray-300"><div class="w-2 h-2 bg-blue-500 rounded-full"></div> LuaU Expert</div>
-                    <div class="bg-panel border border-white/10 px-4 py-2 rounded flex items-center gap-2 text-xs font-mono text-gray-300"><div class="w-2 h-2 bg-purple-500 rounded-full"></div> Rojo Workflow</div>
+                <div class="section-tag mb-4"><i data-lucide="file-text" class="w-3 h-3"></i> Personnel File</div>
+                <h2 class="text-3xl font-black text-white mb-5" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
+                    PERSONNEL FILE <span class="text-schale">#8080</span>
+                </h2>
+                <p class="text-gray-400 leading-relaxed mb-5 text-sm">
+                    I am a 15-year-old Roblox Systems Engineer with a passion for creating robust, scalable backend architectures. Unlike typical scripters who just "make it work" I ensure it <strong class="text-white font-bold">keeps working</strong> under high player loads.
+                </p>
+                <p class="text-gray-400 leading-relaxed mb-8 text-sm">
+                    My philosophy: <span class="text-schale font-semibold">Clean Code = Less Bugs = Happy Players</span>. I specialise in DataStores, Anti-Exploit measures, and complex game loops that require precise synchronisation between client and server.
+                </p>
+
+                <div class="flex flex-wrap gap-3 mb-8">
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400" style="background:rgba(255,255,255,0.03);">
+                        <div class="w-2 h-2 rounded-full" style="background:#60a5fa;box-shadow:0 0 6px #60a5fa;"></div>
+                        LuaU Expert
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400" style="background:rgba(255,255,255,0.03);">
+                        <div class="w-2 h-2 rounded-full" style="background:#c084fc;box-shadow:0 0 6px #c084fc;"></div>
+                        Rojo Workflow
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400" style="background:rgba(255,255,255,0.03);">
+                        <div class="w-2 h-2 rounded-full" style="background:#34d399;box-shadow:0 0 6px #34d399;"></div>
+                        Open to Commissions
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl border border-schale/15 text-xs font-mono text-gray-500 flex items-center gap-3" style="background:rgba(0,164,255,0.04);">
+                    <i data-lucide="info" class="w-4 h-4 text-schale flex-shrink-0"></i>
+                    Available for freelance work. DM on Discord: <span class="text-schale ml-1">hokpy</span>
                 </div>
             </div>
         </div>
@@ -252,32 +360,61 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      SKILLS
 ══════════════════════════════════════════════ -->
-<section id="skills" class="py-24 border-t border-white/5 bg-panel">
+<section id="skills" class="py-24 bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
     <div class="max-w-7xl mx-auto px-6">
-        <div class="flex items-center gap-3 mb-12" data-aos="fade-up">
-            <div class="p-2 bg-schale/10 rounded"><i data-lucide="cpu" class="text-schale w-6 h-6"></i></div>
-            <h2 class="text-2xl font-black text-white tracking-tight">SYSTEM SPECIFICATIONS</h2>
+        <div class="flex items-center gap-4 mb-3" data-aos="fade-up">
+            <div class="section-tag"><i data-lucide="cpu" class="w-3 h-3"></i> Specifications</div>
         </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="0">
-                <div class="flex justify-between items-end mb-4"><h3 class="font-bold text-white text-lg">Luau</h3><span class="font-mono text-schale text-xs">v5.0</span></div>
-                <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[98%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                <p class="text-xs text-gray-500">OOP, Metatables, Parallel Luau</p>
+        <h2 class="text-3xl font-black text-white mb-12" data-aos="fade-up" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">SYSTEM SPECS</h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Skill 1 -->
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="card-header-strip strip-blue"></div>
+                <div class="flex justify-between items-end mb-5 pt-2">
+                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Luau</h3>
+                    <span class="text-schale font-mono text-[10px] tracking-widest">98%</span>
+                </div>
+                <div class="skill-bar-track mb-3">
+                    <div class="skill-bar-fill" data-width="98%"></div>
+                </div>
+                <p class="text-xs text-gray-600">OOP, Metatables, Parallel Luau</p>
             </div>
-            <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="100">
-                <div class="flex justify-between items-end mb-4"><h3 class="font-bold text-white text-lg">DataStores</h3><span class="font-mono text-schale text-xs">SECURE</span></div>
-                <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[95%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                <p class="text-xs text-gray-500">ProfileService, Session Locking</p>
+            <!-- Skill 2 -->
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="80">
+                <div class="card-header-strip strip-blue"></div>
+                <div class="flex justify-between items-end mb-5 pt-2">
+                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">DataStores</h3>
+                    <span class="text-schale font-mono text-[10px] tracking-widest">95%</span>
+                </div>
+                <div class="skill-bar-track mb-3">
+                    <div class="skill-bar-fill" data-width="95%"></div>
+                </div>
+                <p class="text-xs text-gray-600">ProfileService, Session Locking</p>
             </div>
-            <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="200">
-                <div class="flex justify-between items-end mb-4"><h3 class="font-bold text-white text-lg">Interface</h3><span class="font-mono text-schale text-xs">FLUID</span></div>
-                <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[85%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                <p class="text-xs text-gray-500">Roact, Fusion, TweenService</p>
+            <!-- Skill 3 -->
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="160">
+                <div class="card-header-strip strip-purple"></div>
+                <div class="flex justify-between items-end mb-5 pt-2">
+                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Interface</h3>
+                    <span class="text-purple-400 font-mono text-[10px] tracking-widest">85%</span>
+                </div>
+                <div class="skill-bar-track mb-3">
+                    <div class="skill-bar-fill" data-width="85%" style="background:linear-gradient(90deg,#a855f7,#c084fc);box-shadow:0 0 8px rgba(168,85,247,0.4);"></div>
+                </div>
+                <p class="text-xs text-gray-600">Roact, Fusion, TweenService</p>
             </div>
-            <div class="glass-card p-6 rounded-xl" data-aos="fade-up" data-aos-delay="300">
-                <div class="flex justify-between items-end mb-4"><h3 class="font-bold text-white text-lg">Systems</h3><span class="font-mono text-schale text-xs">MODULAR</span></div>
-                <div class="w-full bg-black/50 h-2 rounded-full overflow-hidden mb-3"><div class="h-full bg-schale w-[92%] shadow-[0_0_10px_var(--accent-color)]"></div></div>
-                <p class="text-xs text-gray-500">Knit Framework, ECS Pattern</p>
+            <!-- Skill 4 -->
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="240">
+                <div class="card-header-strip strip-gold"></div>
+                <div class="flex justify-between items-end mb-5 pt-2">
+                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Systems</h3>
+                    <span class="text-gold font-mono text-[10px] tracking-widest">92%</span>
+                </div>
+                <div class="skill-bar-track mb-3">
+                    <div class="skill-bar-fill" data-width="92%" style="background:linear-gradient(90deg,var(--gold),#ffcc44);box-shadow:0 0 8px rgba(255,168,0,0.4);"></div>
+                </div>
+                <p class="text-xs text-gray-600">Knit Framework, ECS Pattern</p>
             </div>
         </div>
     </div>
@@ -286,37 +423,42 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      HISTORY
 ══════════════════════════════════════════════ -->
-<section id="history" class="py-24 border-t border-white/5 bg-dark relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-schale/5 to-transparent pointer-events-none"></div>
+<section id="history" class="py-24 bg-dark relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-schale/4 to-transparent pointer-events-none"></div>
     <div class="max-w-4xl mx-auto px-6 relative z-10">
-        <div class="text-center mb-16" data-aos="fade-up">
-            <span class="text-schale font-mono text-xs tracking-widest uppercase mb-2 block">Career Timeline</span>
-            <h2 class="text-4xl font-black text-white">MISSION LOG</h2>
+        <div class="text-center mb-14" data-aos="fade-up">
+            <div class="section-tag mb-3 mx-auto w-fit">Career Timeline</div>
+            <h2 class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">MISSION LOG</h2>
         </div>
-        <div class="relative" data-aos="fade-up" data-aos-delay="200">
+
+        <div class="relative" data-aos="fade-up" data-aos-delay="100">
             <div class="timeline-line"></div>
+
             <div class="timeline-item group">
-                <div class="timeline-dot group-hover:bg-schale transition-colors"></div>
-                <div class="bg-panel border border-white/10 p-6 rounded-xl hover:border-schale/30 transition-all">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold text-white">Freelance Systems Engineer</h3>
-                        <span class="text-schale font-mono text-xs">2022 - PRESENT</span>
+                <div class="timeline-dot"></div>
+                <div class="glass-card p-6 rounded-xl hover:border-schale/25">
+                    <div class="card-header-strip strip-blue"></div>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 pt-1">
+                        <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">Freelance Systems Engineer</h3>
+                        <span class="text-schale font-mono text-xs mt-1 md:mt-0">2022 – PRESENT</span>
                     </div>
-                    <p class="text-gray-400 text-sm mb-4">Architecting scalable backend solutions for high-traffic simulator games. Delivered 50+ commissions over a 3-year career.</p>
-                    <div class="flex gap-2">
-                        <span class="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-300">DataStore2</span>
-                        <span class="text-[10px] bg-white/5 px-2 py-1 rounded text-gray-300">ProfileService</span>
+                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">Architecting scalable backend solutions for high-traffic simulator games. Delivered 50+ commissions over a 3-year career.</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">DataStore2</span>
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">ProfileService</span>
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">Anti-Exploit</span>
                     </div>
                 </div>
             </div>
+
             <div class="timeline-item group">
-                <div class="timeline-dot group-hover:bg-schale transition-colors"></div>
-                <div class="bg-panel border border-white/10 p-6 rounded-xl hover:border-schale/30 transition-all">
+                <div class="timeline-dot"></div>
+                <div class="glass-card p-6 rounded-xl hover:border-white/15">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold text-white">Junior Developer</h3>
-                        <span class="text-gray-500 font-mono text-xs">2021 - 2022</span>
+                        <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">Junior Developer</h3>
+                        <span class="text-gray-500 font-mono text-xs mt-1 md:mt-0">2021 – 2022</span>
                     </div>
-                    <p class="text-gray-400 text-sm">Started journey with Lua. Created several open-source modules and contributed to community resources.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">Started journey with Lua. Created several open-source modules and contributed to community resources.</p>
                 </div>
             </div>
         </div>
@@ -326,31 +468,32 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      CODE VAULT
 ══════════════════════════════════════════════ -->
-<section id="code" class="py-24 border-t border-white/5 bg-panel">
+<section id="code" class="py-24 bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
     <div class="max-w-6xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6" data-aos="fade-up">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6" data-aos="fade-up">
             <div>
-                <h2 class="text-4xl font-black text-white mb-2">CODE VAULT</h2>
-                <p class="text-gray-400">Direct access to my open-source modules.</p>
+                <div class="section-tag mb-3"><i data-lucide="code-2" class="w-3 h-3"></i> Open Source</div>
+                <h2 class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">CODE VAULT</h2>
+                <p class="text-gray-500 text-sm mt-1">Direct access to my open-source modules.</p>
             </div>
-            <div class="flex gap-2 text-xs font-mono text-gray-500">
-                <span class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> CLEAN</span>
-                <span class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> OPTIMIZED</span>
-                <span class="flex items-center gap-1"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> DOCUMENTED</span>
+            <div class="flex gap-4 text-xs font-mono text-gray-600">
+                <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> CLEAN</span>
+                <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> OPTIMIZED</span>
+                <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> DOCUMENTED</span>
             </div>
         </div>
-        <div class="code-window shadow-2xl" data-aos="fade-up" data-aos-delay="200">
+        <div class="code-window" data-aos="fade-up" data-aos-delay="150">
             <div class="code-header">
-                <div class="flex gap-1.5 items-center mr-4">
+                <div class="flex gap-1.5 items-center mr-4 flex-shrink-0">
                     <div class="code-dot bg-red-500"></div>
                     <div class="code-dot bg-yellow-500"></div>
                     <div class="code-dot bg-green-500"></div>
                 </div>
-                <div id="code-tabs" class="flex overflow-x-auto"></div>
+                <div id="code-tabs" class="flex overflow-x-auto gap-0.5"></div>
             </div>
             <div class="relative group">
-                <button onclick="copyCode()" class="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-2 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                    <i data-lucide="copy" class="w-4 h-4"></i>
+                <button onclick="copyCode()" class="absolute top-3 right-3 bg-white/8 hover:bg-white/15 text-gray-400 hover:text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10" title="Copy code">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 </button>
                 <pre class="code-content"><code id="code-display" class="language-lua"></code></pre>
             </div>
@@ -361,171 +504,176 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      PROJECTS
 ══════════════════════════════════════════════ -->
-<section id="projects" class="py-32 relative border-t border-white/5 bg-dark">
+<section id="projects" class="py-32 relative bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
     <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6" data-aos="fade-up">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6" data-aos="fade-up">
             <div>
-                <div class="flex items-center gap-3 mb-2">
-                    <i data-lucide="folder-open" class="text-schale w-6 h-6"></i>
-                    <span class="text-schale font-bold text-sm tracking-widest">DATABASE</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-white">MISSION REPORTS</h2>
+                <div class="section-tag mb-3"><i data-lucide="folder-open" class="w-3 h-3"></i> Database</div>
+                <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">MISSION REPORTS</h2>
             </div>
             <div class="flex flex-wrap gap-2">
-                <button onclick="filterProjects('all')"          class="filter-btn active px-5 py-2 bg-schale text-white text-xs font-bold rounded shadow-lg hover:scale-105 transition-all">ALL</button>
-                <button onclick="filterProjects('GAMEPLAY')"     class="filter-btn px-5 py-2 bg-panel text-gray-400 border border-white/10 text-xs font-bold rounded hover:border-schale hover:text-white transition-all">SYSTEMS</button>
-                <button onclick="filterProjects('FULL GAME')"    class="filter-btn px-5 py-2 bg-panel text-gold border border-gold/20 text-xs font-bold rounded hover:bg-gold hover:text-black transition-all">GAMES</button>
-                <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn px-5 py-2 bg-panel text-gray-400 border border-white/10 text-xs font-bold rounded hover:border-schale hover:text-white transition-all">FIXES</button>
+                <button onclick="filterProjects('all')" class="filter-btn bg-schale text-white text-xs font-bold rounded-full px-5 py-2 shadow-md hover:scale-105 transition-all">ALL</button>
+                <button onclick="filterProjects('GAMEPLAY')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all">SYSTEMS</button>
+                <button onclick="filterProjects('FULL GAME')" class="filter-btn bg-dark text-gold border border-gold/20 text-xs font-bold rounded-full px-5 py-2 hover:bg-gold hover:text-black transition-all">GAMES</button>
+                <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all">FIXES</button>
             </div>
         </div>
-        <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+        <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </div>
 </section>
 
 <!-- ══════════════════════════════════════════════
      CALCULATOR
 ══════════════════════════════════════════════ -->
-<section id="calculator" class="py-32 relative border-t border-white/5 bg-panel">
+<section id="calculator" class="py-32 relative bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
     <div class="max-w-5xl mx-auto px-6" data-aos="fade-up">
-        <div class="grid md:grid-cols-12 gap-12 items-start">
-            <div class="md:col-span-7 space-y-8">
+        <div class="section-tag mb-4 w-fit"><i data-lucide="calculator" class="w-3 h-3"></i> Pricing</div>
+        <div class="grid md:grid-cols-12 gap-10 items-start">
+
+            <!-- Left: controls -->
+            <div class="md:col-span-7 space-y-7">
                 <div>
-                    <h2 class="text-3xl font-black text-white mb-2" data-i18n="calc_title">RESOURCE ESTIMATOR</h2>
-                    <p class="text-gray-400 text-sm" data-i18n="calc_subtitle">Calculate budget requirements.</p>
+                    <h2 class="text-3xl font-black text-white mb-1" style="font-family:'Rajdhani',sans-serif;" data-i18n="calc_title">RESOURCE ESTIMATOR</h2>
+                    <p class="text-gray-500 text-sm" data-i18n="calc_subtitle">Calculate budget requirements.</p>
                 </div>
-                <div class="space-y-4">
-                    <label class="text-schale text-[10px] font-bold tracking-widest mb-3 block" data-i18n="calc_type">OPERATION TYPE</label>
+
+                <!-- Service type -->
+                <div class="space-y-3">
+                    <label class="text-schale text-[10px] font-bold tracking-[0.15em] block" data-i18n="calc_type">OPERATION TYPE</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="selectService(500,  this); playClick()" class="service-btn p-4 bg-dark border border-white/10 rounded-lg hover:border-white/30 text-left transition-all"><div class="text-white font-bold text-sm" data-i18n="serv_quick">Quick Task</div><div class="text-gray-500 text-[10px] font-mono mt-1">500+ R$</div></button>
-                        <button onclick="selectService(2500, this); playClick()" class="service-btn p-4 bg-dark border border-schale rounded-lg text-left transition-all relative overflow-hidden"><div class="absolute inset-0 bg-schale/5 pointer-events-none"></div><div class="text-white font-bold text-sm" data-i18n="serv_fix">Bug Fix</div><div class="text-gray-500 text-[10px] font-mono mt-1">2,500+ R$</div></button>
-                        <button onclick="selectService(10000,this); playClick()" class="service-btn p-4 bg-dark border border-white/10 rounded-lg hover:border-white/30 text-left transition-all"><div class="text-white font-bold text-sm" data-i18n="serv_sys">System</div><div class="text-gray-500 text-[10px] font-mono mt-1">10k+ R$</div></button>
-                        <button onclick="selectService(30000,this); playClick()" class="service-btn p-4 bg-dark border border-white/10 rounded-lg hover:border-white/30 text-left transition-all"><div class="text-white font-bold text-sm" data-i18n="serv_game">Full Game</div><div class="text-gray-500 text-[10px] font-mono mt-1">30k+ R$</div></button>
+                        <button onclick="selectService(500,this);playClick()" class="service-btn">
+                            <div class="text-white font-bold text-sm mb-1" data-i18n="serv_quick">Quick Task</div>
+                            <div class="text-gray-600 text-[10px] font-mono">500+ R$</div>
+                        </button>
+                        <button onclick="selectService(2500,this);playClick()" class="service-btn" style="border-color:var(--accent);background:rgba(0,164,255,0.06);">
+                            <div class="text-white font-bold text-sm mb-1" data-i18n="serv_fix">Bug Fix</div>
+                            <div class="text-gray-600 text-[10px] font-mono">2,500+ R$</div>
+                        </button>
+                        <button onclick="selectService(10000,this);playClick()" class="service-btn">
+                            <div class="text-white font-bold text-sm mb-1" data-i18n="serv_sys">System</div>
+                            <div class="text-gray-600 text-[10px] font-mono">10k+ R$</div>
+                        </button>
+                        <button onclick="selectService(30000,this);playClick()" class="service-btn">
+                            <div class="text-white font-bold text-sm mb-1" data-i18n="serv_game">Full Game</div>
+                            <div class="text-gray-600 text-[10px] font-mono">30k+ R$</div>
+                        </button>
                     </div>
                 </div>
-                <div class="bg-black/20 p-6 rounded-xl border border-white/5 space-y-6">
+
+                <!-- Sliders -->
+                <div style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:24px;" class="space-y-6">
                     <div>
-                        <div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_complexity">Complexity</label><span id="complexity-val" class="text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded">Standard</span></div>
+                        <div class="flex justify-between mb-3">
+                            <label class="text-gray-400 text-xs font-bold tracking-widest" data-i18n="label_complexity">Complexity</label>
+                            <span id="complexity-val" class="text-gray-400 text-xs font-mono px-2 py-0.5 rounded" style="background:rgba(255,255,255,0.06);">Standard</span>
+                        </div>
                         <input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()">
                     </div>
                     <div>
-                        <div class="flex justify-between mb-3"><label class="text-gray-400 text-xs font-bold" data-i18n="label_timeline">Urgency</label><span id="rush-val" class="text-gray-400 text-xs font-mono bg-white/5 px-2 py-0.5 rounded">Standard</span></div>
+                        <div class="flex justify-between mb-3">
+                            <label class="text-gray-400 text-xs font-bold tracking-widest" data-i18n="label_timeline">Urgency</label>
+                            <span id="rush-val" class="text-gray-400 text-xs font-mono px-2 py-0.5 rounded" style="background:rgba(255,255,255,0.06);">Standard</span>
+                        </div>
                         <input type="range" min="1" max="1.5" step="0.1" value="1" id="rush-range" oninput="calculateBudget()">
                     </div>
                 </div>
             </div>
-            <div class="md:col-span-5 bg-dark border border-white/10 rounded-xl p-8 relative overflow-hidden shadow-2xl">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-schale/10 to-transparent rounded-bl-full pointer-events-none"></div>
-                <div class="flex justify-between items-center mb-8">
-                    <span class="text-xs font-bold text-gray-500 tracking-widest">INVOICE PREVIEW</span>
-                    <select id="currency-select" onchange="calculateBudget(); playClick()" class="bg-black/40 text-white text-xs font-bold px-3 py-1.5 rounded border border-white/10 outline-none hover:border-schale/50">
-                        <option value="R$">R$</option><option value="USD">USD</option><option value="THB">THB</option><option value="VND">VND</option>
+
+            <!-- Right: invoice -->
+            <div class="md:col-span-5 rounded-2xl p-7 relative overflow-hidden" style="background:var(--bg);border:1px solid rgba(255,255,255,0.08);box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+                <div class="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none" style="background:radial-gradient(circle,rgba(0,164,255,0.08),transparent 70%);"></div>
+                <div class="flex justify-between items-center mb-7">
+                    <span class="text-[10px] font-bold text-gray-600 tracking-widest">INVOICE PREVIEW</span>
+                    <select id="currency-select" onchange="calculateBudget();playClick()" class="text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 outline-none hover:border-schale/40 transition-colors" style="background:rgba(0,0,0,0.4);">
+                        <option value="R$">R$</option>
+                        <option value="USD">USD</option>
+                        <option value="THB">THB</option>
+                        <option value="VND">VND</option>
                     </select>
                 </div>
-                <div class="space-y-3 mb-8 border-b border-white/5 pb-8 font-mono text-sm">
-                    <div class="flex justify-between text-gray-400"><span>Base Cost</span>            <span class="text-white"  id="receipt-base">--</span></div>
-                    <div class="flex justify-between text-gray-400"><span>Complexity Multiplier</span><span class="text-schale" id="receipt-comp">x1.0</span></div>
-                    <div class="flex justify-between text-gray-400"><span>Rush Fee</span>             <span class="text-alert"  id="receipt-rush">x1.0</span></div>
+                <div class="space-y-3 mb-7 pb-7 font-mono text-sm" style="border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <div class="flex justify-between text-gray-500"><span>Base Cost</span>        <span class="text-white" id="receipt-base">--</span></div>
+                    <div class="flex justify-between text-gray-500"><span>Complexity ×</span>    <span class="text-schale" id="receipt-comp">x1.0</span></div>
+                    <div class="flex justify-between text-gray-500"><span>Rush Fee ×</span>      <span class="text-alert" id="receipt-rush">x1.0</span></div>
                 </div>
-                <div class="text-right mb-8">
-                    <span class="text-[10px] text-schale font-bold uppercase block mb-1">Total Estimated Cost</span>
-                    <div id="total-price" class="text-4xl font-black text-white tracking-tight">2,500 R$</div>
-                    <div id="sub-price"   class="text-xs text-gray-500 font-mono mt-1">approx $8.75 USD</div>
+                <div class="text-right mb-7">
+                    <span class="text-[10px] text-schale font-bold uppercase tracking-widest block mb-1">Total Estimated</span>
+                    <div id="total-price" class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:-0.01em;">2,500 R$</div>
+                    <div id="sub-price"   class="text-xs text-gray-600 font-mono mt-1">approx $8.75 USD</div>
                 </div>
-                <button class="w-full bg-schale hover:bg-white hover:text-schale text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,164,255,0.3)]">
+                <a href="#contact" onclick="playClick()" class="w-full bg-schale hover:bg-white hover:text-schale text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm" style="box-shadow:0 4px 20px rgba(0,164,255,0.25);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
                     <i data-lucide="message-square" class="w-4 h-4"></i> DISCUSS QUOTE
-                </button>
+                </a>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ══════════════════════════════════════════════
-     REVIEWS / FIELD REPORTS
+     REVIEWS
 ══════════════════════════════════════════════ -->
-<section id="reviews" class="py-32 relative border-t border-white/5 bg-dark">
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6" data-aos="fade-up">
+<section id="reviews" class="py-32 bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6" data-aos="fade-up">
             <div>
-                <div class="flex items-center gap-3 mb-2">
-                    <i data-lucide="star" class="text-gold w-6 h-6"></i>
-                    <span class="text-gold font-bold text-sm tracking-widest">TESTIMONIALS</span>
+                <div class="section-tag mb-3" style="color:var(--gold);background:rgba(255,168,0,0.08);border-color:rgba(255,168,0,0.15);">
+                    <i data-lucide="star" class="w-3 h-3"></i> Testimonials
                 </div>
-                <h2 class="text-4xl md:text-5xl font-black text-white">
+                <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
                     FIELD REPORTS
-                    <span id="reviews-count" class="ml-4 text-xl font-mono text-gold bg-gold/10 border border-gold/30 px-3 py-1 rounded-full align-middle">0</span>
+                    <span id="reviews-count" class="ml-3 text-xl font-mono text-gold px-3 py-1 rounded-full align-middle" style="background:rgba(255,168,0,0.08);border:1px solid rgba(255,168,0,0.2);">0</span>
                 </h2>
             </div>
             <button onclick="openReviewModal()"
-                class="inline-flex items-center gap-2 bg-gold/10 hover:bg-gold text-gold hover:text-black
-                       border border-gold/40 font-bold px-6 py-3 rounded-lg transition-all
-                       hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(255,168,0,0.15)] text-sm">
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
+                style="background:rgba(255,168,0,0.08);border:1px solid rgba(255,168,0,0.25);color:var(--gold);box-shadow:0 4px 20px rgba(255,168,0,0.1);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
                 SUBMIT FIELD REPORT
             </button>
         </div>
-
-        <!-- Cards grid -->
-        <div id="reviews-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+        <div id="reviews-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
     </div>
 </section>
 
-<!-- ══════════════════════════════════════════════
-     REVIEW MODAL
-══════════════════════════════════════════════ -->
-<div id="review-modal"
-     class="hidden fixed inset-0 z-[200] items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+<!-- REVIEW MODAL -->
+<div id="review-modal" class="hidden fixed inset-0 z-[200] items-center justify-center px-4" style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);"
      onclick="if(event.target===this) closeReviewModal()">
-    <div class="bg-[#0F1115] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
-         data-aos="zoom-in">
-        <!-- Modal header -->
-        <div class="bg-gold/10 border-b border-gold/20 px-6 py-4 flex items-center justify-between">
+    <div class="w-full max-w-lg rounded-2xl overflow-hidden" style="background:#090B10;border:1px solid rgba(255,255,255,0.08);box-shadow:0 40px 100px rgba(0,0,0,0.7);">
+        <div style="background:rgba(255,168,0,0.06);border-bottom:1px solid rgba(255,168,0,0.12);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
             <div class="flex items-center gap-3">
-                <i data-lucide="file-text" class="w-5 h-5 text-gold"></i>
-                <span class="font-black text-white tracking-widest text-sm">SUBMIT FIELD REPORT</span>
+                <i data-lucide="file-text" class="w-4 h-4 text-gold"></i>
+                <span class="font-black text-white text-sm tracking-widest" style="font-family:'Rajdhani',sans-serif;">SUBMIT FIELD REPORT</span>
             </div>
-            <button onclick="closeReviewModal()" class="text-gray-500 hover:text-white transition-colors">
+            <button onclick="closeReviewModal()" class="text-gray-600 hover:text-white transition-colors">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
-
-        <!-- Form -->
         <form id="review-form" class="p-6 space-y-5">
-
-            <!-- Name -->
             <div>
-                <label class="text-[10px] font-bold text-gray-500 tracking-widest block mb-2">OPERATIVE HANDLE</label>
+                <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-2">OPERATIVE HANDLE</label>
                 <input id="review-name" type="text" placeholder="Your name or username"
-                    class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white text-sm font-mono
-                           placeholder-gray-600 focus:outline-none focus:border-gold/50 transition-colors"
+                    class="w-full rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-700 outline-none transition-colors"
+                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);"
+                    onfocus="this.style.borderColor='rgba(255,168,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
                     maxlength="40" required>
             </div>
-
-            <!-- Stars -->
             <div>
-                <label class="text-[10px] font-bold text-gray-500 tracking-widest block mb-3">MISSION RATING</label>
-                <div class="flex gap-1" id="star-selector">
-                    <!-- Populated by reviews.js -->
-                </div>
+                <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-3">MISSION RATING</label>
+                <div id="star-selector" class="flex gap-1"></div>
             </div>
-
-            <!-- Text -->
             <div>
-                <label class="text-[10px] font-bold text-gray-500 tracking-widest block mb-2">FIELD NOTES</label>
+                <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-2">FIELD NOTES</label>
                 <textarea id="review-text" placeholder="Describe your experience working with Water..."
-                    class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white text-sm font-mono
-                           placeholder-gray-600 focus:outline-none focus:border-gold/50 transition-colors resize-none h-28"
+                    class="w-full rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-700 outline-none transition-colors resize-none h-28"
+                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);"
+                    onfocus="this.style.borderColor='rgba(255,168,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
                     maxlength="280" required></textarea>
-                <div class="text-right text-[10px] font-mono text-gray-600 mt-1">max 280 chars</div>
+                <div class="text-right text-[10px] font-mono text-gray-700 mt-1">max 280 chars</div>
             </div>
-
-            <!-- Submit -->
             <button id="reviews-submit-btn" type="submit"
-                class="w-full bg-schale hover:bg-white hover:text-schale text-white font-bold py-3 rounded-lg
-                       transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,164,255,0.3)]">
-                <i data-lucide="send" class="w-4 h-4"></i>
-                TRANSMIT REPORT
+                class="w-full text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
+                style="background:var(--accent);box-shadow:0 4px 20px rgba(0,164,255,0.25);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
+                <i data-lucide="send" class="w-4 h-4"></i> TRANSMIT REPORT
             </button>
         </form>
     </div>
@@ -534,67 +682,83 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      FOOTER / MOMOTALK
 ══════════════════════════════════════════════ -->
-<footer id="contact" class="bg-[#050508] border-t border-white/5 py-24 relative overflow-hidden">
+<footer id="contact" class="bg-dark py-24 relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <!-- Subtle glow behind momotalk -->
+    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 60% at 50% 100%,rgba(255,168,0,0.03),transparent 60%);"></div>
+
     <div class="max-w-3xl mx-auto px-6 text-center z-10 relative">
-        <h2 class="text-5xl font-black text-white mb-2 tracking-tighter" data-i18n="contact_title">MomoTalk</h2>
-        <p class="text-gray-400 mb-12" data-i18n="contact_sub">Sensei, you have a new message.</p>
-        <div class="inline-flex items-center gap-6 px-6 py-2 bg-white/5 rounded-full border border-white/5 mb-12 backdrop-blur-sm">
+        <div class="section-tag mb-4 mx-auto w-fit">MomoTalk</div>
+        <h2 class="text-5xl font-black text-white mb-2 tracking-tight" style="font-family:'Rajdhani',sans-serif;" data-i18n="contact_title">MomoTalk</h2>
+        <p class="text-gray-500 mb-12 text-sm" data-i18n="contact_sub">Sensei, you have a new message.</p>
+
+        <!-- Status strip -->
+        <div class="inline-flex items-center gap-5 px-6 py-2.5 rounded-full border border-white/6 mb-12" style="background:rgba(255,255,255,0.025);backdrop-filter:blur(8px);">
             <div class="flex items-center gap-2">
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 <span class="text-[10px] font-bold text-green-500 tracking-widest uppercase">My Status: Online</span>
             </div>
             <div class="w-px h-3 bg-white/10"></div>
-            <div class="text-[10px] font-mono text-gray-400">TOTAL_DATABASE_ACCESSES: <span id="visitor-count" class="text-white font-bold ml-1">---</span></div>
+            <div class="text-[10px] font-mono text-gray-600">DATABASE ACCESSES: <span id="visitor-count" class="text-white font-bold ml-1">---</span></div>
         </div>
-        <div class="momotalk-container text-left mx-auto transform transition-all hover:scale-105 duration-500" data-aos="zoom-in">
+
+        <!-- MomoTalk card -->
+        <div class="momotalk-container" data-aos="zoom-in">
             <div class="momotalk-header">
                 <i data-lucide="message-circle" class="w-5 h-5"></i>
-                <span>MomoTalk</span>
-                <span class="ml-auto text-[10px] bg-white text-momo px-2 py-0.5 rounded-full font-bold shadow-sm">2</span>
+                <span style="font-size:15px;letter-spacing:0.05em;">MomoTalk</span>
+                <span class="ml-auto text-[10px] bg-white/30 text-[#3d1f2c] px-2 py-0.5 rounded-full font-bold">2</span>
             </div>
-            <div class="p-3 bg-[#f0f0f0] min-h-[200px]">
-                <div class="momotalk-item group" onclick="copyDiscord(); playClick()">
-                    <div class="momotalk-avatar bg-indigo-100"><i data-lucide="message-square" class="text-[#5865F2] w-6 h-6 transform group-hover:scale-110 transition-transform"></i></div>
+            <div class="p-4" style="background:#f0f0f0;">
+                <div class="momotalk-item group" onclick="copyDiscord();playClick()">
+                    <div class="momotalk-avatar" style="background:#e8eaff;">
+                        <i data-lucide="message-square" class="w-5 h-5 text-indigo-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-center mb-0.5"><span class="font-bold text-sm text-gray-800">Discord</span><span class="text-[10px] text-gray-400">Now</span></div>
+                        <div class="flex justify-between items-center mb-0.5">
+                            <span class="font-bold text-sm text-gray-800">Discord</span>
+                            <span class="text-[10px] text-gray-400">Now</span>
+                        </div>
                         <div class="text-xs text-gray-500 truncate font-medium" id="contact-discord-text">Username: hokpy</div>
                     </div>
                     <div class="unread-badge animate-bounce">1</div>
                 </div>
                 <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momotalk-item group" onclick="playClick()">
-                    <div class="momotalk-avatar bg-gray-200"><i data-lucide="gamepad-2" class="text-black w-6 h-6 transform group-hover:rotate-12 transition-transform"></i></div>
+                    <div class="momotalk-avatar" style="background:#f0f0f0;">
+                        <i data-lucide="gamepad-2" class="w-5 h-5 text-gray-700 group-hover:rotate-12 transition-transform"></i>
+                    </div>
                     <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-center mb-0.5"><span class="font-bold text-sm text-gray-800">Roblox</span><span class="text-[10px] text-gray-400">1m ago</span></div>
+                        <div class="flex justify-between items-center mb-0.5">
+                            <span class="font-bold text-sm text-gray-800">Roblox</span>
+                            <span class="text-[10px] text-gray-400">1m ago</span>
+                        </div>
                         <div class="text-xs text-gray-500 truncate font-medium">Let's build something awesome!</div>
                     </div>
                     <div class="unread-badge">1</div>
                 </a>
             </div>
         </div>
-        <div class="mt-20 text-[10px] text-gray-600 font-mono uppercase tracking-widest opacity-50">SCHALE DATABASE V11.0 // AUTH: HOKPY // KIVOTOS ADMIN</div>
+
+        <div class="mt-20 text-[9px] text-gray-700 font-mono uppercase tracking-[0.2em] opacity-40">
+            SCHALE DATABASE V2.0 // AUTH: HOKPY // KIVOTOS ADMIN SYSTEM
+        </div>
     </div>
 </footer>
 
 <!-- ══════════════════════════════════════════════
-     SCRIPTS — load order: config → data → logic → init
+     SCRIPTS
 ══════════════════════════════════════════════ -->
-<script src="js/config.js?v=1.1"></script>
-<script src="js/translations.js?v=1.1"></script>
-<script src="js/projects.js?v=1.1"></script>
-<script src="js/snippets.js?v=1.1"></script>
-<script src="js/audio.js?v=1.1"></script>
-<script src="js/calculator.js?v=1.1"></script>
-<script src="js/reviews.js?v=1.1"></script>
-<script src="js/ui.js?v=1.1"></script>
+<script src="js/config.js?v=2.0"></script>
+<script src="js/translations.js?v=2.0"></script>
+<script src="js/projects.js?v=2.0"></script>
+<script src="js/snippets.js?v=2.0"></script>
+<script src="js/audio.js?v=2.0"></script>
+<script src="js/calculator.js?v=2.0"></script>
+<script src="js/reviews.js?v=2.0"></script>
+<script src="js/ui.js?v=2.0"></script>
 
 <script>
-/* INIT — runs after all files load */
 document.addEventListener('DOMContentLoaded', () => {
-    renderReviews();
-    // Populate interactive star selector in modal
-    const starSel = document.getElementById('star-selector');
-    if (starSel) starSel.innerHTML = renderStars(5, true, 'stars');
-    initReviewForm();
+    // Core inits
     initLocalSystem();
     runBootSequence();
     renderProjects();
@@ -602,24 +766,38 @@ document.addEventListener('DOMContentLoaded', () => {
     initCLI();
     initCardSpotlight();
     buildCodeTabs();
+    initSkillBars();
+    initCounters();
+    initActiveNav();
+    initNavScroll();
     lucide.createIcons();
-    AOS.init({ once: true, offset: 50 });
+    AOS.init({ once: true, offset: 60, duration: 650, easing: 'ease-out-cubic' });
     typeWriter();
     calculateBudget();
+
+    // Select default service button
     document.querySelector('.service-btn').click();
 
     // Load first code snippet
     const codeEl = document.getElementById('code-display');
-    codeEl.textContent = codeSnippets[0].content;
-    Prism.highlightElement(codeEl);
+    if (codeEl && codeSnippets.length) {
+        codeEl.textContent = codeSnippets[0].content;
+        Prism.highlightElement(codeEl);
+    }
 
-    // Scroll progress bar
+    // Reviews init
+    renderReviews();
+    const starSel = document.getElementById('star-selector');
+    if (starSel) starSel.innerHTML = renderStars(5, true, 'stars');
+    initReviewForm();
+
+    // Scroll progress
     window.addEventListener('scroll', () => {
         const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
         document.getElementById('scroll-progress').style.width = (pct * 100) + '%';
-    });
+    }, { passive: true });
 
-    // Auto-close mobile menu
+    // Auto-close mobile menu on link click
     document.querySelectorAll('#mobile-menu a').forEach(a =>
         a.addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'))
     );
