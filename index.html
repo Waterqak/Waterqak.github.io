@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Water — Roblox Systems Engineer. Backend specialist. Bug exterminator. Available for hire.">
 <title>Water.Logs | Schale Database</title>
 
 <!-- Fonts -->
@@ -44,7 +45,12 @@ tailwind.config = {
     }}
 };
 </script>
-<link rel="stylesheet" href="css/styles.css?v=2.0">
+<link rel="stylesheet" href="css/styles.css?v=3.0">
+
+<style>
+/* Inline critical anim for ripple */
+@keyframes ripple-anim { to { transform:scale(4);opacity:0; } }
+</style>
 </head>
 <body class="antialiased selection:bg-schale/30 selection:text-white">
 
@@ -53,69 +59,83 @@ tailwind.config = {
 ══════════════════════════════════════════════ -->
 <div id="start-overlay">
     <div class="relative z-10 flex flex-col items-center">
-        <div class="w-20 h-20 bg-schale/5 rounded-2xl flex items-center justify-center border border-schale/20 mb-8 animate-pulse-fast" style="box-shadow:0 0 40px rgba(0,164,255,0.15)">
+        <div class="w-20 h-20 rounded-2xl flex items-center justify-center border border-schale/20 mb-8 animate-pulse-fast"
+             style="background:rgba(0,164,255,0.05);box-shadow:0 0 40px rgba(0,164,255,0.15),inset 0 0 20px rgba(0,164,255,0.05);">
             <i data-lucide="database" class="w-10 h-10 text-schale"></i>
         </div>
-        <h1 class="text-4xl font-black tracking-tighter mb-1 text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.05em;">SCHALE<span class="text-schale">.DB</span></h1>
-        <p class="text-[10px] font-mono text-gray-600 mb-8 tracking-widest">INITIALIZING SYSTEM...</p>
-        <div id="boot-log-container" class="flex flex-col gap-1 min-h-[140px]"></div>
-        <button id="connect-btn" onclick="startExperience()"
-            class="opacity-0 translate-y-4 transition-all duration-700 mt-8 px-12 py-3.5 bg-schale/10 border border-schale/40 hover:bg-schale hover:text-white text-schale font-bold tracking-[0.15em] text-xs"
-            style="border-radius:6px;">
+        <h1 class="text-4xl font-black mb-1 text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
+            SCHALE<span class="text-schale">.DB</span>
+        </h1>
+        <p class="text-[10px] font-mono text-gray-700 mb-8 tracking-[0.2em]">v3.0 // KIVOTOS RESEARCH INSTITUTE</p>
+        <div id="boot-log-container" class="flex flex-col gap-1 min-h-[180px]"></div>
+        <button id="connect-btn" onclick="startExperience()" data-ripple
+            class="opacity-0 translate-y-4 transition-all duration-700 mt-8 px-12 py-3.5 font-bold tracking-[0.15em] text-xs relative overflow-hidden"
+            style="background:rgba(0,164,255,0.08);border:1px solid rgba(0,164,255,0.35);color:var(--accent);border-radius:6px;">
             CONNECT_TO_SERVER
         </button>
     </div>
-    <div class="absolute bottom-10 text-[10px] font-mono text-gray-700 tracking-widest">SYSTEM VER 2.0 // SCHALE RESEARCH INSTITUTE</div>
+    <div class="absolute bottom-10 text-[9px] font-mono text-gray-700 tracking-[0.2em]">
+        SCHALE RESEARCH INSTITUTE // KIVOTOS // <span class="blink-text text-schale/40">■</span>
+    </div>
 </div>
 
 <audio id="bgm" loop></audio>
 
-<!-- Fixed elements -->
+<!-- Fixed UI elements -->
 <div id="scroll-progress"></div>
 <div class="mesh-bg"></div>
 <div class="grid-bg"></div>
 <canvas id="particles-canvas"></canvas>
 
-<!-- Music pill -->
-<div class="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-3 px-4 py-2.5 rounded-full border border-white/8 hover:border-schale/40 transition-all group cursor-pointer" style="background:rgba(4,5,7,0.85);backdrop-filter:blur(20px);" onclick="toggleMute()">
-    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-    <div class="flex flex-col">
-        <span class="text-[8px] font-mono text-gray-500 tracking-widest">NOW PLAYING</span>
+<!-- Music pill (bottom-left) -->
+<div class="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-3 px-4 py-2.5 rounded-full border border-white/8 hover:border-schale/40 transition-all group cursor-pointer hover-glow"
+     style="background:rgba(4,5,7,0.88);backdrop-filter:blur(20px);" onclick="toggleMute()"
+     data-tip="Toggle music — SCHALE RADIO is live ♪">
+    <div class="live-dot"></div>
+    <div class="flex flex-col leading-tight">
+        <span class="text-[8px] font-mono text-gray-600 tracking-widest">NOW PLAYING</span>
         <span class="text-[10px] text-white font-bold group-hover:text-schale transition-colors">SCHALE RADIO</span>
     </div>
-    <i id="mute-icon" data-lucide="volume-2" class="w-4 h-4 text-gray-500 group-hover:text-schale transition-colors"></i>
+    <i id="mute-icon" data-lucide="volume-2" class="w-3.5 h-3.5 text-gray-600 group-hover:text-schale transition-colors"></i>
 </div>
 
 <!-- ══════════════════════════════════════════════
      NAVIGATION
 ══════════════════════════════════════════════ -->
 <nav class="fixed w-full z-50 nav-bar">
-    <div class="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between" style="height:68px;">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between" style="height:68px;">
 
-        <!-- Logo -->
-        <div class="flex items-center gap-3 cursor-pointer group" onclick="playClick(); window.scrollTo({top:0,behavior:'smooth'})">
-            <div class="bg-schale/10 text-schale p-2 rounded-lg border border-schale/15 group-hover:bg-schale group-hover:text-white transition-all duration-300">
+        <!-- Logo (easter egg: click 7x) -->
+        <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
+             onclick="playClick(); window.scrollTo({top:0,behavior:'smooth'})"
+             data-tip="SCHALE.DB — click me 7 times 👀">
+            <div class="bg-schale/8 text-schale p-2 rounded-lg border border-schale/15 group-hover:bg-schale group-hover:text-white transition-all duration-300"
+                 style="box-shadow:0 0 0 0 var(--accent-glow);transition:all 0.3s,box-shadow 0.3s;">
                 <i data-lucide="database" class="w-4 h-4"></i>
             </div>
-            <span class="font-black text-lg tracking-tight text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.05em;">SCHALE<span class="text-schale">.DB</span></span>
+            <span class="font-black text-lg text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.06em;">
+                SCHALE<span class="text-schale">.DB</span>
+            </span>
         </div>
 
-        <!-- Desktop nav -->
-        <div class="hidden md:flex items-center gap-8 text-sm font-bold text-gray-500">
-            <a href="#about"      class="nav-link hover:text-white transition-colors" onclick="playClick()">Home</a>
-            <a href="#code"       class="nav-link hover:text-white transition-colors" onclick="playClick()">Code Vault</a>
-            <a href="#history"    class="nav-link hover:text-white transition-colors" onclick="playClick()">History</a>
-            <a href="#projects"   class="nav-link hover:text-white transition-colors" onclick="playClick()">Projects</a>
-            <a href="#calculator" class="nav-link hover:text-white transition-colors" onclick="playClick()">Estimator</a>
-            <a href="#reviews"    class="nav-link hover:text-white transition-colors" onclick="playClick()">Reviews</a>
+        <!-- Desktop links -->
+        <div class="hidden md:flex items-center gap-7 text-gray-500">
+            <a href="#about"      class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Home</a>
+            <a href="#code"       class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Code Vault</a>
+            <a href="#history"    class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">History</a>
+            <a href="#projects"   class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Projects</a>
+            <a href="#calculator" class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Estimator</a>
+            <a href="#reviews"    class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Reviews</a>
         </div>
 
         <!-- Desktop actions -->
         <div class="hidden md:flex items-center gap-3">
-            <button onclick="toggleLanguage(); playClick()" class="text-[10px] font-mono font-bold text-schale border border-schale/25 px-3 py-1.5 hover:bg-schale/10 transition-all rounded-md" style="letter-spacing:0.1em;">
+            <button onclick="toggleLanguage(); playClick()"
+                    class="text-[10px] font-mono font-bold text-schale border border-schale/25 px-3 py-1.5 hover:bg-schale/10 transition-all rounded-md"
+                    style="letter-spacing:0.12em;" data-tip="Switch language / ภาษา">
                 <span id="lang-display">EN</span>
             </button>
-            <a href="#contact" onclick="playClick()"
+            <a href="#contact" onclick="playClick()" data-magnetic data-ripple
                class="bg-momo hover:bg-[#ff8fae] text-[#3d1f2c] px-5 py-2 rounded-xl text-xs font-black shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
                style="letter-spacing:0.05em;">
                 <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
@@ -123,41 +143,50 @@ tailwind.config = {
             </a>
         </div>
 
-        <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 bg-white/5 rounded-lg border border-white/8">
+        <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 rounded-lg border border-white/8"
+                style="background:rgba(255,255,255,0.04);">
             <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
     </div>
 </nav>
 
 <!-- Mobile menu -->
-<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 bg-dark md:hidden flex flex-col pt-24 px-8 gap-8 border-l border-schale/20" style="background:#040507;">
+<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 md:hidden flex flex-col pt-24 px-8 gap-8 border-l border-schale/20"
+     style="background:#040507;">
     <button onclick="toggleMobileMenu(); playClick()" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
         <i data-lucide="x" class="w-7 h-7"></i>
     </button>
-    <div class="flex flex-col gap-6 text-2xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
-        <a href="#about"      onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">HOME</a>
-        <a href="#code"       onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">CODE VAULT</a>
-        <a href="#history"    onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">HISTORY</a>
-        <a href="#projects"   onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">PROJECTS</a>
-        <a href="#calculator" onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">ESTIMATOR</a>
-        <a href="#reviews"    onclick="toggleMobileMenu()" class="hover:text-schale transition-colors">REVIEWS</a>
+    <div class="flex flex-col gap-5 text-2xl font-black" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.1em;">
+        <a href="#about"      onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">HOME</a>
+        <a href="#code"       onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">CODE VAULT</a>
+        <a href="#history"    onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">HISTORY</a>
+        <a href="#projects"   onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">PROJECTS</a>
+        <a href="#calculator" onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">ESTIMATOR</a>
+        <a href="#reviews"    onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">REVIEWS</a>
     </div>
-    <div class="h-px bg-white/8 w-full"></div>
-    <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-500" style="font-family:'Rajdhani',sans-serif;">LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span></button>
+    <div class="h-px w-full" style="background:rgba(255,255,255,0.06);"></div>
+    <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-500" style="font-family:'Rajdhani',sans-serif;">
+        LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span>
+    </button>
+    <div class="mt-auto pb-12 text-[9px] font-mono text-gray-700 tracking-widest">
+        SCHALE.DB v3.0 // KIVOTOS
+    </div>
 </div>
 
 <!-- ══════════════════════════════════════════════
-     HERO
+     HERO  ·  01
 ══════════════════════════════════════════════ -->
 <header class="min-h-screen flex items-center relative overflow-hidden pt-20" id="about">
     <div class="halo-container"></div>
+    <div class="section-num" style="top:80px;right:40px;">01</div>
 
     <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full z-10 py-16">
 
-        <!-- Left: Text -->
+        <!-- Left: Copy -->
         <div data-aos="fade-right" data-aos-duration="900">
+
             <!-- Status badge -->
-            <button onclick="toggleSystemOverride()" class="hero-badge mb-8">
+            <button onclick="toggleSystemOverride()" class="hero-badge mb-8 float-badge" data-tip="Click to toggle system status">
                 <span class="relative flex h-2 w-2">
                     <span id="status-ping"  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                     <span id="status-dot"   class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -166,43 +195,43 @@ tailwind.config = {
             </button>
 
             <!-- Headline -->
-            <h1 class="hero-title mb-6 glitch-hover cursor-default">
-                <span data-i18n="hero_prefix" class="block">Sensei, I fix</span>
+            <h1 class="hero-title mb-6 cursor-default" data-aos="fade-right" data-aos-delay="100">
+                <span data-i18n="hero_prefix" class="block text-white/80">Sensei, I fix</span>
                 <span id="typewriter" class="text-gradient block"></span>
             </h1>
 
-            <!-- Bio -->
+            <!-- Bio — improved copy -->
             <p class="text-gray-400 mb-10 max-w-lg leading-relaxed pl-5 border-l-2 border-schale/40 text-sm" data-i18n="hero_desc">
-                Specialized Roblox Systems Engineer. Focusing on backend stability, data integrity, and complex game mechanics.
+                Roblox Systems Engineer. I turn laggy spaghetti code into clean, scalable backends — then charge R$ for it.
             </p>
 
-            <!-- CTA + stats -->
-            <div class="flex flex-wrap gap-4 mb-10">
-                <a href="#projects" onclick="playClick()"
-                   class="inline-flex items-center gap-2 bg-white text-black font-black px-8 py-3.5 rounded-lg hover:bg-gray-100 transition-all hover:-translate-y-1"
-                   style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:0.08em;box-shadow:4px 4px 0 var(--accent);">
+            <!-- CTA buttons -->
+            <div class="flex flex-wrap gap-4 mb-10" data-aos="fade-up" data-aos-delay="200">
+                <a href="#projects" onclick="playClick()" data-magnetic data-ripple
+                   class="inline-flex items-center gap-2 bg-white text-black font-black px-8 py-3.5 rounded-lg hover:bg-blue-50 transition-all hover:-translate-y-1"
+                   style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:0.1em;box-shadow:4px 4px 0 var(--accent);">
                     <span data-i18n="btn_see_work">VIEW DATABASE</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
-                <a href="#contact" onclick="playClick()"
-                   class="inline-flex items-center gap-2 border border-white/15 text-gray-300 px-8 py-3.5 rounded-lg hover:border-schale/50 hover:text-white hover:bg-schale/8 transition-all"
-                   style="font-size:12px;font-weight:700;letter-spacing:0.1em;">
+                <a href="#contact" onclick="playClick()" data-magnetic
+                   class="inline-flex items-center gap-2 border text-gray-300 px-8 py-3.5 rounded-lg hover:text-white hover:bg-schale/8 transition-all"
+                   style="border-color:rgba(255,255,255,0.12);font-size:12px;font-weight:700;letter-spacing:0.1em;">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                     HIRE ME
                 </a>
             </div>
 
-            <!-- Stats row -->
-            <div class="grid grid-cols-3 gap-3 max-w-sm">
-                <div class="hero-stat">
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-3 max-w-sm" data-aos="fade-up" data-aos-delay="300">
+                <div class="hero-stat tilt-card" data-tip="50+ satisfied clients (and counting)">
                     <div class="hero-stat-num" data-counter="50" data-suffix="+">50+</div>
                     <div class="hero-stat-label">Commissions</div>
                 </div>
-                <div class="hero-stat">
+                <div class="hero-stat tilt-card" data-tip="Started scripting at age 11. Send help.">
                     <div class="hero-stat-num" data-counter="4" data-suffix="yrs">4yrs</div>
                     <div class="hero-stat-label">Experience</div>
                 </div>
-                <div class="hero-stat">
+                <div class="hero-stat tilt-card" data-tip="Average server lag reduction per optimization">
                     <div class="hero-stat-num" data-counter="40" data-suffix="%">40%</div>
                     <div class="hero-stat-label">Avg Lag Fix</div>
                 </div>
@@ -211,146 +240,180 @@ tailwind.config = {
 
         <!-- Right: Terminal -->
         <div class="relative hidden md:block" data-aos="zoom-in" data-aos-delay="200">
-            <div class="terminal-wrap" style="border-radius:16px;">
+            <div class="terminal-wrap">
                 <div class="scanline"></div>
 
-                <!-- Terminal top bar -->
-                <div style="background:rgba(8,10,14,0.97);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;">
+                <!-- Top bar -->
+                <div style="background:rgba(6,8,12,0.98);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;">
                     <div class="flex items-center gap-2">
                         <i data-lucide="terminal" class="w-3.5 h-3.5 text-schale"></i>
-                        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;letter-spacing:0.1em;">INTERACTIVE_TERMINAL</span>
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;letter-spacing:0.1em;">INTERACTIVE_TERMINAL</span>
                     </div>
                     <div class="flex gap-1.5">
-                        <div class="w-2.5 h-2.5 bg-red-500 rounded-full opacity-80"></div>
-                        <div class="w-2.5 h-2.5 bg-yellow-500 rounded-full opacity-80"></div>
-                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full opacity-80"></div>
+                        <div class="w-2.5 h-2.5 bg-red-500/70 rounded-full hover:bg-red-500 transition-colors cursor-pointer" data-tip="Does nothing. I just like the aesthetic."></div>
+                        <div class="w-2.5 h-2.5 bg-yellow-500/70 rounded-full hover:bg-yellow-500 transition-colors cursor-pointer"></div>
+                        <div class="w-2.5 h-2.5 bg-green-500/70 rounded-full hover:bg-green-500 transition-colors cursor-pointer"></div>
                     </div>
                 </div>
 
-                <!-- Status lines -->
-                <div style="padding:16px 20px 0;font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;">
+                <!-- Sys stats -->
+                <div style="padding:14px 18px 0;font-family:'JetBrains Mono',monospace;font-size:10px;">
                     <div class="flex justify-between items-center mb-2">
-                        <span>CORE_LOAD</span>
+                        <span style="color:#444;">CORE_LOAD</span>
                         <div class="flex items-center gap-2">
-                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;">
                                 <div style="width:40%;height:100%;background:#00ff88;box-shadow:0 0 6px #00ff88;animation:pulse 2s ease-in-out infinite;"></div>
                             </div>
-                            <span style="color:#00ff88;font-weight:700;">OK</span>
+                            <span style="color:#00ff88;font-weight:700;font-size:9px;">40%</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-center mb-2">
-                        <span>NET_UPLINK</span>
+                        <span style="color:#444;">NET_UPLINK</span>
                         <div class="flex items-center gap-2">
-                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;">
                                 <div style="width:72%;height:100%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 2.5s ease-in-out infinite;"></div>
                             </div>
-                            <span style="color:var(--accent);font-weight:700;">OK</span>
+                            <span style="color:var(--accent);font-weight:700;font-size:9px;">72%</span>
                         </div>
                     </div>
-                    <div style="height:1px;background:rgba(255,255,255,0.05);margin:12px 0;"></div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span style="color:#444;">BUGS_IN_PROD</span>
+                        <span style="color:#00ff88;font-weight:700;font-size:9px;" data-tip="Definitely accurate">0 ✓</span>
+                    </div>
+                    <div style="height:1px;background:rgba(255,255,255,0.04);margin:10px 0;"></div>
                 </div>
 
                 <!-- CLI -->
-                <div style="padding:0 20px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;"
+                <div style="padding:0 18px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;"
                      onclick="document.getElementById('cli-input').focus()">
-                    <div id="cli-output" style="height:160px;overflow-y:auto;margin-bottom:10px;color:#888;line-height:1.8;">
-                        <span style="color:var(--accent);">System initialized. Type 'help' for commands.</span><br>
+                    <div id="cli-output" style="height:155px;overflow-y:auto;margin-bottom:10px;color:#666;line-height:1.9;">
+                        <span style="color:var(--accent);">visitor@schale:~$</span> <span style="color:#666">type 'help' for commands</span><br>
+                        <span style="color:#333;font-size:9px;">· · · try: coffee, hack, uwu, sudo · · ·</span><br>
                     </div>
-                    <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:10px;">
+                    <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:10px;">
                         <span style="color:var(--accent);">visitor@schale:~$</span>
-                        <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false">
-                        <span class="cli-cursor" style="width:7px;height:14px;background:var(--accent);display:block;border-radius:1px;"></span>
+                        <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false" placeholder="">
+                        <span class="cli-cursor" style="width:7px;height:13px;background:var(--accent);display:block;border-radius:1px;"></span>
                     </div>
                 </div>
             </div>
 
-            <!-- Corner accents -->
-            <div class="absolute -z-10 -top-6 -right-6 w-28 h-28 border-t-2 border-r-2 border-schale/20 rounded-tr-3xl pointer-events-none"></div>
-            <div class="absolute -z-10 -bottom-6 -left-6 w-28 h-28 border-b-2 border-l-2 border-schale/20 rounded-bl-3xl pointer-events-none"></div>
+            <!-- Corner deco -->
+            <div class="absolute -z-10 -top-6 -right-6 w-28 h-28 border-t-2 border-r-2 border-schale/15 rounded-tr-3xl pointer-events-none"></div>
+            <div class="absolute -z-10 -bottom-6 -left-6 w-28 h-28 border-b-2 border-l-2 border-schale/15 rounded-bl-3xl pointer-events-none"></div>
         </div>
     </div>
 </header>
 
 <!-- ══════════════════════════════════════════════
-     PERSONNEL FILE
+     PERSONNEL FILE  ·  02
 ══════════════════════════════════════════════ -->
-<section id="file" class="py-24 bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
+<section id="file" class="py-24 bg-dark relative" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="section-num" style="right:24px;top:40px;">02</div>
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid md:grid-cols-12 gap-12 items-center">
 
             <!-- Profile card -->
             <div class="md:col-span-5" data-aos="fade-right">
                 <div class="relative group">
-                    <div class="glass-card rounded-2xl p-7 relative z-10 hover:border-schale/30 transition-colors duration-500">
+                    <div class="glass-card tilt-card rounded-2xl p-7 relative z-10 hover:border-schale/30 transition-colors duration-500">
                         <div class="card-header-strip strip-blue"></div>
                         <div class="flex items-center justify-between mb-6">
-                            <div id="pfp-container" onclick="updateProfilePicture()" class="w-24 h-24 rounded-2xl flex items-center justify-center border border-schale/20 group-hover:border-schale cursor-pointer overflow-hidden transition-all duration-300 relative"
-                                 style="background:rgba(0,164,255,0.06);">
-                                <img id="avatar-img" src="" class="w-full h-full object-cover hidden" onerror="this.classList.add('hidden');document.getElementById('avatar-placeholder').classList.remove('hidden');"/>
+                            <!-- Avatar -->
+                            <div id="pfp-container" onclick="updateProfilePicture()"
+                                 class="w-24 h-24 rounded-2xl flex items-center justify-center border border-schale/20 cursor-pointer overflow-hidden transition-all duration-300 relative"
+                                 style="background:rgba(0,164,255,0.05);"
+                                 data-tip="Click to update your profile photo">
+                                <img id="avatar-img" src="" class="w-full h-full object-cover hidden"
+                                     onerror="this.classList.add('hidden');document.getElementById('avatar-placeholder').classList.remove('hidden');"/>
                                 <i id="avatar-placeholder" data-lucide="user" class="w-10 h-10 text-schale"></i>
-                                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style="background:rgba(0,0,0,0.55);">
+                                <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style="background:rgba(0,0,0,0.6);">
                                     <i data-lucide="edit-2" class="w-5 h-5 text-white"></i>
                                 </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-[9px] font-mono text-gray-600 mb-1 tracking-widest">CLEARANCE LEVEL</div>
-                                <div class="text-xl font-black text-white" style="font-family:'Rajdhani',sans-serif;">PRODIGY <span class="text-schale">01</span></div>
+                                <div class="text-xl font-black text-white" style="font-family:'Rajdhani',sans-serif;">
+                                    PRODIGY <span class="text-schale">01</span>
+                                </div>
+                                <div class="text-[9px] font-mono text-gray-700 mt-1">⬛⬛⬛⬛⬜ CLASSIFIED</div>
                             </div>
                         </div>
                         <div class="space-y-3 font-mono text-xs">
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <span class="text-gray-600">CODENAME</span><span class="text-white font-bold">WATER</span>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <span class="text-gray-600">CODENAME</span>
+                                <span class="text-white font-bold">WATER</span>
                             </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <span class="text-gray-600">AGE</span><span class="text-white font-bold">15</span>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <span class="text-gray-600">AGE</span>
+                                <span class="text-white font-bold">15 <span class="text-gray-700">(yes, really)</span></span>
                             </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <span class="text-gray-600">AFFILIATION</span><span class="text-schale font-bold">SCHALE (INDEPENDENT)</span>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <span class="text-gray-600">AFFILIATION</span>
+                                <span class="text-schale font-bold">SCHALE (INDIE)</span>
                             </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                                <span class="text-gray-600">SPECIALTY</span><span class="text-white font-bold">BACKEND ENGINEERING</span>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <span class="text-gray-600">SPECIALTY</span>
+                                <span class="text-white font-bold">BACKEND / SYSTEMS</span>
+                            </div>
+                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <span class="text-gray-600">EXPERIENCE</span>
+                                <span class="text-white font-bold">4+ YRS</span>
                             </div>
                             <div class="flex justify-between py-2">
-                                <span class="text-gray-600">EXPERIENCE</span><span class="text-white font-bold">4+ YEARS</span>
+                                <span class="text-gray-600">STATUS</span>
+                                <span class="text-green-400 font-bold flex items-center gap-1.5">
+                                    <span class="live-dot" style="width:6px;height:6px;"></span> AVAILABLE
+                                </span>
                             </div>
                         </div>
-                        <div class="mt-5 text-[9px] text-gray-700 text-center uppercase tracking-widest">Click avatar to update photo</div>
+                        <div class="mt-5 text-[9px] text-gray-700 text-center tracking-widest">Click avatar to update photo</div>
                     </div>
-                    <div class="absolute inset-0 bg-schale/10 blur-3xl -z-10 opacity-0 group-hover:opacity-40 transition-opacity duration-700 rounded-2xl"></div>
+                    <div class="absolute inset-0 bg-schale/8 blur-3xl -z-10 opacity-0 group-hover:opacity-50 transition-opacity duration-700 rounded-2xl"></div>
                 </div>
             </div>
 
-            <!-- Bio -->
+            <!-- Bio — improved writing -->
             <div class="md:col-span-7" data-aos="fade-left">
                 <div class="section-tag mb-4"><i data-lucide="file-text" class="w-3 h-3"></i> Personnel File</div>
-                <h2 class="text-3xl font-black text-white mb-5" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
+                <h2 class="text-3xl font-black text-white mb-6" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
                     PERSONNEL FILE <span class="text-schale">#8080</span>
                 </h2>
-                <p class="text-gray-400 leading-relaxed mb-5 text-sm">
-                    I am a 15-year-old Roblox Systems Engineer with a passion for creating robust, scalable backend architectures. Unlike typical scripters who just "make it work" I ensure it <strong class="text-white font-bold">keeps working</strong> under high player loads.
+                <p class="text-gray-400 leading-loose mb-5 text-sm">
+                    I'm a 15-year-old self-taught Roblox Systems Engineer who got tired of watching developers release buggy games. So I started fixing them — and apparently people pay for that.
                 </p>
-                <p class="text-gray-400 leading-relaxed mb-8 text-sm">
-                    My philosophy: <span class="text-schale font-semibold">Clean Code = Less Bugs = Happy Players</span>. I specialise in DataStores, Anti-Exploit measures, and complex game loops that require precise synchronisation between client and server.
+                <p class="text-gray-400 leading-loose mb-5 text-sm">
+                    While most scripters write code that <em class="text-white not-italic">"just works"</em>, I write code that keeps working at 10,000 concurrent players, after a DataStore migration, after some guy tries to dupe items. My philosophy is brutally simple:
+                </p>
+                <div class="p-4 rounded-xl mb-6" style="background:rgba(0,164,255,0.04);border-left:3px solid var(--accent);">
+                    <p class="text-white font-semibold text-sm italic">
+                        "Clean Code → Less Bugs → Happy Players → Happy Client → Happy me."
+                    </p>
+                </div>
+                <p class="text-gray-400 text-sm leading-loose mb-8">
+                    4 years of Roblox backend work, 50+ shipped commissions, and exactly <strong class="text-white">0</strong> production fires I couldn't put out.
                 </p>
 
                 <div class="flex flex-wrap gap-3 mb-8">
-                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400" style="background:rgba(255,255,255,0.03);">
-                        <div class="w-2 h-2 rounded-full" style="background:#60a5fa;box-shadow:0 0 6px #60a5fa;"></div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-schale/30 hover:text-schale transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
+                        <div class="w-1.5 h-1.5 rounded-full" style="background:#60a5fa;box-shadow:0 0 5px #60a5fa;"></div>
                         LuaU Expert
                     </div>
-                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400" style="background:rgba(255,255,255,0.03);">
-                        <div class="w-2 h-2 rounded-full" style="background:#c084fc;box-shadow:0 0 6px #c084fc;"></div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-purple-500/30 hover:text-purple-400 transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
+                        <div class="w-1.5 h-1.5 rounded-full" style="background:#c084fc;box-shadow:0 0 5px #c084fc;"></div>
                         Rojo Workflow
                     </div>
-                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400" style="background:rgba(255,255,255,0.03);">
-                        <div class="w-2 h-2 rounded-full" style="background:#34d399;box-shadow:0 0 6px #34d399;"></div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-green-500/30 hover:text-green-400 transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
+                        <div class="w-1.5 h-1.5 rounded-full" style="background:#34d399;box-shadow:0 0 5px #34d399;"></div>
                         Open to Commissions
                     </div>
                 </div>
 
-                <div class="p-4 rounded-xl border border-schale/15 text-xs font-mono text-gray-500 flex items-center gap-3" style="background:rgba(0,164,255,0.04);">
-                    <i data-lucide="info" class="w-4 h-4 text-schale flex-shrink-0"></i>
-                    Available for freelance work. DM on Discord: <span class="text-schale ml-1">hokpy</span>
+                <div class="p-4 rounded-xl border border-schale/12 flex items-center gap-3 text-xs font-mono" style="background:rgba(0,164,255,0.03);">
+                    <i data-lucide="zap" class="w-4 h-4 text-schale flex-shrink-0"></i>
+                    <span class="text-gray-500">Quickest way to reach me → Discord:</span>
+                    <span class="text-schale font-bold cursor-pointer hover:underline" onclick="copyDiscord();playClick()">hokpy</span>
+                    <span class="text-gray-700">(click to copy)</span>
                 </div>
             </div>
         </div>
@@ -358,58 +421,56 @@ tailwind.config = {
 </section>
 
 <!-- ══════════════════════════════════════════════
-     SKILLS
+     SKILLS  ·  03
 ══════════════════════════════════════════════ -->
-<section id="skills" class="py-24 bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
+<section id="skills" class="py-24 bg-panel relative" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="section-num" style="right:24px;top:40px;">03</div>
     <div class="max-w-7xl mx-auto px-6">
-        <div class="flex items-center gap-4 mb-3" data-aos="fade-up">
+        <div data-aos="fade-up" class="mb-3">
             <div class="section-tag"><i data-lucide="cpu" class="w-3 h-3"></i> Specifications</div>
         </div>
-        <h2 class="text-3xl font-black text-white mb-12" data-aos="fade-up" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">SYSTEM SPECS</h2>
+        <h2 class="text-3xl font-black text-white mb-3" data-aos="fade-up" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
+            SYSTEM SPECS
+        </h2>
+        <p class="text-gray-600 text-sm mb-12 font-mono" data-aos="fade-up" data-aos-delay="50">
+            — hover the percentage. you won't. —
+        </p>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <!-- Skill 1 -->
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="0">
+            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="0">
                 <div class="card-header-strip strip-blue"></div>
                 <div class="flex justify-between items-end mb-5 pt-2">
                     <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Luau</h3>
-                    <span class="text-schale font-mono text-[10px] tracking-widest">98%</span>
+                    <span class="text-schale font-mono text-[10px] tracking-widest skill-pct" data-tip="Metatables? OOP? Closures? Yes.">98%</span>
                 </div>
-                <div class="skill-bar-track mb-3">
-                    <div class="skill-bar-fill" data-width="98%"></div>
-                </div>
+                <div class="skill-bar-track mb-3"><div class="skill-bar-fill" data-width="98%"></div></div>
                 <p class="text-xs text-gray-600">OOP, Metatables, Parallel Luau</p>
             </div>
-            <!-- Skill 2 -->
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="80">
+            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="70">
                 <div class="card-header-strip strip-blue"></div>
                 <div class="flex justify-between items-end mb-5 pt-2">
                     <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">DataStores</h3>
-                    <span class="text-schale font-mono text-[10px] tracking-widest">95%</span>
+                    <span class="text-schale font-mono text-[10px] tracking-widest skill-pct" data-tip="I've read the API docs more times than I've slept.">95%</span>
                 </div>
-                <div class="skill-bar-track mb-3">
-                    <div class="skill-bar-fill" data-width="95%"></div>
-                </div>
+                <div class="skill-bar-track mb-3"><div class="skill-bar-fill" data-width="95%"></div></div>
                 <p class="text-xs text-gray-600">ProfileService, Session Locking</p>
             </div>
-            <!-- Skill 3 -->
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="160">
+            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="140">
                 <div class="card-header-strip strip-purple"></div>
                 <div class="flex justify-between items-end mb-5 pt-2">
                     <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Interface</h3>
-                    <span class="text-purple-400 font-mono text-[10px] tracking-widest">85%</span>
+                    <span class="text-purple-400 font-mono text-[10px] tracking-widest skill-pct" data-tip="I can make it look nice. I just prefer it to work.">85%</span>
                 </div>
                 <div class="skill-bar-track mb-3">
                     <div class="skill-bar-fill" data-width="85%" style="background:linear-gradient(90deg,#a855f7,#c084fc);box-shadow:0 0 8px rgba(168,85,247,0.4);"></div>
                 </div>
                 <p class="text-xs text-gray-600">Roact, Fusion, TweenService</p>
             </div>
-            <!-- Skill 4 -->
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="240">
+            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="210">
                 <div class="card-header-strip strip-gold"></div>
                 <div class="flex justify-between items-end mb-5 pt-2">
                     <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Systems</h3>
-                    <span class="text-gold font-mono text-[10px] tracking-widest">92%</span>
+                    <span class="text-gold font-mono text-[10px] tracking-widest skill-pct" data-tip="Knit, ECS, event-driven, modular — you name it.">92%</span>
                 </div>
                 <div class="skill-bar-track mb-3">
                     <div class="skill-bar-fill" data-width="92%" style="background:linear-gradient(90deg,var(--gold),#ffcc44);box-shadow:0 0 8px rgba(255,168,0,0.4);"></div>
@@ -417,18 +478,64 @@ tailwind.config = {
                 <p class="text-xs text-gray-600">Knit Framework, ECS Pattern</p>
             </div>
         </div>
+
+        <!-- Fun extra row -->
+        <div class="mt-5 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="280" style="opacity:0.6;">
+                <div class="flex justify-between items-end mb-4 pt-1">
+                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Sleep Schedule</h3>
+                    <span class="text-red-500 font-mono text-[10px]">2%</span>
+                </div>
+                <div class="skill-bar-track mb-2">
+                    <div class="skill-bar-fill" data-width="2%" style="background:#FF4F4F;box-shadow:0 0 6px rgba(255,79,79,0.5);"></div>
+                </div>
+                <p class="text-[10px] text-gray-700">caffeine-dependent</p>
+            </div>
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="330" style="opacity:0.6;">
+                <div class="flex justify-between items-end mb-4 pt-1">
+                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Touching Grass</h3>
+                    <span class="text-red-500 font-mono text-[10px]">5%</span>
+                </div>
+                <div class="skill-bar-track mb-2">
+                    <div class="skill-bar-fill" data-width="5%" style="background:#34d399;box-shadow:0 0 6px rgba(52,211,153,0.4);"></div>
+                </div>
+                <p class="text-[10px] text-gray-700">rare event, treat with care</p>
+            </div>
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="380" style="opacity:0.6;">
+                <div class="flex justify-between items-end mb-4 pt-1">
+                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Googling Errors</h3>
+                    <span class="text-gold font-mono text-[10px]">99%</span>
+                </div>
+                <div class="skill-bar-track mb-2">
+                    <div class="skill-bar-fill" data-width="99%" style="background:var(--gold);box-shadow:0 0 6px var(--gold-glow);"></div>
+                </div>
+                <p class="text-[10px] text-gray-700">Stack Overflow MVP</p>
+            </div>
+            <div class="skill-card" data-aos="fade-up" data-aos-delay="430" style="opacity:0.6;">
+                <div class="flex justify-between items-end mb-4 pt-1">
+                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Charging Fair Rates</h3>
+                    <span class="text-schale font-mono text-[10px]">actually yes</span>
+                </div>
+                <div class="skill-bar-track mb-2">
+                    <div class="skill-bar-fill" data-width="75%"></div>
+                </div>
+                <p class="text-[10px] text-gray-700">use the estimator ↓</p>
+            </div>
+        </div>
     </div>
 </section>
 
 <!-- ══════════════════════════════════════════════
-     HISTORY
+     HISTORY  ·  04
 ══════════════════════════════════════════════ -->
 <section id="history" class="py-24 bg-dark relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-schale/4 to-transparent pointer-events-none"></div>
+    <div class="section-num" style="right:24px;top:40px;">04</div>
+    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-schale/3 to-transparent pointer-events-none"></div>
     <div class="max-w-4xl mx-auto px-6 relative z-10">
         <div class="text-center mb-14" data-aos="fade-up">
             <div class="section-tag mb-3 mx-auto w-fit">Career Timeline</div>
             <h2 class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">MISSION LOG</h2>
+            <p class="text-gray-600 text-sm mt-2 font-mono">the origin story nobody asked for</p>
         </div>
 
         <div class="relative" data-aos="fade-up" data-aos-delay="100">
@@ -440,25 +547,50 @@ tailwind.config = {
                     <div class="card-header-strip strip-blue"></div>
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 pt-1">
                         <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">Freelance Systems Engineer</h3>
-                        <span class="text-schale font-mono text-xs mt-1 md:mt-0">2022 – PRESENT</span>
+                        <span class="text-schale font-mono text-xs mt-1 md:mt-0 bg-schale/8 px-2 py-0.5 rounded">2022 – PRESENT</span>
                     </div>
-                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">Architecting scalable backend solutions for high-traffic simulator games. Delivered 50+ commissions over a 3-year career.</p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">DataStore2</span>
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">ProfileService</span>
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);">Anti-Exploit</span>
+                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                        Building and maintaining backend systems for high-traffic Roblox games. 50+ commissions shipped. Zero clients reported memory leaks. <span class="text-gray-600">(that I know of)</span>
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">DataStore2</span>
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">ProfileService</span>
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">Anti-Exploit</span>
+                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">Optimization</span>
+                    </div>
+                    <!-- Hover reveal detail -->
+                    <div class="reveal-detail text-xs text-gray-600 font-mono pt-2" style="border-top:1px solid rgba(255,255,255,0.04);">
+                        ↳ available now — see estimator to get a quote
                     </div>
                 </div>
             </div>
 
             <div class="timeline-item group">
                 <div class="timeline-dot"></div>
-                <div class="glass-card p-6 rounded-xl hover:border-white/15">
+                <div class="glass-card p-6 rounded-xl hover:border-white/12">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
                         <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">Junior Developer</h3>
                         <span class="text-gray-500 font-mono text-xs mt-1 md:mt-0">2021 – 2022</span>
                     </div>
-                    <p class="text-gray-400 text-sm leading-relaxed">Started journey with Lua. Created several open-source modules and contributed to community resources.</p>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Started the journey with Lua. Made terrible code. Googled a lot. Slowly became less wrong. Created open-source modules that are somehow still used today.
+                    </p>
+                    <div class="reveal-detail text-xs text-gray-600 font-mono pt-2 mt-2" style="border-top:1px solid rgba(255,255,255,0.04);">
+                        ↳ first commit message: "added stuff" — genuine growth
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item group">
+                <div class="timeline-dot" style="border-color:rgba(255,255,255,0.2);box-shadow:none;"></div>
+                <div class="glass-card p-6 rounded-xl hover:border-white/12" style="opacity:0.5;">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">The Beginning</h3>
+                        <span class="text-gray-600 font-mono text-xs mt-1 md:mt-0">~2020</span>
+                    </div>
+                    <p class="text-gray-500 text-sm italic">
+                        Opened Studio for the first time. Moved a baseplate brick around for 40 minutes. Thought I was a developer.
+                    </p>
                 </div>
             </div>
         </div>
@@ -466,33 +598,37 @@ tailwind.config = {
 </section>
 
 <!-- ══════════════════════════════════════════════
-     CODE VAULT
+     CODE VAULT  ·  05
 ══════════════════════════════════════════════ -->
-<section id="code" class="py-24 bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
+<section id="code" class="py-24 bg-panel relative" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="section-num" style="right:24px;top:40px;">05</div>
     <div class="max-w-6xl mx-auto px-6">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6" data-aos="fade-up">
             <div>
                 <div class="section-tag mb-3"><i data-lucide="code-2" class="w-3 h-3"></i> Open Source</div>
                 <h2 class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">CODE VAULT</h2>
-                <p class="text-gray-500 text-sm mt-1">Direct access to my open-source modules.</p>
+                <p class="text-gray-600 text-sm mt-1">Real modules from real projects. Steal them. I don't care.</p>
             </div>
-            <div class="flex gap-4 text-xs font-mono text-gray-600">
+            <div class="flex gap-4 text-[10px] font-mono text-gray-600">
                 <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> CLEAN</span>
                 <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> OPTIMIZED</span>
                 <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> DOCUMENTED</span>
+                <span class="flex items-center gap-1.5 text-gray-700" data-tip="Okay maybe not 100% comment coverage"><i data-lucide="minus" class="w-3 h-3"></i> <s>COMMENT COVERAGE 100%</s></span>
             </div>
         </div>
         <div class="code-window" data-aos="fade-up" data-aos-delay="150">
             <div class="code-header">
                 <div class="flex gap-1.5 items-center mr-4 flex-shrink-0">
-                    <div class="code-dot bg-red-500"></div>
+                    <div class="code-dot bg-red-500" data-tip="Close (does nothing)"></div>
                     <div class="code-dot bg-yellow-500"></div>
                     <div class="code-dot bg-green-500"></div>
                 </div>
                 <div id="code-tabs" class="flex overflow-x-auto gap-0.5"></div>
             </div>
             <div class="relative group">
-                <button onclick="copyCode()" class="absolute top-3 right-3 bg-white/8 hover:bg-white/15 text-gray-400 hover:text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10" title="Copy code">
+                <button onclick="copyCode()" data-ripple
+                        class="absolute top-3 right-3 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10 text-gray-500 hover:text-white"
+                        style="background:rgba(255,255,255,0.06);" data-tip="Copy to clipboard">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                 </button>
                 <pre class="code-content"><code id="code-display" class="language-lua"></code></pre>
@@ -502,20 +638,22 @@ tailwind.config = {
 </section>
 
 <!-- ══════════════════════════════════════════════
-     PROJECTS
+     PROJECTS  ·  06
 ══════════════════════════════════════════════ -->
 <section id="projects" class="py-32 relative bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="section-num" style="right:24px;top:40px;">06</div>
     <div class="max-w-7xl mx-auto px-6 relative z-10">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6" data-aos="fade-up">
             <div>
                 <div class="section-tag mb-3"><i data-lucide="folder-open" class="w-3 h-3"></i> Database</div>
                 <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">MISSION REPORTS</h2>
+                <p class="text-gray-600 text-sm mt-2">Things I built. Some look cool. All of them work.</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <button onclick="filterProjects('all')" class="filter-btn bg-schale text-white text-xs font-bold rounded-full px-5 py-2 shadow-md hover:scale-105 transition-all">ALL</button>
-                <button onclick="filterProjects('GAMEPLAY')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all">SYSTEMS</button>
-                <button onclick="filterProjects('FULL GAME')" class="filter-btn bg-dark text-gold border border-gold/20 text-xs font-bold rounded-full px-5 py-2 hover:bg-gold hover:text-black transition-all">GAMES</button>
-                <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all">FIXES</button>
+                <button onclick="filterProjects('all')" class="filter-btn bg-schale text-white text-xs font-bold rounded-full px-5 py-2 shadow-md hover:scale-105 transition-all" data-ripple>ALL</button>
+                <button onclick="filterProjects('GAMEPLAY')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all" data-ripple>SYSTEMS</button>
+                <button onclick="filterProjects('FULL GAME')" class="filter-btn bg-dark text-gold border border-gold/20 text-xs font-bold rounded-full px-5 py-2 hover:bg-gold hover:text-black transition-all" data-ripple>GAMES</button>
+                <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all" data-ripple>FIXES</button>
             </div>
         </div>
         <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
@@ -523,85 +661,86 @@ tailwind.config = {
 </section>
 
 <!-- ══════════════════════════════════════════════
-     CALCULATOR
+     CALCULATOR  ·  07
 ══════════════════════════════════════════════ -->
 <section id="calculator" class="py-32 relative bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="section-num" style="right:24px;top:40px;">07</div>
     <div class="max-w-5xl mx-auto px-6" data-aos="fade-up">
         <div class="section-tag mb-4 w-fit"><i data-lucide="calculator" class="w-3 h-3"></i> Pricing</div>
         <div class="grid md:grid-cols-12 gap-10 items-start">
 
-            <!-- Left: controls -->
+            <!-- Controls -->
             <div class="md:col-span-7 space-y-7">
                 <div>
                     <h2 class="text-3xl font-black text-white mb-1" style="font-family:'Rajdhani',sans-serif;" data-i18n="calc_title">RESOURCE ESTIMATOR</h2>
-                    <p class="text-gray-500 text-sm" data-i18n="calc_subtitle">Calculate budget requirements.</p>
+                    <p class="text-gray-500 text-sm" data-i18n="calc_subtitle">No surprises. Calculate before you commit.</p>
                 </div>
-
-                <!-- Service type -->
                 <div class="space-y-3">
                     <label class="text-schale text-[10px] font-bold tracking-[0.15em] block" data-i18n="calc_type">OPERATION TYPE</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="selectService(500,this);playClick()" class="service-btn">
+                        <button onclick="selectService(500,this);playClick()" class="service-btn" data-ripple>
                             <div class="text-white font-bold text-sm mb-1" data-i18n="serv_quick">Quick Task</div>
-                            <div class="text-gray-600 text-[10px] font-mono">500+ R$</div>
+                            <div class="text-gray-600 text-[10px] font-mono">500+ R$ · ~$1.75 USD</div>
                         </button>
-                        <button onclick="selectService(2500,this);playClick()" class="service-btn" style="border-color:var(--accent);background:rgba(0,164,255,0.06);">
+                        <button onclick="selectService(2500,this);playClick()" class="service-btn" data-ripple style="border-color:var(--accent);background:rgba(0,164,255,0.06);">
                             <div class="text-white font-bold text-sm mb-1" data-i18n="serv_fix">Bug Fix</div>
-                            <div class="text-gray-600 text-[10px] font-mono">2,500+ R$</div>
+                            <div class="text-gray-600 text-[10px] font-mono">2,500+ R$ · ~$8.75 USD</div>
                         </button>
-                        <button onclick="selectService(10000,this);playClick()" class="service-btn">
+                        <button onclick="selectService(10000,this);playClick()" class="service-btn" data-ripple>
                             <div class="text-white font-bold text-sm mb-1" data-i18n="serv_sys">System</div>
-                            <div class="text-gray-600 text-[10px] font-mono">10k+ R$</div>
+                            <div class="text-gray-600 text-[10px] font-mono">10k+ R$ · ~$35 USD</div>
                         </button>
-                        <button onclick="selectService(30000,this);playClick()" class="service-btn">
+                        <button onclick="selectService(30000,this);playClick()" class="service-btn" data-ripple>
                             <div class="text-white font-bold text-sm mb-1" data-i18n="serv_game">Full Game</div>
-                            <div class="text-gray-600 text-[10px] font-mono">30k+ R$</div>
+                            <div class="text-gray-600 text-[10px] font-mono">30k+ R$ · ~$105 USD</div>
                         </button>
                     </div>
                 </div>
-
-                <!-- Sliders -->
-                <div style="background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:24px;" class="space-y-6">
+                <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:24px;" class="space-y-6">
                     <div>
                         <div class="flex justify-between mb-3">
                             <label class="text-gray-400 text-xs font-bold tracking-widest" data-i18n="label_complexity">Complexity</label>
                             <span id="complexity-val" class="text-gray-400 text-xs font-mono px-2 py-0.5 rounded" style="background:rgba(255,255,255,0.06);">Standard</span>
                         </div>
-                        <input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()">
+                        <input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()" data-tip="How complex is the work?">
                     </div>
                     <div>
                         <div class="flex justify-between mb-3">
                             <label class="text-gray-400 text-xs font-bold tracking-widest" data-i18n="label_timeline">Urgency</label>
                             <span id="rush-val" class="text-gray-400 text-xs font-mono px-2 py-0.5 rounded" style="background:rgba(255,255,255,0.06);">Standard</span>
                         </div>
-                        <input type="range" min="1" max="1.5" step="0.1" value="1" id="rush-range" oninput="calculateBudget()">
+                        <input type="range" min="1" max="1.5" step="0.1" value="1" id="rush-range" oninput="calculateBudget()" data-tip="Rush fee applies if you need it YESTERDAY">
                     </div>
                 </div>
             </div>
 
-            <!-- Right: invoice -->
-            <div class="md:col-span-5 rounded-2xl p-7 relative overflow-hidden" style="background:var(--bg);border:1px solid rgba(255,255,255,0.08);box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-                <div class="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none" style="background:radial-gradient(circle,rgba(0,164,255,0.08),transparent 70%);"></div>
+            <!-- Invoice -->
+            <div class="md:col-span-5 rounded-2xl p-7 relative overflow-hidden tilt-card" style="background:var(--bg);border:1px solid rgba(255,255,255,0.07);box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+                <div class="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none" style="background:radial-gradient(circle,rgba(0,164,255,0.07),transparent 70%);"></div>
                 <div class="flex justify-between items-center mb-7">
                     <span class="text-[10px] font-bold text-gray-600 tracking-widest">INVOICE PREVIEW</span>
-                    <select id="currency-select" onchange="calculateBudget();playClick()" class="text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 outline-none hover:border-schale/40 transition-colors" style="background:rgba(0,0,0,0.4);">
+                    <select id="currency-select" onchange="calculateBudget();playClick()"
+                            class="text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 outline-none hover:border-schale/40 transition-colors"
+                            style="background:rgba(0,0,0,0.4);">
                         <option value="R$">R$</option>
                         <option value="USD">USD</option>
                         <option value="THB">THB</option>
                         <option value="VND">VND</option>
                     </select>
                 </div>
-                <div class="space-y-3 mb-7 pb-7 font-mono text-sm" style="border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <div class="flex justify-between text-gray-500"><span>Base Cost</span>        <span class="text-white" id="receipt-base">--</span></div>
-                    <div class="flex justify-between text-gray-500"><span>Complexity ×</span>    <span class="text-schale" id="receipt-comp">x1.0</span></div>
-                    <div class="flex justify-between text-gray-500"><span>Rush Fee ×</span>      <span class="text-alert" id="receipt-rush">x1.0</span></div>
+                <div class="space-y-3 mb-7 pb-7 font-mono text-sm" style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div class="flex justify-between text-gray-500"><span>Base Cost</span><span class="text-white" id="receipt-base">--</span></div>
+                    <div class="flex justify-between text-gray-500"><span>Complexity ×</span><span class="text-schale" id="receipt-comp">x1.0</span></div>
+                    <div class="flex justify-between text-gray-500"><span>Rush Fee ×</span><span class="text-alert" id="receipt-rush">x1.0</span></div>
                 </div>
                 <div class="text-right mb-7">
                     <span class="text-[10px] text-schale font-bold uppercase tracking-widest block mb-1">Total Estimated</span>
                     <div id="total-price" class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:-0.01em;">2,500 R$</div>
-                    <div id="sub-price"   class="text-xs text-gray-600 font-mono mt-1">approx $8.75 USD</div>
+                    <div id="sub-price" class="text-xs text-gray-600 font-mono mt-1">approx $8.75 USD</div>
                 </div>
-                <a href="#contact" onclick="playClick()" class="w-full bg-schale hover:bg-white hover:text-schale text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm" style="box-shadow:0 4px 20px rgba(0,164,255,0.25);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
+                <a href="#contact" onclick="playClick()" data-ripple
+                   class="w-full text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm hover:bg-white hover:text-schale"
+                   style="background:var(--accent);box-shadow:0 4px 20px rgba(0,164,255,0.25);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
                     <i data-lucide="message-square" class="w-4 h-4"></i> DISCUSS QUOTE
                 </a>
             </div>
@@ -610,23 +749,26 @@ tailwind.config = {
 </section>
 
 <!-- ══════════════════════════════════════════════
-     REVIEWS
+     REVIEWS  ·  08
 ══════════════════════════════════════════════ -->
-<section id="reviews" class="py-32 bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
+<section id="reviews" class="py-32 bg-dark relative" style="border-top:1px solid rgba(255,255,255,0.05);">
+    <div class="section-num" style="right:24px;top:40px;">08</div>
     <div class="max-w-7xl mx-auto px-6">
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6" data-aos="fade-up">
             <div>
-                <div class="section-tag mb-3" style="color:var(--gold);background:rgba(255,168,0,0.08);border-color:rgba(255,168,0,0.15);">
+                <div class="section-tag mb-3" style="color:var(--gold);background:rgba(255,168,0,0.07);border-color:rgba(255,168,0,0.15);">
                     <i data-lucide="star" class="w-3 h-3"></i> Testimonials
                 </div>
                 <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
                     FIELD REPORTS
-                    <span id="reviews-count" class="ml-3 text-xl font-mono text-gold px-3 py-1 rounded-full align-middle" style="background:rgba(255,168,0,0.08);border:1px solid rgba(255,168,0,0.2);">0</span>
+                    <span id="reviews-count" class="ml-3 text-xl font-mono text-gold px-3 py-1 rounded-full align-middle"
+                          style="background:rgba(255,168,0,0.07);border:1px solid rgba(255,168,0,0.2);">0</span>
                 </h2>
+                <p class="text-gray-600 text-sm mt-2">Real reviews. From real clients. Allegedly.</p>
             </div>
-            <button onclick="openReviewModal()"
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:-translate-y-0.5"
-                style="background:rgba(255,168,0,0.08);border:1px solid rgba(255,168,0,0.25);color:var(--gold);box-shadow:0 4px 20px rgba(255,168,0,0.1);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
+            <button onclick="openReviewModal()" data-magnetic data-ripple
+                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:-translate-y-1"
+                style="background:rgba(255,168,0,0.07);border:1px solid rgba(255,168,0,0.25);color:var(--gold);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
                 SUBMIT FIELD REPORT
             </button>
@@ -636,15 +778,17 @@ tailwind.config = {
 </section>
 
 <!-- REVIEW MODAL -->
-<div id="review-modal" class="hidden fixed inset-0 z-[200] items-center justify-center px-4" style="background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);"
+<div id="review-modal" class="hidden fixed inset-0 z-[200] items-center justify-center px-4"
+     style="background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);"
      onclick="if(event.target===this) closeReviewModal()">
-    <div class="w-full max-w-lg rounded-2xl overflow-hidden" style="background:#090B10;border:1px solid rgba(255,255,255,0.08);box-shadow:0 40px 100px rgba(0,0,0,0.7);">
-        <div style="background:rgba(255,168,0,0.06);border-bottom:1px solid rgba(255,168,0,0.12);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
+    <div class="w-full max-w-lg rounded-2xl overflow-hidden"
+         style="background:#090B10;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7);">
+        <div style="background:rgba(255,168,0,0.05);border-bottom:1px solid rgba(255,168,0,0.1);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
             <div class="flex items-center gap-3">
                 <i data-lucide="file-text" class="w-4 h-4 text-gold"></i>
                 <span class="font-black text-white text-sm tracking-widest" style="font-family:'Rajdhani',sans-serif;">SUBMIT FIELD REPORT</span>
             </div>
-            <button onclick="closeReviewModal()" class="text-gray-600 hover:text-white transition-colors">
+            <button onclick="closeReviewModal()" class="text-gray-600 hover:text-white transition-colors hover:rotate-90 transition-transform">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
@@ -653,8 +797,8 @@ tailwind.config = {
                 <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-2">OPERATIVE HANDLE</label>
                 <input id="review-name" type="text" placeholder="Your name or username"
                     class="w-full rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-700 outline-none transition-colors"
-                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);"
-                    onfocus="this.style.borderColor='rgba(255,168,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
+                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);"
+                    onfocus="this.style.borderColor='rgba(255,168,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"
                     maxlength="40" required>
             </div>
             <div>
@@ -663,16 +807,16 @@ tailwind.config = {
             </div>
             <div>
                 <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-2">FIELD NOTES</label>
-                <textarea id="review-text" placeholder="Describe your experience working with Water..."
+                <textarea id="review-text" placeholder="Was it good? Terrible? Did he fix it? Tell us."
                     class="w-full rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-700 outline-none transition-colors resize-none h-28"
-                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.08);"
-                    onfocus="this.style.borderColor='rgba(255,168,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
+                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);"
+                    onfocus="this.style.borderColor='rgba(255,168,0,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"
                     maxlength="280" required></textarea>
-                <div class="text-right text-[10px] font-mono text-gray-700 mt-1">max 280 chars</div>
+                <div class="text-right text-[9px] font-mono text-gray-700 mt-1">max 280 characters</div>
             </div>
-            <button id="reviews-submit-btn" type="submit"
-                class="w-full text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm"
-                style="background:var(--accent);box-shadow:0 4px 20px rgba(0,164,255,0.25);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
+            <button id="reviews-submit-btn" type="submit" data-ripple
+                class="w-full text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm hover:opacity-90"
+                style="background:var(--accent);box-shadow:0 4px 20px rgba(0,164,255,0.2);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
                 <i data-lucide="send" class="w-4 h-4"></i> TRANSMIT REPORT
             </button>
         </form>
@@ -680,66 +824,78 @@ tailwind.config = {
 </div>
 
 <!-- ══════════════════════════════════════════════
-     FOOTER / MOMOTALK
+     FOOTER / MOMOTALK  ·  09
 ══════════════════════════════════════════════ -->
 <footer id="contact" class="bg-dark py-24 relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <!-- Subtle glow behind momotalk -->
     <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 60% at 50% 100%,rgba(255,168,0,0.03),transparent 60%);"></div>
 
     <div class="max-w-3xl mx-auto px-6 text-center z-10 relative">
         <div class="section-tag mb-4 mx-auto w-fit">MomoTalk</div>
-        <h2 class="text-5xl font-black text-white mb-2 tracking-tight" style="font-family:'Rajdhani',sans-serif;" data-i18n="contact_title">MomoTalk</h2>
-        <p class="text-gray-500 mb-12 text-sm" data-i18n="contact_sub">Sensei, you have a new message.</p>
+        <h2 class="text-5xl font-black text-white mb-2" style="font-family:'Rajdhani',sans-serif;" data-i18n="contact_title">MomoTalk</h2>
+        <p class="text-gray-500 mb-3 text-sm" data-i18n="contact_sub">Sensei, you have a new message.</p>
+        <p class="text-gray-700 text-xs font-mono mb-12">response time: fast (unless I'm asleep, which is often)</p>
 
-        <!-- Status strip -->
-        <div class="inline-flex items-center gap-5 px-6 py-2.5 rounded-full border border-white/6 mb-12" style="background:rgba(255,255,255,0.025);backdrop-filter:blur(8px);">
+        <!-- Status bar -->
+        <div class="inline-flex items-center gap-5 px-6 py-3 rounded-full border border-white/5 mb-12" style="background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);">
             <div class="flex items-center gap-2">
-                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="live-dot"></span>
                 <span class="text-[10px] font-bold text-green-500 tracking-widest uppercase">My Status: Online</span>
             </div>
-            <div class="w-px h-3 bg-white/10"></div>
-            <div class="text-[10px] font-mono text-gray-600">DATABASE ACCESSES: <span id="visitor-count" class="text-white font-bold ml-1">---</span></div>
+            <div class="w-px h-3 bg-white/8"></div>
+            <div class="text-[10px] font-mono text-gray-600">
+                UPTIME: <span id="uptime-counter" class="uptime-display">00:00:00</span>
+            </div>
+            <div class="w-px h-3 bg-white/8"></div>
+            <div class="text-[10px] font-mono text-gray-600">
+                VISITS: <span id="visitor-count" class="text-white font-bold">---</span>
+            </div>
         </div>
 
         <!-- MomoTalk card -->
-        <div class="momotalk-container" data-aos="zoom-in">
+        <div class="momotalk-container" data-aos="zoom-in" data-tip="Real messaging apps, real me">
             <div class="momotalk-header">
                 <i data-lucide="message-circle" class="w-5 h-5"></i>
-                <span style="font-size:15px;letter-spacing:0.05em;">MomoTalk</span>
-                <span class="ml-auto text-[10px] bg-white/30 text-[#3d1f2c] px-2 py-0.5 rounded-full font-bold">2</span>
+                <span style="font-size:15px;letter-spacing:0.05em;font-family:'Rajdhani',sans-serif;">MomoTalk</span>
+                <span class="ml-auto text-[10px] bg-white/25 text-[#3d1f2c] px-2 py-0.5 rounded-full font-bold">2 unread</span>
             </div>
-            <div class="p-4" style="background:#f0f0f0;">
-                <div class="momotalk-item group" onclick="copyDiscord();playClick()">
-                    <div class="momotalk-avatar" style="background:#e8eaff;">
+            <div class="p-4" style="background:#efefef;">
+                <div class="momotalk-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord username">
+                    <div class="momotalk-avatar" style="background:#eaecff;">
                         <i data-lucide="message-square" class="w-5 h-5 text-indigo-500 group-hover:scale-110 transition-transform"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-center mb-0.5">
                             <span class="font-bold text-sm text-gray-800">Discord</span>
-                            <span class="text-[10px] text-gray-400">Now</span>
+                            <span class="text-[10px] text-gray-400">now</span>
                         </div>
-                        <div class="text-xs text-gray-500 truncate font-medium" id="contact-discord-text">Username: hokpy</div>
+                        <div class="text-xs text-gray-500 truncate font-medium" id="contact-discord-text">hokpy · click to copy</div>
                     </div>
-                    <div class="unread-badge animate-bounce">1</div>
+                    <div class="unread-badge">1</div>
                 </div>
                 <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momotalk-item group" onclick="playClick()">
-                    <div class="momotalk-avatar" style="background:#f0f0f0;">
-                        <i data-lucide="gamepad-2" class="w-5 h-5 text-gray-700 group-hover:rotate-12 transition-transform"></i>
+                    <div class="momotalk-avatar" style="background:#f2f2f2;">
+                        <i data-lucide="gamepad-2" class="w-5 h-5 text-gray-600 group-hover:rotate-12 transition-transform"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-center mb-0.5">
                             <span class="font-bold text-sm text-gray-800">Roblox</span>
                             <span class="text-[10px] text-gray-400">1m ago</span>
                         </div>
-                        <div class="text-xs text-gray-500 truncate font-medium">Let's build something awesome!</div>
+                        <div class="text-xs text-gray-500 truncate font-medium">View my profile — Water @ Roblox</div>
                     </div>
                     <div class="unread-badge">1</div>
                 </a>
             </div>
         </div>
 
-        <div class="mt-20 text-[9px] text-gray-700 font-mono uppercase tracking-[0.2em] opacity-40">
-            SCHALE DATABASE V2.0 // AUTH: HOKPY // KIVOTOS ADMIN SYSTEM
+        <!-- Footer note -->
+        <div class="mt-16 space-y-2">
+            <div class="text-[9px] text-gray-700 font-mono uppercase tracking-[0.2em] opacity-40">
+                SCHALE DATABASE V3.0 // AUTH: HOKPY // KIVOTOS ADMIN
+            </div>
+            <div class="text-[9px] text-gray-800 font-mono opacity-30" data-tip="Don't tell anyone">
+                built at 2am · powered by redbull · no bugs (allegedly)
+            </div>
         </div>
     </div>
 </footer>
@@ -747,18 +903,18 @@ tailwind.config = {
 <!-- ══════════════════════════════════════════════
      SCRIPTS
 ══════════════════════════════════════════════ -->
-<script src="js/config.js?v=2.0"></script>
-<script src="js/translations.js?v=2.0"></script>
-<script src="js/projects.js?v=2.0"></script>
-<script src="js/snippets.js?v=2.0"></script>
-<script src="js/audio.js?v=2.0"></script>
-<script src="js/calculator.js?v=2.0"></script>
-<script src="js/reviews.js?v=2.0"></script>
-<script src="js/ui.js?v=2.0"></script>
+<script src="js/config.js?v=3.0"></script>
+<script src="js/translations.js?v=3.0"></script>
+<script src="js/projects.js?v=3.0"></script>
+<script src="js/snippets.js?v=3.0"></script>
+<script src="js/audio.js?v=3.0"></script>
+<script src="js/calculator.js?v=3.0"></script>
+<script src="js/reviews.js?v=3.0"></script>
+<script src="js/ui.js?v=3.0"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Core inits
+    // Core
     initLocalSystem();
     runBootSequence();
     renderProjects();
@@ -770,37 +926,48 @@ document.addEventListener('DOMContentLoaded', () => {
     initCounters();
     initActiveNav();
     initNavScroll();
+    initTooltips();
+    initCursorTrail();
+    initMagneticButtons();
+    initCardTilt();
+    initRippleButtons();
+    initScrambleHeadings();
+    initLogoEasterEgg();
+    initUptimeCounter();
+    startRandomToasts();
+
     lucide.createIcons();
-    AOS.init({ once: true, offset: 60, duration: 650, easing: 'ease-out-cubic' });
+    AOS.init({ once: true, offset: 60, duration: 680, easing: 'ease-out-cubic' });
     typeWriter();
     calculateBudget();
-
-    // Select default service button
     document.querySelector('.service-btn').click();
 
-    // Load first code snippet
+    // Load first snippet
     const codeEl = document.getElementById('code-display');
     if (codeEl && codeSnippets.length) {
         codeEl.textContent = codeSnippets[0].content;
         Prism.highlightElement(codeEl);
     }
 
-    // Reviews init
+    // Reviews
     renderReviews();
     const starSel = document.getElementById('star-selector');
     if (starSel) starSel.innerHTML = renderStars(5, true, 'stars');
     initReviewForm();
 
-    // Scroll progress
+    // Scroll progress bar
     window.addEventListener('scroll', () => {
         const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
         document.getElementById('scroll-progress').style.width = (pct * 100) + '%';
     }, { passive: true });
 
-    // Auto-close mobile menu on link click
+    // Auto-close mobile menu
     document.querySelectorAll('#mobile-menu a').forEach(a =>
         a.addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'))
     );
+
+    // Show welcome toast a few seconds in
+    setTimeout(() => showFunnyToast('👋 Welcome, Sensei. Try the terminal.'), 3000);
 });
 </script>
 </body>
