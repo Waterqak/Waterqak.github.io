@@ -98,6 +98,7 @@ tailwind.config = {
             <a href="#history"    class="nav-link hover:text-white transition-colors" onclick="playClick()">History</a>
             <a href="#projects"   class="nav-link hover:text-white transition-colors" onclick="playClick()">Projects</a>
             <a href="#calculator" class="nav-link hover:text-white transition-colors" onclick="playClick()">Estimator</a>
+            <a href="#reviews"    class="nav-link hover:text-white transition-colors" onclick="playClick()">Reviews</a>
         </div>
         <div class="hidden md:flex items-center gap-4">
             <button onclick="toggleLanguage(); playClick()" class="text-xs font-mono text-schale border border-schale/30 px-3 py-1 hover:bg-schale/10 transition-colors rounded">
@@ -125,6 +126,7 @@ tailwind.config = {
         <a href="#history"    onclick="toggleMobileMenu()">HISTORY</a>
         <a href="#projects"   onclick="toggleMobileMenu()">PROJECTS</a>
         <a href="#calculator" onclick="toggleMobileMenu()">ESTIMATOR</a>
+        <a href="#reviews"    onclick="toggleMobileMenu()">REVIEWS</a>
     </div>
     <div class="h-px bg-white/10 w-full"></div>
     <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-400">LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span></button>
@@ -438,6 +440,98 @@ tailwind.config = {
 </section>
 
 <!-- ══════════════════════════════════════════════
+     REVIEWS / FIELD REPORTS
+══════════════════════════════════════════════ -->
+<section id="reviews" class="py-32 relative border-t border-white/5 bg-dark">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6" data-aos="fade-up">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <i data-lucide="star" class="text-gold w-6 h-6"></i>
+                    <span class="text-gold font-bold text-sm tracking-widest">TESTIMONIALS</span>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black text-white">
+                    FIELD REPORTS
+                    <span id="reviews-count" class="ml-4 text-xl font-mono text-gold bg-gold/10 border border-gold/30 px-3 py-1 rounded-full align-middle">0</span>
+                </h2>
+            </div>
+            <button onclick="openReviewModal()"
+                class="inline-flex items-center gap-2 bg-gold/10 hover:bg-gold text-gold hover:text-black
+                       border border-gold/40 font-bold px-6 py-3 rounded-lg transition-all
+                       hover:-translate-y-0.5 shadow-[0_4px_20px_rgba(255,168,0,0.15)] text-sm">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                SUBMIT FIELD REPORT
+            </button>
+        </div>
+
+        <!-- Cards grid -->
+        <div id="reviews-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     REVIEW MODAL
+══════════════════════════════════════════════ -->
+<div id="review-modal"
+     class="hidden fixed inset-0 z-[200] items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+     onclick="if(event.target===this) closeReviewModal()">
+    <div class="bg-[#0F1115] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+         data-aos="zoom-in">
+        <!-- Modal header -->
+        <div class="bg-gold/10 border-b border-gold/20 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="file-text" class="w-5 h-5 text-gold"></i>
+                <span class="font-black text-white tracking-widest text-sm">SUBMIT FIELD REPORT</span>
+            </div>
+            <button onclick="closeReviewModal()" class="text-gray-500 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Form -->
+        <form id="review-form" class="p-6 space-y-5">
+
+            <!-- Name -->
+            <div>
+                <label class="text-[10px] font-bold text-gray-500 tracking-widest block mb-2">OPERATIVE HANDLE</label>
+                <input id="review-name" type="text" placeholder="Your name or username"
+                    class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white text-sm font-mono
+                           placeholder-gray-600 focus:outline-none focus:border-gold/50 transition-colors"
+                    maxlength="40" required>
+            </div>
+
+            <!-- Stars -->
+            <div>
+                <label class="text-[10px] font-bold text-gray-500 tracking-widest block mb-3">MISSION RATING</label>
+                <div class="flex gap-1" id="star-selector">
+                    <!-- Populated by reviews.js -->
+                </div>
+            </div>
+
+            <!-- Text -->
+            <div>
+                <label class="text-[10px] font-bold text-gray-500 tracking-widest block mb-2">FIELD NOTES</label>
+                <textarea id="review-text" placeholder="Describe your experience working with Water..."
+                    class="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-white text-sm font-mono
+                           placeholder-gray-600 focus:outline-none focus:border-gold/50 transition-colors resize-none h-28"
+                    maxlength="280" required></textarea>
+                <div class="text-right text-[10px] font-mono text-gray-600 mt-1">max 280 chars</div>
+            </div>
+
+            <!-- Submit -->
+            <button id="reviews-submit-btn" type="submit"
+                class="w-full bg-schale hover:bg-white hover:text-schale text-white font-bold py-3 rounded-lg
+                       transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,164,255,0.3)]">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                TRANSMIT REPORT
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
      FOOTER / MOMOTALK
 ══════════════════════════════════════════════ -->
 <footer id="contact" class="bg-[#050508] border-t border-white/5 py-24 relative overflow-hidden">
@@ -490,11 +584,17 @@ tailwind.config = {
 <script src="js/snippets.js?v=1.1"></script>
 <script src="js/audio.js?v=1.1"></script>
 <script src="js/calculator.js?v=1.1"></script>
+<script src="js/reviews.js?v=1.1"></script>
 <script src="js/ui.js?v=1.1"></script>
 
 <script>
 /* INIT — runs after all files load */
 document.addEventListener('DOMContentLoaded', () => {
+    renderReviews();
+    // Populate interactive star selector in modal
+    const starSel = document.getElementById('star-selector');
+    if (starSel) starSel.innerHTML = renderStars(5, true, 'stars');
+    initReviewForm();
     initLocalSystem();
     runBootSequence();
     renderProjects();
