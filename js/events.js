@@ -91,7 +91,7 @@ function unlockAchievement(id) {
     _toastCountEvents++;
 
     var card = document.createElement('div');
-    var bot  = 24 + (_toastCountEvents - 1) * 88;
+    var bot  = 88 + (_toastCountEvents - 1) * 88; // 88px base clears 56px ach button
     card.style.cssText = [
         'position:fixed;bottom:' + bot + 'px;left:24px;z-index:9997;width:290px;',
         'background:rgba(5,9,26,.98);',
@@ -449,13 +449,13 @@ function triggerTransmission() {
     var card = document.createElement('div');
     card.id   = id;
     card.style.cssText = [
-        'position:fixed;bottom:28px;right:28px;z-index:9992;width:310px;',
+        'position:fixed;bottom:88px;right:28px;z-index:9992;width:310px;',
         'background:rgba(5,9,26,.98);',
         'border:1px solid rgba(255,255,255,.07);border-top:2px solid ' + col + ';',
         'border-radius:12px;overflow:hidden;',
-        'box-shadow:0 16px 50px rgba(0,0,0,.8),0 0 0 1px rgba(26,168,255,.05);',
-        'transform:translateY(48px) scale(.96);opacity:0;',
-        'transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);',
+        'box-shadow:0 16px 50px rgba(0,0,0,.8),0 0 0 1px rgba(26,168,255,.04);',
+        'transform:translateX(340px);opacity:0;',
+        'transition:all 0.45s cubic-bezier(0.175,0.885,0.32,1.275);',
         'font-family:\'JetBrains Mono\',monospace;',
     ].join('');
 
@@ -495,13 +495,13 @@ function triggerTransmission() {
     document.body.appendChild(card);
     requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-            card.style.transform = 'translateY(0) scale(1)';
+            card.style.transform = 'translateX(0)';
             card.style.opacity   = '1';
         });
     });
     setTimeout(function () {
         var el = document.getElementById(id);
-        if (el) { el.style.transform = 'translateY(48px) scale(.96)'; el.style.opacity = '0'; }
+        if (el) { el.style.transform = 'translateX(340px)'; el.style.opacity = '0'; }
         setTimeout(function () { var el2 = document.getElementById(id); if (el2) el2.remove(); }, 450);
     }, 10000);
 
