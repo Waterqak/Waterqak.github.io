@@ -113,16 +113,13 @@ function _applyPfp(url) {
     };
 }
 
+// initLocalSystem is defined in events.js (real counter via CountAPI).
+// This stub runs only if events.js hasn't loaded yet.
 function initLocalSystem() {
     var pfp = localStorage.getItem('schale_db_pfp');
     if (pfp) _applyPfp(pfp);
-
-    var visits = parseInt(localStorage.getItem('schale_db_visits') || '0') + 1;
-    localStorage.setItem('schale_db_visits', visits);
-    var visBase = (config && config.visitorBase) ? config.visitorBase : 14200;
-    var total = visBase + Math.floor(Date.now() / 3600000) + visits;
     var el = document.getElementById('visitor-count');
-    if (el) el.innerText = total.toLocaleString();
+    if (el) el.innerText = '...';
 }
 
 /* ── PIN-PROTECTED profile picture update ──
