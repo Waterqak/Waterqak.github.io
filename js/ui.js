@@ -1,25 +1,41 @@
 /* ============================================================
-   UI.JS v4.0  —  All bugs fixed, BA animations, easter eggs
+   UI.JS v4.0  —  Blue Archive Edition
+   ALL BUGS FIXED:
+     ✓ cursor trail: initialised off-screen (no 0,0 flash)
+     ✓ glass-card / skill-card: no CSS transform on :hover (tilt JS owns it)
+     ✓ toggleSystemOverride: resets all 5 --accent-* vars to correct BA blue
+     ✓ logo easter egg: resets all 5 accent vars
+     ✓ initActiveNav / initCounters: correct IntersectionObserver pattern
+     ✓ blink keyframe unified to `blink`
+     ✓ toggleLanguage: synced with #lang-display-mobile (in translations.js)
+     ✓ profilePicture: PIN-protected, only owner can change it
+   NEW:
+     ✓ Tab autocomplete in CLI
+     ✓ neofetch, touch grass, uname, pwd, ls -la, git commit, git push
+     ✓ Admin CLI: "reviews clear", "pfp reset" (PIN-gated)
+     ✓ Toast queue (up to 3 simultaneous, stacked)
+     ✓ Section reveal animations
+     ✓ showFunnyToast alias preserved
    ============================================================ */
 
-/* ── CONSOLE ART for devs who open devtools ── */
+/* ── CONSOLE ART ── */
 (function () {
     const art = [
         '%c',
-        '  ██╗    ██╗ █████╗ ████████╗███████╗██████╗',
-        '  ██║    ██║██╔══██╗╚══██╔══╝██╔════╝██╔══██╗',
-        '  ██║ █╗ ██║███████║   ██║   █████╗  ██████╔╝',
-        '  ██║███╗██║██╔══██║   ██║   ██╔══╝  ██╔══██╗',
-        '  ╚███╔███╔╝██║  ██║   ██║   ███████╗██║  ██║',
-        '   ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝',
+        '  \u2588\u2588\u2557    \u2588\u2588\u2557 \u2588\u2588\u2588\u2588\u2588\u2557 \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2557',
+        '  \u2588\u2588\u2551    \u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u255a\u2550\u2550\u2588\u2588\u2554\u2550\u2550\u255d\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255d\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557',
+        '  \u2588\u2588\u2551 \u2588\u2557 \u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2551   \u2588\u2588\u2551   \u2588\u2588\u2588\u2588\u2588\u2557  \u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255d',
+        '  \u2588\u2588\u2551\u2588\u2588\u2588\u2557\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2551   \u2588\u2588\u2551   \u2588\u2588\u2554\u2550\u2550\u255d  \u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557',
+        '  \u255a\u2588\u2588\u2588\u2554\u2588\u2588\u2588\u2554\u255d\u2588\u2588\u2551  \u2588\u2588\u2551   \u2588\u2588\u2551   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2551  \u2588\u2588\u2551',
+        '   \u255a\u2550\u2550\u255d\u255a\u2550\u2550\u255d \u255a\u2550\u255d  \u255a\u2550\u255d   \u255a\u2550\u255d   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u255d\u255a\u2550\u255d  \u255a\u2550\u255d',
         '',
-        '  👋 Hey! You opened devtools. Respect.',
-        '  🐛 Bugs in this codebase: 0 (officially)',
-        '  ☕ Powered by: Lua skills + Red Bull + zero sleep',
-        '  🔥 Built by Water, age 15, somehow doing this',
+        '  \ud83d\udc4b Hey devtools lurker. Respect.',
+        '  \ud83d\udc1b Official bug count: 0  (this is a lie)',
+        '  \u2615 Fuel: Red Bull + spite + sleep deprivation',
+        '  \ud83d\udd25 Built by Water, age 15, somehow professional',
         '',
-        '  💡 Secret CLI commands: coffee  uwu  hack  sudo  vim',
-        '     git blame  npm install  ls  cat readme.md  penis',
+        '  \ud83d\udca1 CLI secrets: coffee  uwu  hack  sudo  neofetch',
+        '     git blame  npm install  ls  cat readme.md  ping',
         '',
     ].join('\n');
     setTimeout(() => console.log(art, 'color:#1AA8FF;font-family:monospace;font-size:11px;'), 1200);
@@ -32,12 +48,13 @@ function startExperience() {
     if (typeof audioCtx !== 'undefined' && audioCtx.state === 'suspended') audioCtx.resume();
     playClick(880, 0.3);
     const overlay = document.getElementById('start-overlay');
+    if (!overlay) return;
     overlay.style.animation = 'crtOff 0.5s forwards';
     setTimeout(() => {
         overlay.style.display = 'none';
         const bgm = document.getElementById('bgm');
-        if (bgm && config.bgmUrl) {
-            bgm.src = config.bgmUrl;
+        if (bgm && config && config.bgmUrl) {
+            bgm.src    = config.bgmUrl;
             bgm.volume = config.volume || 0.15;
             bgm.play().catch(() => {});
         }
@@ -48,31 +65,31 @@ function runBootSequence() {
     const container = document.getElementById('boot-log-container');
     if (!container) return;
     const checks = [
-        { label: 'BIOS_CHECK',                   cls: 'check', status: 'OK'   },
-        { label: 'MEMORY_INTEGRITY',              cls: 'check', status: 'OK'   },
-        { label: 'CHECKING_IF_SENSEI_AWAKE',      cls: 'info',  status: 'YES'  },
-        { label: 'LOADING_COPE_RESERVES',         cls: 'warn',  status: 'FULL' },
-        { label: 'COUNTING_BUGS_IN_CODEBASE',     cls: 'check', status: '0 ✓'  },
-        { label: 'NETWORK_UPLINK',                cls: 'check', status: 'OK'   },
-        { label: 'VIRUS_DETECTED',                cls: 'err',   status: '...'  },
-        { label: 'just_kidding_lol',              cls: 'info',  status: 'haha' },
-        { label: 'SCHALE_DB_MOUNT',               cls: 'check', status: 'OK'   },
+        { label: 'BIOS_CHECK',               cls: 'check', status: 'OK'   },
+        { label: 'MEMORY_INTEGRITY',          cls: 'check', status: 'OK'   },
+        { label: 'CHECKING_IF_SENSEI_AWAKE',  cls: 'info',  status: 'YES'  },
+        { label: 'LOADING_COPE_RESERVES',     cls: 'warn',  status: 'FULL' },
+        { label: 'COUNTING_BUGS_IN_CODEBASE', cls: 'check', status: '0 check' },
+        { label: 'NETWORK_UPLINK',            cls: 'check', status: 'OK'   },
+        { label: 'VIRUS_DETECTED',            cls: 'err',   status: '...'  },
+        { label: 'just_kidding_lol',          cls: 'info',  status: 'haha' },
+        { label: 'SCHALE_DB_MOUNT',           cls: 'check', status: 'OK'   },
     ];
     let i = 0;
     function next() {
         if (i < checks.length) {
-            const { label, cls, status } = checks[i];
-            const div = document.createElement('div');
+            var ch = checks[i];
+            var div = document.createElement('div');
             div.className = 'boot-status-line';
-            div.innerHTML = `<span>${label}...</span><span class="${cls}">${status}</span>`;
+            div.innerHTML = '<span>' + ch.label + '...</span><span class="' + ch.cls + '">' + ch.status + '</span>';
             container.appendChild(div);
             playClick(800 + i * 55, 0.04);
             i++;
             setTimeout(next, i === 7 ? 650 : 230);
         } else {
-            setTimeout(() => {
-                const btn = document.getElementById('connect-btn');
-                if (btn) { btn.classList.remove('opacity-0', 'translate-y-4'); }
+            setTimeout(function () {
+                var btn = document.getElementById('connect-btn');
+                if (btn) btn.classList.remove('opacity-0', 'translate-y-4');
             }, 350);
         }
     }
@@ -80,70 +97,103 @@ function runBootSequence() {
 }
 
 /* ════════════════════════════════
-   LOCAL STORAGE
+   LOCAL STORAGE / AVATAR
 ════════════════════════════════ */
+function _applyPfp(url) {
+    var img = document.getElementById('avatar-img');
+    var ph  = document.getElementById('avatar-placeholder');
+    if (!img || !ph) return;
+    img.src = url;
+    img.classList.remove('hidden');
+    ph.classList.add('hidden');
+    img.onerror = function () {
+        img.classList.add('hidden');
+        ph.classList.remove('hidden');
+        localStorage.removeItem('schale_db_pfp');
+    };
+}
+
 function initLocalSystem() {
-    // Avatar
-    const pfp = localStorage.getItem('schale_db_pfp');
-    if (pfp) {
-        const img = document.getElementById('avatar-img');
-        const ph  = document.getElementById('avatar-placeholder');
-        if (img && ph) { img.src = pfp; img.classList.remove('hidden'); ph.classList.add('hidden'); }
-    }
-    // Visit counter
-    let visits = parseInt(localStorage.getItem('schale_db_visits') || '0') + 1;
+    var pfp = localStorage.getItem('schale_db_pfp');
+    if (pfp) _applyPfp(pfp);
+
+    var visits = parseInt(localStorage.getItem('schale_db_visits') || '0') + 1;
     localStorage.setItem('schale_db_visits', visits);
-    const total = (config.visitorBase || 14200) + Math.floor(Date.now() / 3_600_000) + visits;
-    const el = document.getElementById('visitor-count');
+    var visBase = (config && config.visitorBase) ? config.visitorBase : 14200;
+    var total = visBase + Math.floor(Date.now() / 3600000) + visits;
+    var el = document.getElementById('visitor-count');
     if (el) el.innerText = total.toLocaleString();
 }
 
+/* ── PIN-PROTECTED profile picture update ──
+   Set config.profilePin in config.js.
+   Visitors without the PIN cannot change the photo.     */
 window.updateProfilePicture = function () {
-    const url = prompt('Paste an image URL for your profile picture:');
-    if (url && (url.startsWith('http') || url.startsWith('data:image'))) {
-        playClick(1000, 0.1);
-        localStorage.setItem('schale_db_pfp', url);
-        const img = document.getElementById('avatar-img');
-        const ph  = document.getElementById('avatar-placeholder');
-        if (img && ph) { img.src = url; img.classList.remove('hidden'); ph.classList.add('hidden'); }
+    var correctPin = (config && config.profilePin) ? String(config.profilePin) : 'schale';
+    var pin = prompt('Lock Admin PIN required to update profile photo:\n\nHint: check config.js');
+    if (pin === null) return;
+    if (pin.trim() !== correctPin) {
+        showToast('Access denied — wrong PIN.', 'var(--alert)');
+        playClick(220, 0.4);
+        return;
     }
+    var url = prompt('PIN accepted!\n\nPaste your profile picture URL:\n(Direct image link or data: URI)');
+    if (!url) return;
+    if (!url.startsWith('http') && !url.startsWith('data:image')) {
+        showToast('Invalid URL — must start with http or data:image', 'var(--gold)');
+        return;
+    }
+    playClick(1000, 0.1);
+    localStorage.setItem('schale_db_pfp', url);
+    _applyPfp(url);
+    showToast('Profile picture updated!', 'var(--green)');
+};
+
+window.adminResetPfp = function () {
+    localStorage.removeItem('schale_db_pfp');
+    var img = document.getElementById('avatar-img');
+    var ph  = document.getElementById('avatar-placeholder');
+    if (img) { img.src = ''; img.classList.add('hidden'); }
+    if (ph)  ph.classList.remove('hidden');
 };
 
 /* ════════════════════════════════
    TYPEWRITER
 ════════════════════════════════ */
-let _twTimer;
+var _twTimer;
 function typeWriter() {
-    const el = document.getElementById('typewriter');
+    var el = document.getElementById('typewriter');
     if (!el) return;
     clearTimeout(_twTimer);
-    const isEN = (document.getElementById('lang-display')?.innerText || 'EN') === 'EN';
-    const text = isEN ? 'Broken Code.' : 'โค้ดที่พังครับ';
-    let i = 0;
+    var langEl = document.getElementById('lang-display');
+    var isEN   = (langEl ? langEl.innerText : 'EN') === 'EN';
+    var text   = isEN ? 'Broken Code.' : 'โค้ดที่พังครับ';
+    var i = 0;
     el.innerText = '';
-    (function tick() {
-        if (i < text.length) { el.innerHTML += text.charAt(i++); _twTimer = setTimeout(tick, 85); }
-    })();
+    function tick() {
+        if (i < text.length) {
+            el.innerHTML += text.charAt(i++);
+            _twTimer = setTimeout(tick, 85);
+        }
+    }
+    tick();
 }
 
 /* ════════════════════════════════
    TEXT SCRAMBLE
 ════════════════════════════════ */
-class TextScramble {
-    constructor(el) {
-        this.el = el;
-        this.chars = '!<>-_\\/[]{}—=+*^?#ABCDEFabcdef0123456789';
+var TextScramble = (function () {
+    function TS(el) {
+        this.el    = el;
+        this.chars = '!<>-_\\/[]{}=+*^?#ABCDEFabcdef0123456789';
         this.update = this.update.bind(this);
     }
-    setText(newText) {
-        const old = this.el.innerText;
-        const len = Math.max(old.length, newText.length);
-        this.resolve = null;
-        const p = new Promise(res => { this.resolve = res; });
+    TS.prototype.setText = function (newText) {
+        var old   = this.el.innerText;
         this.queue = [];
-        for (let i = 0; i < len; i++) {
+        for (var i = 0; i < Math.max(old.length, newText.length); i++) {
             this.queue.push({
-                from:  old[i] || '',
+                from:  old[i]     || '',
                 to:    newText[i] || '',
                 start: Math.floor(Math.random() * 18),
                 end:   Math.floor(Math.random() * 18) + 18,
@@ -152,80 +202,68 @@ class TextScramble {
         }
         cancelAnimationFrame(this._raf);
         this.frame = 0;
-        this.update();
-        return p;
-    }
-    update() {
-        let out = '', done = 0;
-        for (let i = 0, n = this.queue.length; i < n; i++) {
-            const q = this.queue[i];
-            if (this.frame >= q.end) {
-                done++;
-                out += q.to;
-            } else if (this.frame >= q.start) {
-                if (!q.char || Math.random() < 0.28) {
+        var self = this;
+        return new Promise(function (r) { self._res = r; self.update(); });
+    };
+    TS.prototype.update = function () {
+        var out = '', done = 0;
+        for (var i = 0; i < this.queue.length; i++) {
+            var q = this.queue[i];
+            if (this.frame >= q.end)        { done++; out += q.to; }
+            else if (this.frame >= q.start) {
+                if (!q.char || Math.random() < 0.28)
                     q.char = this.chars[Math.floor(Math.random() * this.chars.length)];
-                }
-                out += `<span style="color:var(--accent);opacity:.55">${q.char}</span>`;
-            } else {
-                out += q.from;
-            }
+                out += '<span style="color:var(--accent);opacity:.55">' + q.char + '</span>';
+            } else { out += q.from; }
         }
         this.el.innerHTML = out;
-        if (done === this.queue.length) {
-            if (this.resolve) this.resolve();
-        } else {
-            this._raf = requestAnimationFrame(this.update);
-            this.frame++;
-        }
-    }
-}
+        if (done === this.queue.length) { if (this._res) this._res(); }
+        else { this._raf = requestAnimationFrame(this.update); this.frame++; }
+    };
+    return TS;
+})();
 
 function initScrambleHeadings() {
-    const els = document.querySelectorAll('[data-scramble]');
+    var els = document.querySelectorAll('[data-scramble]');
     if (!els.length) return;
-    const obs = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            const el   = entry.target;
-            const text = el.getAttribute('data-scramble');
-            if (!text) return;
-            // Store original text content in attribute on first run
-            new TextScramble(el).setText(text);
-            obs.unobserve(el);
+            var text = entry.target.getAttribute('data-scramble');
+            if (text) new TextScramble(entry.target).setText(text);
+            obs.unobserve(entry.target);
         });
     }, { threshold: 0.6 });
-    els.forEach(e => obs.observe(e));
+    els.forEach(function (e) { obs.observe(e); });
 }
+function initScrambleAll() { initScrambleHeadings(); }
 
 /* ════════════════════════════════
-   CURSOR TRAIL  —  fixed: no 0,0 flash
+   CURSOR TRAIL
+   BUG FIX: starts at -500,-500 so no 0,0 flash
 ════════════════════════════════ */
 function initCursorTrail() {
     if (window.matchMedia('(pointer:coarse)').matches) return;
-    const N    = 12;
-    const dots = [];
-    // init positions to far off-screen so they don't flash at 0,0
-    let mx = -500, my = -500;
-    for (let i = 0; i < N; i++) {
-        const d = document.createElement('div');
+    var N = 12, dots = [], mx = -500, my = -500;
+    for (var i = 0; i < N; i++) {
+        var d = document.createElement('div');
         d.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;border-radius:50%;';
         document.body.appendChild(d);
         dots.push({ el: d, x: -500, y: -500 });
     }
-    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    window.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
     (function loop() {
-        dots.forEach((dot, i) => {
-            const prev = i === 0 ? { x: mx, y: my } : dots[i - 1];
+        dots.forEach(function (dot, i) {
+            var prev = i === 0 ? { x: mx, y: my } : dots[i - 1];
             dot.x += (prev.x - dot.x) * 0.42;
             dot.y += (prev.y - dot.y) * 0.42;
-            const size  = Math.max(1.5, 5.5 - i * 0.35);
-            const alpha = Math.max(0, 0.45 - i * 0.035);
-            dot.el.style.cssText = `position:fixed;pointer-events:none;z-index:9999;border-radius:50%;
-                width:${size}px;height:${size}px;
-                background:rgba(26,168,255,${alpha});
-                left:${dot.x - size / 2}px;top:${dot.y - size / 2}px;
-                box-shadow:0 0 ${size * 2}px rgba(26,168,255,${alpha * 0.5});`;
+            var sz = Math.max(1.5, 5.5 - i * 0.35);
+            var al = Math.max(0, 0.45 - i * 0.035);
+            dot.el.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;border-radius:50%;'
+                + 'width:' + sz + 'px;height:' + sz + 'px;'
+                + 'background:rgba(26,168,255,' + al + ');'
+                + 'left:' + (dot.x - sz / 2) + 'px;top:' + (dot.y - sz / 2) + 'px;'
+                + 'box-shadow:0 0 ' + (sz * 2) + 'px rgba(26,168,255,' + (al * 0.5) + ');';
         });
         requestAnimationFrame(loop);
     })();
@@ -235,15 +273,15 @@ function initCursorTrail() {
    MAGNETIC BUTTONS
 ════════════════════════════════ */
 function initMagneticButtons() {
-    document.querySelectorAll('[data-magnetic]').forEach(btn => {
-        btn.addEventListener('mouseenter', () => { btn.style.transition = 'transform 0.1s'; });
-        btn.addEventListener('mousemove', e => {
-            const r  = btn.getBoundingClientRect();
-            const dx = (e.clientX - r.left - r.width  / 2) * 0.26;
-            const dy = (e.clientY - r.top  - r.height / 2) * 0.26;
-            btn.style.transform = `translate(${dx}px,${dy}px)`;
+    document.querySelectorAll('[data-magnetic]').forEach(function (btn) {
+        btn.addEventListener('mouseenter', function () { btn.style.transition = 'transform 0.1s'; });
+        btn.addEventListener('mousemove', function (e) {
+            var r  = btn.getBoundingClientRect();
+            var dx = (e.clientX - r.left - r.width  / 2) * 0.26;
+            var dy = (e.clientY - r.top  - r.height / 2) * 0.26;
+            btn.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
         });
-        btn.addEventListener('mouseleave', () => {
+        btn.addEventListener('mouseleave', function () {
             btn.style.transition = 'transform 0.45s cubic-bezier(0.175,0.885,0.32,1.275)';
             btn.style.transform  = 'translate(0,0)';
         });
@@ -251,18 +289,20 @@ function initMagneticButtons() {
 }
 
 /* ════════════════════════════════
-   CARD TILT  —  owns the transform
+   CARD TILT
+   BUG FIX: CSS .glass-card:hover and .skill-card:hover
+   have NO transform — this function owns it entirely
 ════════════════════════════════ */
 function initCardTilt() {
-    document.querySelectorAll('.tilt-card').forEach(card => {
-        card.addEventListener('mouseenter', () => { card.style.transition = 'transform 0.1s'; });
-        card.addEventListener('mousemove', e => {
-            const r  = card.getBoundingClientRect();
-            const dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
-            const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
-            card.style.transform = `perspective(800px) rotateX(${dy * -7}deg) rotateY(${dx * 7}deg) translateZ(8px)`;
+    document.querySelectorAll('.tilt-card').forEach(function (card) {
+        card.addEventListener('mouseenter', function () { card.style.transition = 'transform 0.1s'; });
+        card.addEventListener('mousemove', function (e) {
+            var r  = card.getBoundingClientRect();
+            var dx = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+            var dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+            card.style.transform = 'perspective(800px) rotateX(' + (dy * -7) + 'deg) rotateY(' + (dx * 7) + 'deg) translateZ(8px)';
         });
-        card.addEventListener('mouseleave', () => {
+        card.addEventListener('mouseleave', function () {
             card.style.transition = 'transform 0.5s cubic-bezier(0.175,0.885,0.32,1.275)';
             card.style.transform  = 'perspective(800px) rotateX(0) rotateY(0) translateZ(0)';
         });
@@ -273,57 +313,61 @@ function initCardTilt() {
    RIPPLE
 ════════════════════════════════ */
 function addRipple(e) {
-    const btn  = e.currentTarget;
-    const rect = btn.getBoundingClientRect();
-    const span = document.createElement('span');
-    span.style.cssText = `
-        position:absolute;border-radius:50%;transform:scale(0);
-        animation:ripple-anim 0.6s linear;pointer-events:none;
-        left:${e.clientX - rect.left}px;top:${e.clientY - rect.top}px;
-        width:80px;height:80px;margin:-40px 0 0 -40px;
-        background:rgba(255,255,255,0.18);z-index:100;`;
+    var btn  = e.currentTarget;
+    var rect = btn.getBoundingClientRect();
+    var span = document.createElement('span');
+    span.style.cssText = 'position:absolute;border-radius:50%;transform:scale(0);'
+        + 'animation:ripple-anim 0.6s linear;pointer-events:none;'
+        + 'left:' + (e.clientX - rect.left) + 'px;top:' + (e.clientY - rect.top) + 'px;'
+        + 'width:80px;height:80px;margin:-40px 0 0 -40px;'
+        + 'background:rgba(255,255,255,.18);z-index:100;';
     btn.style.position = 'relative';
     btn.style.overflow = 'hidden';
     btn.appendChild(span);
-    setTimeout(() => span.remove(), 650);
+    setTimeout(function () { span.remove(); }, 650);
 }
 function initRippleButtons() {
-    document.querySelectorAll('[data-ripple]').forEach(btn => btn.addEventListener('click', addRipple));
+    document.querySelectorAll('[data-ripple]').forEach(function (b) {
+        b.addEventListener('click', addRipple);
+    });
 }
 
 /* ════════════════════════════════
    TOOLTIP
 ════════════════════════════════ */
 function initTooltips() {
-    const tip = document.createElement('div');
-    tip.id = 'global-tooltip';
-    document.body.appendChild(tip);
-    document.querySelectorAll('[data-tip]').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            tip.innerText = el.getAttribute('data-tip');
+    var tip = document.getElementById('global-tooltip');
+    if (!tip) {
+        tip = document.createElement('div');
+        tip.id = 'global-tooltip';
+        document.body.appendChild(tip);
+    }
+    document.querySelectorAll('[data-tip]').forEach(function (el) {
+        el.addEventListener('mouseenter', function () {
+            tip.innerText     = el.getAttribute('data-tip');
             tip.style.opacity = '1';
         });
-        el.addEventListener('mousemove', e => {
-            tip.style.left = `${e.clientX + 14}px`;
-            tip.style.top  = `${e.clientY - 8}px`;
+        el.addEventListener('mousemove', function (e) {
+            tip.style.left = (e.clientX + 14) + 'px';
+            tip.style.top  = (e.clientY - 8)  + 'px';
         });
-        el.addEventListener('mouseleave', () => { tip.style.opacity = '0'; });
+        el.addEventListener('mouseleave', function () { tip.style.opacity = '0'; });
     });
 }
 
 /* ════════════════════════════════
-   LIVE UPTIME COUNTER
+   UPTIME COUNTER
 ════════════════════════════════ */
 function initUptimeCounter() {
-    const el = document.getElementById('uptime-counter');
+    var el = document.getElementById('uptime-counter');
     if (!el) return;
-    const start = Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 48);
+    var start = Date.now() - Math.floor(Math.random() * 1000 * 60 * 60 * 48);
     function tick() {
-        const d = Date.now() - start;
-        const h = Math.floor(d / 3600000);
-        const m = Math.floor((d % 3600000) / 60000);
-        const s = Math.floor((d % 60000) / 1000);
-        el.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        var d = Date.now() - start;
+        var h = Math.floor(d / 3600000);
+        var m = Math.floor((d % 3600000) / 60000);
+        var s = Math.floor((d % 60000) / 1000);
+        el.innerText = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
     }
     tick();
     setInterval(tick, 1000);
@@ -331,56 +375,70 @@ function initUptimeCounter() {
 
 /* ════════════════════════════════
    TOAST NOTIFICATIONS
+   NEW: stackable up to 3 simultaneous
 ════════════════════════════════ */
-const TOASTS = [
-    '✓ Fixed a memory leak. Probably.',
-    '⚡ Optimized loop by 0.003ms. Huge win.',
-    '🐛 Bug squashed. It had a family.',
-    '☕ Coffee consumed. Productivity +20%',
-    '📦 Dependency updated. Nothing broke. Wow.',
-    '🎯 Null check added. Just in case.',
-    '💾 DataStore saved. Pinky promise.',
-    '🔐 Anti-exploit updated. Take that, exploiters.',
-    '🤔 TODO written. Will never fix.',
-    '🚀 Deployed to prod. No tests. YOLO.',
-    '📊 Server TPS: 60. Briefly.',
-    '🌙 It\'s 2am. Why are you still here.',
-];
-let _toastCd = false;
+var _toastCount = 0;
+var _toastMax   = 3;
 
 function showToast(msg, color) {
-    if (_toastCd) return;
-    _toastCd = true;
-    setTimeout(() => { _toastCd = false; }, 7000);
-    const t = document.createElement('div');
-    const c = color || 'var(--accent)';
-    t.style.cssText = `
-        position:fixed;bottom:24px;right:24px;z-index:9998;
-        background:rgba(5,9,26,.97);border:1px solid var(--accent-border);
-        border-left:3px solid ${c};
-        color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;
-        padding:12px 18px;border-radius:10px;
-        box-shadow:0 8px 32px rgba(0,0,0,.65);
-        transform:translateY(16px) scale(.95);opacity:0;
-        transition:all 0.38s cubic-bezier(0.175,0.885,0.32,1.275);
-        max-width:290px;line-height:1.5;pointer-events:none;`;
-    t.innerHTML = `<div style="font-size:9px;letter-spacing:.12em;color:${c};margin-bottom:3px;">SCHALE.DB</div>${msg}`;
+    if (_toastCount >= _toastMax) return;
+    _toastCount++;
+    var t   = document.createElement('div');
+    var col = color || 'var(--accent)';
+    var off = (_toastCount - 1) * 84;
+    t.style.cssText =
+        'position:fixed;bottom:' + (24 + off) + 'px;right:24px;z-index:9998;' +
+        'background:rgba(5,9,26,.97);border:1px solid var(--accent-border);' +
+        'border-left:3px solid ' + col + ';' +
+        'color:var(--text);font-size:11px;font-family:\'JetBrains Mono\',monospace;' +
+        'padding:12px 18px;border-radius:10px;' +
+        'box-shadow:0 8px 32px rgba(0,0,0,.65);' +
+        'transform:translateY(16px) scale(.95);opacity:0;' +
+        'transition:all 0.38s cubic-bezier(0.175,0.885,0.32,1.275);' +
+        'max-width:300px;line-height:1.5;pointer-events:none;';
+    t.innerHTML = '<div style="font-size:9px;letter-spacing:.12em;color:' + col + ';margin-bottom:3px;">SCHALE.DB</div>' + msg;
     document.body.appendChild(t);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-        t.style.transform = 'translateY(0) scale(1)';
-        t.style.opacity   = '1';
-    }));
-    setTimeout(() => {
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+            t.style.transform = 'translateY(0) scale(1)';
+            t.style.opacity   = '1';
+        });
+    });
+    setTimeout(function () {
         t.style.transform = 'translateY(16px) scale(.95)';
         t.style.opacity   = '0';
-        setTimeout(() => t.remove(), 420);
-    }, 4200);
+        setTimeout(function () {
+            t.remove();
+            _toastCount = Math.max(0, _toastCount - 1);
+        }, 420);
+    }, 4500);
 }
 
+/* Alias */
+var showFunnyToast = showToast;
+
+var TOASTS = [
+    'Fixed a memory leak. Probably.',
+    'Optimized loop by 0.003ms. Huge win.',
+    'Bug squashed. It had a family.',
+    'Coffee consumed. Productivity +20%',
+    'Dependency updated. Nothing broke. Wow.',
+    'Null check added. Just in case.',
+    'DataStore saved. Pinky promise.',
+    'Anti-exploit updated. Take that, exploiters.',
+    'TODO written. Will never fix.',
+    'Deployed to prod. No tests. YOLO.',
+    'Server TPS: 60. Briefly.',
+    'Still coding at 2am. Impressive.',
+    'Local test passed. Prod is another story.',
+    'Sensei, you\'ve been on this page a while.',
+];
+var _toastCd = false;
+
 function startRandomToasts() {
-    setTimeout(() => {
+    setTimeout(function () {
         showToast(TOASTS[Math.floor(Math.random() * TOASTS.length)]);
-        setInterval(() => {
+        setInterval(function () {
             if (Math.random() > 0.45) showToast(TOASTS[Math.floor(Math.random() * TOASTS.length)]);
         }, 28000);
     }, 5000);
@@ -390,46 +448,41 @@ function startRandomToasts() {
    PARTICLES
 ════════════════════════════════ */
 function initParticles() {
-    const canvas = document.getElementById('particles-canvas');
+    var canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const mouse = { x: -9999, y: -9999 };
-    let particles = [];
+    var ctx   = canvas.getContext('2d');
+    var mouse = { x: -9999, y: -9999 };
+    var pts   = [];
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     function spawn() {
-        const n = Math.min(55, Math.floor(window.innerWidth / 22));
-        particles = Array.from({ length: n }, () => ({
-            x:  Math.random() * canvas.width,
-            y:  Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.22,
-            vy: (Math.random() - 0.5) * 0.22,
-            s:  Math.random() * 1.5 + 0.5,
-        }));
+        var n = Math.min(55, Math.floor(window.innerWidth / 22));
+        pts = [];
+        for (var i = 0; i < n; i++) pts.push({
+            x: Math.random() * canvas.width,  y: Math.random() * canvas.height,
+            vx:(Math.random() - 0.5) * 0.22, vy:(Math.random() - 0.5) * 0.22,
+            s: Math.random() * 1.5 + 0.5,
+        });
     }
     resize(); spawn();
-
-    window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; }, { passive: true });
-    window.addEventListener('resize', () => { resize(); spawn(); });
+    window.addEventListener('mousemove', function (e) { mouse.x = e.x; mouse.y = e.y; }, { passive: true });
+    window.addEventListener('resize',    function ()  { resize(); spawn(); });
 
     (function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach((p, i) => {
+        pts.forEach(function (p, i) {
             p.x += p.vx; p.y += p.vy;
             if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
             if (p.y < 0 || p.y > canvas.height)  p.vy *= -1;
-            const dx = mouse.x - p.x, dy = mouse.y - p.y;
-            const md = Math.sqrt(dx * dx + dy * dy);
+            var dx = mouse.x - p.x, dy = mouse.y - p.y;
+            var md = Math.sqrt(dx * dx + dy * dy);
             if (md < 100) { p.x -= (dx / md) * 1.6; p.y -= (dy / md) * 1.6; }
-
             ctx.globalAlpha = 0.55;
-            ctx.fillStyle = 'rgba(26,168,255,.9)';
+            ctx.fillStyle   = 'rgba(26,168,255,.9)';
             ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill();
-
-            for (let j = i + 1; j < particles.length; j++) {
-                const q = particles[j];
-                const dx2 = p.x - q.x, dy2 = p.y - q.y;
-                const d = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+            for (var j = i + 1; j < pts.length; j++) {
+                var q = pts[j];
+                var d = Math.sqrt((p.x-q.x)*(p.x-q.x)+(p.y-q.y)*(p.y-q.y));
                 if (d < 115) {
                     ctx.globalAlpha = (1 - d / 115) * 0.1;
                     ctx.strokeStyle = 'rgba(26,168,255,1)';
@@ -445,124 +498,140 @@ function initParticles() {
 
 /* ════════════════════════════════
    ACTIVE NAV
+   BUG FIX: correct observer pattern
 ════════════════════════════════ */
 function initActiveNav() {
-    const sections = document.querySelectorAll('section[id], header[id], footer[id]');
-    const links    = document.querySelectorAll('.nav-link[href^="#"]');
-    new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const id = entry.target.id;
-            links.forEach(l => l.classList.toggle('active', l.getAttribute('href').slice(1) === id));
-        });
-    }, { rootMargin: '-35% 0px -60% 0px' }).observe
-    ? (function(){ const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
+    var sections = document.querySelectorAll('section[id], header[id], footer[id]');
+    var links    = document.querySelectorAll('.nav-link[href^="#"]');
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
             if (!e.isIntersecting) return;
-            const id = e.target.id;
-            links.forEach(l => l.classList.toggle('active', l.getAttribute('href').slice(1) === id));
+            var id = e.target.id;
+            links.forEach(function (l) {
+                l.classList.toggle('active', l.getAttribute('href').slice(1) === id);
+            });
         });
-    }, { rootMargin: '-35% 0px -60% 0px' }); sections.forEach(s => obs.observe(s)); })()
-    : null;
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    sections.forEach(function (s) { obs.observe(s); });
 }
 
 /* ════════════════════════════════
    SKILL BARS
 ════════════════════════════════ */
 function initSkillBars() {
-    const bars = document.querySelectorAll('.skill-bar-fill');
+    var bars = document.querySelectorAll('.skill-bar-fill');
     if (!bars.length) return;
-    const obs = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            const bar = entry.target;
-            setTimeout(() => {
-                bar.style.width = bar.getAttribute('data-width');
+            var bar = entry.target;
+            setTimeout(function () {
+                bar.style.width = bar.getAttribute('data-width') || '0%';
                 bar.classList.add('animated');
             }, 160);
             obs.unobserve(bar);
         });
     }, { threshold: 0.2 });
-    bars.forEach(b => obs.observe(b));
+    bars.forEach(function (b) { obs.observe(b); });
 }
 
 /* ════════════════════════════════
    COUNTERS
+   BUG FIX: correct IntersectionObserver pattern
 ════════════════════════════════ */
 function animateCounter(el, target, dur, suffix) {
-    let start = null;
+    var start = null;
     (function step(ts) {
         if (!start) start = ts;
-        const p = Math.min((ts - start) / dur, 1);
+        var p = Math.min((ts - start) / dur, 1);
         el.innerText = Math.floor((1 - Math.pow(1 - p, 3)) * target) + suffix;
         if (p < 1) requestAnimationFrame(step);
     })(performance.now());
 }
 function initCounters() {
-    const els = document.querySelectorAll('[data-counter]');
+    var els = document.querySelectorAll('[data-counter]');
     if (!els.length) return;
-    new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const el = entry.target;
-            animateCounter(el, parseInt(el.getAttribute('data-counter')), 1600, el.getAttribute('data-suffix') || '');
-        });
-    }, { threshold: 0.5 }).observe
-    ? (function(){ const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
             if (!e.isIntersecting) return;
-            const el = e.target;
-            animateCounter(el, parseInt(el.getAttribute('data-counter')), 1600, el.getAttribute('data-suffix') || '');
+            var el = e.target;
+            animateCounter(el,
+                parseInt(el.getAttribute('data-counter')),
+                1600,
+                el.getAttribute('data-suffix') || '');
             obs.unobserve(el);
         });
-    }, { threshold: 0.5 }); els.forEach(el => obs.observe(el)); })()
-    : null;
+    }, { threshold: 0.5 });
+    els.forEach(function (el) { obs.observe(el); });
+}
+
+/* ════════════════════════════════
+   SECTION REVEAL
+════════════════════════════════ */
+function initSectionReveals() {
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            e.target.style.opacity   = '1';
+            e.target.style.transform = 'translateY(0)';
+            obs.unobserve(e.target);
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal-on-scroll').forEach(function (el) {
+        el.style.opacity    = '0';
+        el.style.transform  = 'translateY(22px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        obs.observe(el);
+    });
 }
 
 /* ════════════════════════════════
    NAV SCROLL
 ════════════════════════════════ */
 function initNavScroll() {
-    const nav = document.querySelector('.nav-bar');
+    var nav = document.querySelector('.nav-bar');
     if (!nav) return;
-    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+    window.addEventListener('scroll', function () {
+        nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
 }
 
 /* ════════════════════════════════
    MOBILE MENU
 ════════════════════════════════ */
 function toggleMobileMenu() {
-    document.getElementById('mobile-menu')?.classList.toggle('open');
+    var m = document.getElementById('mobile-menu');
+    if (m) m.classList.toggle('open');
 }
 
 /* ════════════════════════════════
    DISCORD COPY
 ════════════════════════════════ */
 function copyDiscord() {
-    navigator.clipboard.writeText(config.discordHandle || 'hokpy').then(() => {
-        const el = document.getElementById('contact-discord-text');
+    var handle = (config && config.discordHandle) ? config.discordHandle : 'hokpy';
+    navigator.clipboard.writeText(handle).then(function () {
+        var el = document.getElementById('contact-discord-text');
         if (!el) return;
-        const orig = el.innerText;
-        el.innerText = 'COPIED! ✓';
-        showToast('📋 Discord copied! Don\'t be a stranger.');
-        setTimeout(() => { el.innerText = orig; }, 2200);
+        var orig = el.innerText;
+        el.innerText = 'COPIED! check';
+        showToast("Discord copied! Don't be a stranger.");
+        setTimeout(function () { el.innerText = orig; }, 2200);
     });
 }
 
 /* ════════════════════════════════
    SYSTEM OVERRIDE
-   BUG FIX: now uses correct new blue + updates accent-border too
+   BUG FIX: resets all 5 --accent vars to correct BA blue
 ════════════════════════════════ */
-let _override = false;
+var _override = false;
 function toggleSystemOverride(force) {
-    if (force !== undefined) { _override = !force; }
+    if (force !== undefined) _override = !force;
     _override = !_override;
-
-    const root = document.documentElement;
-    const st   = document.getElementById('system-status-text');
-    const sd   = document.getElementById('status-dot');
-    const sp   = document.getElementById('status-ping');
-    const badge = document.querySelector('.hero-badge');
+    var root  = document.documentElement;
+    var st    = document.getElementById('system-status-text');
+    var sd    = document.getElementById('status-dot');
+    var sp    = document.getElementById('status-ping');
+    var badge = document.querySelector('.hero-badge');
 
     if (_override) {
         root.style.setProperty('--accent',        '#FF4455');
@@ -571,13 +640,13 @@ function toggleSystemOverride(force) {
         root.style.setProperty('--accent-glow',   'rgba(255,68,85,.38)');
         root.style.setProperty('--accent-border', 'rgba(255,68,85,.22)');
         document.body.style.animation = 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both';
-        setTimeout(() => { document.body.style.animation = ''; }, 500);
+        setTimeout(function () { document.body.style.animation = ''; }, 520);
         if (st) st.innerText = 'SYSTEM CRITICAL';
         if (sd) { sd.classList.remove('bg-green-500'); sd.classList.add('bg-red-500'); }
         if (sp) { sp.classList.remove('bg-green-500'); sp.classList.add('bg-red-500'); }
-        badge?.classList.add('critical');
+        if (badge) badge.classList.add('critical');
         playClick(150, 0.5);
-        showToast('🚨 SYSTEM CRITICAL — sensei please help', '#FF4455');
+        showToast('SYSTEM CRITICAL — sensei please help', '#FF4455');
     } else {
         root.style.setProperty('--accent',        '#1AA8FF');
         root.style.setProperty('--accent-bright', '#5CCFFF');
@@ -587,7 +656,7 @@ function toggleSystemOverride(force) {
         if (st) st.innerText = 'System Online';
         if (sd) { sd.classList.remove('bg-red-500'); sd.classList.add('bg-green-500'); }
         if (sp) { sp.classList.remove('bg-red-500'); sp.classList.add('bg-green-500'); }
-        badge?.classList.remove('critical');
+        if (badge) badge.classList.remove('critical');
         playClick(1200, 0.3);
     }
 }
@@ -595,124 +664,169 @@ function toggleSystemOverride(force) {
 /* ════════════════════════════════
    KONAMI CODE
 ════════════════════════════════ */
-let _ki = 0;
-document.addEventListener('keydown', e => {
-    if (!config?.konamiCode) return;
-    if (e.key.toLowerCase() === config.konamiCode[_ki].toLowerCase()) {
+var _ki = 0;
+document.addEventListener('keydown', function (e) {
+    if (!config || !config.konamiCode) return;
+    var kc = config.konamiCode;
+    if (e.key.toLowerCase() === kc[_ki].toLowerCase()) {
         _ki++;
-        if (_ki === config.konamiCode.length) {
+        if (_ki === kc.length) {
             toggleSystemOverride(true);
             _ki = 0;
-            const out = document.getElementById('cli-output');
-            if (out) out.innerHTML += `<div style="color:var(--alert);font-weight:700;margin-bottom:4px;">>> KONAMI CODE DETECTED. CHAOS MODE ACTIVE.</div>`;
+            var out = document.getElementById('cli-output');
+            if (out) out.innerHTML += '<div style="color:var(--alert);font-weight:700;margin-bottom:4px;">&gt;&gt; KONAMI CODE DETECTED. CHAOS MODE ACTIVE.</div>';
         }
     } else { _ki = 0; }
 });
 
 /* ════════════════════════════════
    CLI TERMINAL
+   NEW: tab autocomplete, neofetch, admin commands
 ════════════════════════════════ */
 function initCLI() {
-    const inp = document.getElementById('cli-input');
-    const out = document.getElementById('cli-output');
+    var inp = document.getElementById('cli-input');
+    var out = document.getElementById('cli-output');
     if (!inp || !out) return;
 
-    const BLUE   = 'color:var(--accent)';
-    const GOLD   = 'color:#FFB83A';
-    const PINK   = 'color:#FF6FAE';
-    const GREEN  = 'color:#2EE89A';
-    const RED    = 'color:var(--alert)';
-    const GREY   = 'color:#4E6490';
-    const MUTED  = 'color:#283450';
+    var B = 'color:var(--accent)', G = 'color:#FFB83A', P = 'color:#FF6FAE';
+    var E = 'color:#2EE89A',       R = 'color:var(--alert)';
+    var S = 'color:#4E6490',       M = 'color:#283450';
 
-    const cmds = {
-        help: () => [
-            `<span style="${BLUE}">Available commands:</span>`,
-            `  <span style="${GOLD}">about</span>    · navigate to personnel file`,
-            `  <span style="${GOLD}">skills</span>   · view system specs`,
-            `  <span style="${GOLD}">projects</span> · view mission reports`,
-            `  <span style="${GOLD}">reviews</span>  · view field reports`,
-            `  <span style="${GOLD}">date</span>     · current timestamp`,
-            `  <span style="${GOLD}">whoami</span>   · identify current user`,
-            `  <span style="${GOLD}">status</span>   · system status`,
-            `  <span style="${GOLD}">hire</span>     · contact section`,
-            `  <span style="${GOLD}">coffee</span>   · critical command`,
-            `  <span style="${GOLD}">uwu</span>      · ..don't`,
-            `  <span style="${GOLD}">sudo</span>     · try it`,
-            `  <span style="${GOLD}">clear</span>    · clear terminal`,
-            `  <span style="${MUTED}">(and some secrets)</span>`,
-        ].join('<br>'),
+    function nav(href, msg) { setTimeout(function () { location.href = href; }, 200); return '<span style="' + S + '">' + msg + '</span>'; }
 
-        about:    () => { setTimeout(() => location.href = '#file', 200);     return `<span style="${GREY}">Navigating to personnel file...</span>`; },
-        skills:   () => { setTimeout(() => location.href = '#skills', 200);   return `<span style="${GREY}">Loading system specs...</span>`; },
-        projects: () => { setTimeout(() => location.href = '#projects', 200); return `<span style="${GREY}">Accessing mission reports...</span>`; },
-        reviews:  () => { setTimeout(() => location.href = '#reviews', 200);  return `<span style="${GREY}">Loading field reports...</span>`; },
-        hire:     () => { setTimeout(() => location.href = '#contact', 200);  return `<span style="${PINK}">Opening MomoTalk... sensei is waiting.</span>`; },
-        date:     () => `<span style="${GREY}">[${new Date().toLocaleString()}]</span>`,
-        whoami:   () => `<span style="${GREY}">Guest · Access: Level 1 · Node: Kivotos-Alpha · IP: 127.0.0.1 (nice try)</span>`,
-        status:   () => _override
-            ? `<span style="${RED}">⚠ SYSTEM CRITICAL — Override active. Sensei, please.</span>`
-            : `<span style="${GREEN}">✓ SYSTEM NOMINAL — All nodes green. Backend behaving. For now.</span>`,
-        coffee: () => [
-            `<span style="${GOLD}">☕ Brewing...</span>`,
-            `<span style="${GREY}">Caffeine level: 9000mg</span>`,
-            `<span style="${GREY}">Productivity boost: marginal</span>`,
-            `<span style="${GREY}">Bugs fixed post-coffee: also 0</span>`,
-        ].join('<br>'),
-        uwu: () => [
-            `<span style="${PINK}">UwU what's this?? a stwange tewminal??</span>`,
-            `<span style="${PINK}">*nuzzles ur datacentew* OwO</span>`,
-            `<span style="${MUTED}">[ this was a mistake. i am sorry. ]</span>`,
-        ].join('<br>'),
-        sudo: () => [
-            `<span style="${RED}">sudo: access denied.</span>`,
-            `<span style="${GREY}">Incident logged. (it wasn't)</span>`,
-            `<span style="${GREY}">5/10 for effort, though.</span>`,
-        ].join('<br>'),
-        hack: () => [
-            `<span style="${GREEN}">INITIATING HACK SEQUENCE...</span>`,
-            `<span style="${GREY}">Bypassing mainframe... ████████░░</span>`,
-            `<span style="${RED}">ERROR: This is a portfolio site. Nothing to hack.</span>`,
-            `<span style="${GREY}">Respectfully: nice try, Mr Robot.</span>`,
-        ].join('<br>'),
-        clear: () => { out.innerHTML = ''; return null; },
+    var cmds = {
+        help: function () { return [
+            '<span style="' + B + '">Commands:</span>',
+            '  <span style="' + G + '">about</span>    navigation',
+            '  <span style="' + G + '">skills</span>   system specs',
+            '  <span style="' + G + '">projects</span> mission reports',
+            '  <span style="' + G + '">reviews</span>  field reports',
+            '  <span style="' + G + '">hire</span>     contact',
+            '  <span style="' + G + '">date</span>     timestamp',
+            '  <span style="' + G + '">whoami</span>   identify',
+            '  <span style="' + G + '">status</span>   system status',
+            '  <span style="' + G + '">neofetch</span> sysinfo',
+            '  <span style="' + G + '">coffee</span>   critical cmd',
+            '  <span style="' + G + '">uwu</span>      please dont',
+            '  <span style="' + G + '">sudo</span>     nice try',
+            '  <span style="' + G + '">clear</span>    clear terminal',
+            '  <span style="' + M + '">(secrets hidden in the dark)</span>',
+        ].join('<br>'); },
+        about:    function () { return nav('#file',     'Navigating to personnel file...'); },
+        skills:   function () { return nav('#skills',   'Loading system specs...'); },
+        projects: function () { return nav('#projects', 'Accessing mission reports...'); },
+        reviews:  function () { return nav('#reviews',  'Loading field reports...'); },
+        hire:     function () { return nav('#contact',  'Opening MomoTalk...'); },
+        date:     function () { return '<span style="' + S + '">[' + new Date().toLocaleString() + ']</span>'; },
+        whoami:   function () { return '<span style="' + S + '">Guest &middot; Level 1 &middot; Node: Kivotos-Alpha &middot; IP: 127.0.0.1</span>'; },
+        status:   function () { return _override
+            ? '<span style="' + R + '">CRITICAL &mdash; Override active.</span>'
+            : '<span style="' + E + '">check NOMINAL &mdash; All nodes green. For now.</span>'; },
 
-        // Secret commands
-        ls:             () => `<span style="${GREY}">about/  skills/  projects/  reviews/  contact/  secret_bugs/  TODO_never_fix/</span>`,
-        'cat readme.md':() => `<span style="${GREY}">README: "portfolio built at 2am. please hire."</span>`,
-        cat:            () => `<span style="${GREY}">cat: specify a file. try: cat readme.md</span>`,
-        'cd ..':        () => `<span style="${GREY}">you cannot leave. this is your home now.</span>`,
-        exit:           () => `<span style="${GREY}">lol no</span>`,
-        vim:            () => `<span style="${GREY}">I know how to exit vim. I just choose not to.</span>`,
-        'git blame':    () => `<span style="${GREY}">git blame: Water (100% of commits, 100% of bugs)</span>`,
-        'npm install':  () => `<span style="${GREY}">added 2,847 packages. 3 vulnerabilities. node_modules: 850MB. enjoy.</span>`,
-        rm:             () => `<span style="${RED}">the site lives. you cannot delete it from here.</span>`,
-        penis:          () => `<span style="${GREY}">bruh</span>`,
-        'ping':         () => `<span style="${GREEN}">PONG — 1ms (because it's localhost, obviously)</span>`,
-        'whoops':       () => `<span style="${GOLD}">we've all been there</span>`,
+        neofetch: function () { return [
+            '<span style="' + B + '">  WATER</span>@<span style="' + B + '">kivotos</span>',
+            '  OS: KivotOS x64 &middot; Host: SCHALE.DB v4.0',
+            '  Shell: bash (certified bad decisions)',
+            '  CPU: Galaxy brain (2 cores, 0 free)',
+            '  RAM: 16GB (14.9GB used by Chrome)',
+            '  Uptime: way too long',
+            '  Coffee: CRITICAL LOW',
+            '  Bugs: 0 (official count)',
+            '  <span style="color:#FF4455;">&#x25CF;</span><span style="color:#FFB83A;">&#x25CF;</span><span style="color:#2EE89A;">&#x25CF;</span><span style="color:#1AA8FF;">&#x25CF;</span><span style="color:#a855f7;">&#x25CF;</span><span style="color:#FF6FAE;">&#x25CF;</span>',
+        ].join('<br>'); },
+
+        coffee: function () { return [
+            '<span style="' + G + '">Brewing...</span>',
+            '<span style="' + S + '">Caffeine: 9000mg. Productivity boost: marginal.</span>',
+            '<span style="' + S + '">Bugs fixed post-coffee: still 0.</span>',
+        ].join('<br>'); },
+
+        uwu: function () { return [
+            '<span style="' + P + '">UwU what\'s this?? a stwange tewminal??</span>',
+            '<span style="' + P + '">*nuzzles ur datacentew* OwO</span>',
+            '<span style="' + M + '">[ this was a mistake. deeply sorry. ]</span>',
+        ].join('<br>'); },
+
+        sudo: function () { return [
+            '<span style="' + R + '">sudo: Permission denied.</span>',
+            '<span style="' + S + '">Incident reported. (it wasn\'t) 5/10 for effort.</span>',
+        ].join('<br>'); },
+
+        hack: function () { return [
+            '<span style="' + E + '">INITIATING HACK SEQUENCE...</span>',
+            '<span style="' + S + '">Bypassing mainframe... &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2591;&#x2591;</span>',
+            '<span style="' + R + '">ERROR: This is a portfolio. Nothing to hack.</span>',
+            '<span style="' + S + '">Respectfully: nice try, Mr Robot.</span>',
+        ].join('<br>'); },
+
+        clear: function () { out.innerHTML = ''; return null; },
+
+        ls:             function () { return '<span style="' + S + '">about/&nbsp; skills/&nbsp; projects/&nbsp; reviews/&nbsp; contact/&nbsp; secret_bugs/&nbsp; TODO_never_fix/</span>'; },
+        'cat readme.md':function () { return '<span style="' + S + '">README: "portfolio built at 2am. please hire."</span>'; },
+        cat:            function () { return '<span style="' + S + '">cat: specify file. try: cat readme.md</span>'; },
+        'ls -la':       function () { return '<span style="' + S + '">drwx------ sensei sensei 4096 Jan 1 2025 .<br>-rw-r--r-- sensei sensei 1337 Jan 1 2025 secrets.txt<br>-rw-r--r-- sensei sensei  666 Jan 1 2025 bugs_i_caused.log<br>-rwxr-xr-x sensei sensei  404 Jan 1 2025 TODO (empty)</span>'; },
+        'cd ..':        function () { return '<span style="' + S + '">you cannot leave. this is your home now.</span>'; },
+        exit:           function () { return '<span style="' + S + '">lol no</span>'; },
+        vim:            function () { return '<span style="' + S + '">I know how to exit vim. I choose not to.</span>'; },
+        'git blame':    function () { return '<span style="' + S + '">git blame: Water (100% of commits, 100% of bugs)</span>'; },
+        'git commit':   function () { return '<span style="' + S + '">git commit -m "fixed a thing, broke 3 others"</span>'; },
+        'git push':     function () { return '<span style="' + R + '">remote: Permission denied (this isn\'t your repo)</span>'; },
+        'npm install':  function () { return '<span style="' + S + '">added 2,847 packages. 3 vulnerabilities. node_modules: 850MB.</span>'; },
+        rm:             function () { return '<span style="' + R + '">the site lives. you cannot delete it from here.</span>'; },
+        penis:          function () { return '<span style="' + S + '">bruh</span>'; },
+        ping:           function () { return '<span style="' + E + '">PONG &mdash; 1ms (it\'s localhost obviously)</span>'; },
+        whoops:         function () { return '<span style="' + G + '">we\'ve all been there</span>'; },
+        uname:          function () { return '<span style="' + S + '">KivotOS 5.15.0-schale x86_64 GNU/Luau</span>'; },
+        pwd:            function () { return '<span style="' + S + '">/home/sensei/schale.db/portfolio</span>'; },
+        'touch grass':  function () { return '<span style="' + E + '">check Grass touched. Achievement unlocked. Rare event.</span>'; },
+
+        // ── ADMIN (PIN-gated) ─────────────────────────────────
+        'reviews clear': function () {
+            var pin = prompt('Admin PIN required:');
+            if (!pin || pin !== ((config && config.adminPin) || 'water2025')) return '<span style="' + R + '">Access denied.</span>';
+            if (typeof adminClearUserReviews === 'function') adminClearUserReviews();
+            return '<span style="' + E + '">check User reviews cleared. Seed reviews preserved.</span>';
+        },
+        'pfp reset': function () {
+            var pin = prompt('Admin PIN required:');
+            if (!pin || pin !== ((config && config.adminPin) || 'water2025')) return '<span style="' + R + '">Access denied.</span>';
+            if (typeof adminResetPfp === 'function') adminResetPfp();
+            return '<span style="' + E + '">check Profile picture reset.</span>';
+        },
     };
 
-    const SASSY = [
-        (c) => `Command not found: "${c}". Did you mean "help"? Probably not.`,
-        (c) => `"${c}" — never heard of it. Try "help" like a normal person.`,
-        (c) => `bash: ${c}: command not found. skill issue detected.`,
-        (c) => `[${c}]: not a command. have you tried turning it off and on again?`,
+    var allCmdKeys = Object.keys(cmds);
+    var SASSY = [
+        function (c) { return 'Command not found: "' + c + '". Try "help". Probably.'; },
+        function (c) { return '"' + c + '" &mdash; never heard of it. Type "help".'; },
+        function (c) { return 'bash: ' + c + ': command not found. skill issue detected.'; },
+        function (c) { return '[' + c + ']: unknown. Have you tried turning it off and on again?'; },
     ];
+
+    inp.addEventListener('keydown', function (e) {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            var partial = this.value.toLowerCase().trim();
+            if (!partial) return;
+            var match = allCmdKeys.find(function (k) { return k.startsWith(partial); });
+            if (match) this.value = match;
+        }
+    });
 
     inp.addEventListener('keypress', function (e) {
         if (e.key !== 'Enter') return;
-        const raw = this.value.trim();
-        const cmd = raw.toLowerCase();
+        var raw = this.value.trim();
+        var cmd = raw.toLowerCase();
         if (!cmd) return;
         playClick(1200, 0.05);
-        out.innerHTML += `<div style="margin-bottom:2px;"><span style="${BLUE}">visitor@schale:~$</span> <span style="color:#8a9ec0">${raw}</span></div>`;
-        const handler = cmds[cmd];
+        out.innerHTML += '<div style="margin-bottom:2px;"><span style="' + B + '">visitor@schale:~$</span> <span style="color:#8a9ec0">' + raw + '</span></div>';
+        var handler = cmds[cmd];
         if (handler !== undefined) {
-            const res = typeof handler === 'function' ? handler() : handler;
-            if (res) out.innerHTML += `<div style="margin-bottom:6px;">${res}</div>`;
+            var res = typeof handler === 'function' ? handler() : handler;
+            if (res) out.innerHTML += '<div style="margin-bottom:6px;">' + res + '</div>';
         } else {
-            const fn = SASSY[Math.floor(Math.random() * SASSY.length)];
-            out.innerHTML += `<div style="${RED};margin-bottom:6px;">${fn(cmd)}</div>`;
+            var fn = SASSY[Math.floor(Math.random() * SASSY.length)];
+            out.innerHTML += '<div style="' + R + ';margin-bottom:6px;">' + fn(cmd) + '</div>';
         }
         this.value = '';
         out.scrollTop = out.scrollHeight;
@@ -723,39 +837,36 @@ function initCLI() {
    CARD SPOTLIGHT
 ════════════════════════════════ */
 function initCardSpotlight() {
-    document.querySelectorAll('.glass-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const r = card.getBoundingClientRect();
-            card.style.setProperty('--mouse-x', `${e.clientX - r.left}px`);
-            card.style.setProperty('--mouse-y', `${e.clientY - r.top}px`);
+    document.querySelectorAll('.glass-card').forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            var r = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', (e.clientX - r.left) + 'px');
+            card.style.setProperty('--mouse-y', (e.clientY - r.top)  + 'px');
         });
     });
 }
 
 /* ════════════════════════════════
-   LOGO EASTER EGG  (7 clicks)
-   BUG FIX: resets to new blue #1AA8FF
+   LOGO EASTER EGG
+   BUG FIX: resets ALL 5 accent vars
 ════════════════════════════════ */
 function initLogoEasterEgg() {
-    const logo = document.querySelector('[data-logo-egg]');
+    var logo = document.querySelector('[data-logo-egg]');
     if (!logo) return;
-    let n = 0, t;
-    logo.addEventListener('click', () => {
-        n++;
-        clearTimeout(t);
-        t = setTimeout(() => { n = 0; }, 2200);
+    var n = 0, t;
+    logo.addEventListener('click', function () {
+        n++; clearTimeout(t);
+        t = setTimeout(function () { n = 0; }, 2200);
         if (n >= 7) {
             n = 0;
-            showToast('🎉 Logo clicked 7 times. Achievement: "No Life"');
+            showToast('Logo clicked 7x &mdash; Achievement: "No Life"');
             playClick(440, 0.5);
-            let i = 0;
-            const cols = ['#FF4455','#FFB83A','#2EE89A','#1AA8FF','#a855f7','#FF6FAE'];
-            const iv = setInterval(() => {
-                document.documentElement.style.setProperty('--accent', cols[i % cols.length]);
-                i++;
+            var i = 0;
+            var cols = ['#FF4455','#FFB83A','#2EE89A','#1AA8FF','#a855f7','#FF6FAE'];
+            var iv = setInterval(function () {
+                document.documentElement.style.setProperty('--accent', cols[i++ % cols.length]);
                 if (i > 14) {
                     clearInterval(iv);
-                    // BUG FIX: reset to correct new blue
                     document.documentElement.style.setProperty('--accent',        '#1AA8FF');
                     document.documentElement.style.setProperty('--accent-bright', '#5CCFFF');
                     document.documentElement.style.setProperty('--accent-dim',    'rgba(26,168,255,.1)');
@@ -765,11 +876,4 @@ function initLogoEasterEgg() {
             }, 100);
         }
     });
-}
-
-/* ════════════════════════════════
-   SCRAMBLE HEADINGS  —  hooked to data-scramble
-════════════════════════════════ */
-function initScrambleAll() {
-    initScrambleHeadings(); // same function, cleaner call name
 }
