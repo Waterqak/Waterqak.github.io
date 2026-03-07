@@ -39,7 +39,7 @@ tailwind.config = {
     }}
 };
 </script>
-<link rel="stylesheet" href="css/styles.css?v=4.0">
+<link rel="stylesheet" href="css/styles.css?v=4.1">
 <style>@keyframes ripple-anim{to{transform:scale(4);opacity:0;}}</style>
 </head>
 <body class="antialiased">
@@ -77,14 +77,12 @@ tailwind.config = {
 <div class="grid-bg"></div>
 <canvas id="particles-canvas"></canvas>
 
-<!-- Music pill -->
-<div class="fixed bottom-6 left-6 z-40 hidden md:flex items-center gap-3 px-4 py-2.5 rounded-full border border-white/8 hover:border-schale/40 transition-all group cursor-pointer"
-     style="background:rgba(5,9,26,0.88);backdrop-filter:blur(20px);" onclick="toggleMute()"
-     data-tip="Toggle music — SCHALE RADIO is live">
+<!-- Music pill — bottom RIGHT (achievement panel owns bottom-left) -->
+<div class="music-pill group" onclick="toggleMute()" data-tip="Toggle music — SCHALE RADIO is live">
     <div class="live-dot"></div>
     <div class="flex flex-col leading-tight">
-        <span class="text-[8px] font-mono text-gray-600 tracking-widest">NOW PLAYING</span>
-        <span class="text-[10px] text-white font-bold group-hover:text-schale transition-colors">SCHALE RADIO</span>
+        <span class="text-[8px] font-mono text-gray-600 tracking-widest group-hover:text-schale/60 transition-colors">NOW PLAYING</span>
+        <span class="text-[10px] text-white font-bold group-hover:text-schale transition-colors" style="font-family:'JetBrains Mono',monospace;">SCHALE RADIO</span>
     </div>
     <i id="mute-icon" data-lucide="volume-2" class="w-3.5 h-3.5 text-gray-600 group-hover:text-schale transition-colors"></i>
 </div>
@@ -112,13 +110,13 @@ tailwind.config = {
         </div>
         <div class="hidden md:flex items-center gap-3">
             <button onclick="toggleLanguage(); playClick()"
-                    class="text-[10px] font-mono font-bold text-schale border border-schale/25 px-3 py-1.5 hover:bg-schale/10 transition-all rounded-md"
+                    class="text-[10px] font-mono font-bold text-schale border border-schale/20 px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-schale/10 hover:border-schale/40 hover:scale-105 active:scale-95"
                     style="letter-spacing:0.12em;" data-tip="Switch language / ภาษา">
                 <span id="lang-display">EN</span>
             </button>
             <a href="#contact" onclick="playClick()" data-magnetic data-ripple
-               class="bg-momo hover:bg-[#ff8fae] text-[#3d1f2c] px-5 py-2 rounded-xl text-xs font-black shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
-               style="letter-spacing:0.05em;">
+               class="nav-cta inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-black shadow-lg"
+               style="background:#FFA8C5;color:#3d1f2c;letter-spacing:0.05em;">
                 <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                 <span data-i18n="nav_hire">MomoTalk</span>
             </a>
@@ -154,44 +152,60 @@ tailwind.config = {
 <!-- ══ HERO · 01 ═══════════════════════════════════════════ -->
 <header class="min-h-screen flex items-center relative overflow-hidden pt-20" id="about">
     <div class="halo-container"></div>
+    <!-- Ambient orbs -->
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div style="position:absolute;top:10%;left:-8%;width:500px;height:500px;border-radius:50%;
+                    background:radial-gradient(circle,rgba(26,168,255,.055) 0%,transparent 70%);
+                    filter:blur(50px);animation:floatOrb1 22s ease-in-out infinite;will-change:transform;"></div>
+        <div style="position:absolute;bottom:5%;right:-5%;width:380px;height:380px;border-radius:50%;
+                    background:radial-gradient(circle,rgba(168,85,247,.04) 0%,transparent 70%);
+                    filter:blur(45px);animation:floatOrb2 28s ease-in-out infinite;will-change:transform;"></div>
+        <div style="position:absolute;top:50%;left:50%;width:250px;height:250px;border-radius:50%;
+                    transform:translate(-50%,-50%);
+                    background:radial-gradient(circle,rgba(255,111,174,.025) 0%,transparent 70%);
+                    filter:blur(40px);animation:floatOrb1 18s ease-in-out infinite reverse;will-change:transform;"></div>
+    </div>
     <div class="section-num" style="top:80px;right:40px;">01</div>
     <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full z-10 py-16">
 
         <!-- Left -->
-        <div data-aos="fade-right" data-aos-duration="900">
-            <button onclick="toggleSystemOverride()" class="hero-badge mb-8" data-tip="Click to toggle system status">
-                <span class="relative flex h-2 w-2">
-                    <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                    <span id="status-dot"  class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                </span>
-                <span id="system-status-text" class="tracking-widest" data-i18n="status_online">System Online</span>
-            </button>
+        <div>
+            <div data-aos="fade-right" data-aos-duration="700">
+                <button onclick="toggleSystemOverride()" class="hero-badge mb-8" data-tip="Click to toggle system status">
+                    <span class="relative flex h-2 w-2">
+                        <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                        <span id="status-dot"  class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span id="system-status-text" class="tracking-widest" data-i18n="status_online">System Online</span>
+                </button>
+            </div>
 
-            <h1 class="hero-title mb-6 cursor-default" data-aos="fade-right" data-aos-delay="100">
-                <span data-i18n="hero_prefix" class="block text-white/80">Sensei, I fix</span>
+            <h1 class="hero-title mb-6 cursor-default" data-aos="fade-right" data-aos-delay="80" data-aos-duration="800">
+                <span data-i18n="hero_prefix" class="block text-white/80 mb-1">Sensei, I fix</span>
                 <span id="typewriter" class="text-gradient block"></span>
             </h1>
 
-            <p class="text-gray-400 mb-10 max-w-lg leading-relaxed pl-5 border-l-2 border-schale/40 text-sm" data-i18n="hero_desc">
+            <p class="text-gray-400 mb-10 max-w-lg leading-relaxed pl-5 border-l-2 border-schale/35 text-sm"
+               data-aos="fade-right" data-aos-delay="160" data-i18n="hero_desc">
                 I'm a Roblox Systems Engineer. I turn your laggy, spaghetti code into beautiful, scalable backends. Yes, I accept Robux. Let's make your game survive contact with actual players.
             </p>
 
-            <div class="flex flex-wrap gap-4 mb-10" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex flex-wrap gap-4 mb-10" data-aos="fade-up" data-aos-delay="220">
                 <a href="#projects" onclick="playClick()" data-magnetic data-ripple
-                   class="inline-flex items-center gap-2 bg-white text-black font-black px-8 py-3.5 rounded-lg hover:bg-blue-50 transition-all hover:-translate-y-1"
-                   style="font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:0.1em;box-shadow:4px 4px 0 var(--accent);">
+                   class="btn-primary bg-white text-black px-8 py-3.5 rounded-lg text-sm"
+                   style="box-shadow:4px 4px 0 var(--accent);">
                     <span data-i18n="btn_see_work">VIEW DATABASE</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
                 <a href="#contact" onclick="playClick()" data-magnetic
-                   class="inline-flex items-center gap-2 border text-gray-300 px-8 py-3.5 rounded-lg hover:text-white hover:bg-schale/8 transition-all"
-                   style="border-color:rgba(255,255,255,0.12);font-size:12px;font-weight:700;letter-spacing:0.1em;">
+                   class="btn-secondary px-8 py-3.5 rounded-lg text-xs font-bold border"
+                   style="border-color:rgba(255,255,255,0.12);color:#a0a8c0;letter-spacing:0.1em;">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                     HIRE ME
                 </a>
             </div>
 
-            <div class="grid grid-cols-3 gap-3 max-w-sm" data-aos="fade-up" data-aos-delay="300">
+            <div class="grid grid-cols-3 gap-3 max-w-sm" data-aos="fade-up" data-aos-delay="300" data-stagger="80">
                 <div class="hero-stat tilt-card" data-tip="50+ satisfied clients (and counting)">
                     <div class="hero-stat-num" data-counter="50" data-suffix="+">50+</div>
                     <div class="hero-stat-label">Commissions</div>
@@ -348,7 +362,7 @@ tailwind.config = {
                 <p class="text-gray-400 text-sm leading-loose mb-8">
                     I've got 4 years of Roblox backend experience, over 50 shipped commissions, and exactly zero production fires that I couldn't eventually put out (just don't ask about the ones I accidentally started on my local machine).
                 </p>
-                <div class="flex flex-wrap gap-3 mb-8">
+                <div class="flex flex-wrap gap-3 mb-8" data-stagger="70">
                     <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-schale/30 hover:text-schale transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
                         <div class="w-1.5 h-1.5 rounded-full" style="background:#60a5fa;box-shadow:0 0 5px #60a5fa;"></div>LuaU Expert
                     </div>
@@ -380,7 +394,7 @@ tailwind.config = {
         <h2 class="text-3xl font-black text-white mb-3" data-aos="fade-up" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="SYSTEM SPECS">SYSTEM SPECS</h2>
         <p class="text-gray-600 text-sm mb-12 font-mono" data-aos="fade-up" data-aos-delay="50">— hover the percentage. you won't. —</p>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger="60">
             <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="0">
                 <div class="card-header-strip strip-blue"></div>
                 <div class="flex justify-between items-end mb-5 pt-2">
@@ -423,7 +437,7 @@ tailwind.config = {
             </div>
         </div>
         <!-- Fun skills -->
-        <div class="mt-5 grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="mt-5 grid md:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger="55">
             <div class="skill-card" data-aos="fade-up" data-aos-delay="280" style="opacity:0.6;">
                 <div class="flex justify-between items-end mb-4 pt-1">
                     <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Sleep Schedule</h3><span class="text-red-500 font-mono text-[10px]">2%</span>
@@ -468,7 +482,7 @@ tailwind.config = {
         </div>
         <div class="relative" data-aos="fade-up" data-aos-delay="100">
             <div class="timeline-line"></div>
-            <div class="timeline-item group">
+            <div class="timeline-item group reveal-on-scroll" data-reveal="left" data-reveal-delay="0">
                 <div class="timeline-dot"></div>
                 <div class="glass-card p-6 rounded-xl">
                     <div class="card-header-strip strip-blue"></div>
@@ -486,7 +500,7 @@ tailwind.config = {
                     <div class="reveal-detail text-xs text-gray-600 font-mono pt-2" style="border-top:1px solid rgba(255,255,255,0.04);">↳ available now — see estimator to get a quote</div>
                 </div>
             </div>
-            <div class="timeline-item group">
+            <div class="timeline-item group reveal-on-scroll" data-reveal="left" data-reveal-delay="100">
                 <div class="timeline-dot"></div>
                 <div class="glass-card p-6 rounded-xl">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
@@ -497,7 +511,7 @@ tailwind.config = {
                     <div class="reveal-detail text-xs text-gray-600 font-mono pt-2 mt-2" style="border-top:1px solid rgba(255,255,255,0.04);">↳ first commit message: "added stuff" — genuine growth</div>
                 </div>
             </div>
-            <div class="timeline-item group">
+            <div class="timeline-item group reveal-on-scroll" data-reveal="left" data-reveal-delay="200">
                 <div class="timeline-dot" style="border-color:rgba(255,255,255,0.2);box-shadow:none;"></div>
                 <div class="glass-card p-6 rounded-xl" style="opacity:0.5;">
                     <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
@@ -558,7 +572,7 @@ tailwind.config = {
                 <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="MISSION REPORTS">MISSION REPORTS</h2>
                 <p class="text-gray-600 text-sm mt-2">Things I built. Some look cool. All of them work.</p>
             </div>
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2" data-stagger="50">
                 <button onclick="filterProjects('all')" class="filter-btn bg-schale text-white text-xs font-bold rounded-full px-5 py-2 shadow-md hover:scale-105 transition-all" data-ripple>ALL</button>
                 <button onclick="filterProjects('GAMEPLAY')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all" data-ripple>SYSTEMS</button>
                 <button onclick="filterProjects('FULL GAME')" class="filter-btn bg-dark text-gold border border-gold/20 text-xs font-bold rounded-full px-5 py-2 hover:bg-gold hover:text-black transition-all" data-ripple>GAMES</button>
@@ -741,7 +755,7 @@ tailwind.config = {
                 <span style="font-size:15px;letter-spacing:0.05em;font-family:'Rajdhani',sans-serif;">MomoTalk</span>
                 <span class="ml-auto text-[10px] bg-white/25 text-[#3d1f2c] px-2 py-0.5 rounded-full font-bold">2 unread</span>
             </div>
-            <div class="p-4" style="background:#efefef;">
+            <div class="p-4" style="background:#efefef;" data-stagger="80">
                 <div class="momotalk-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord username">
                     <div class="momotalk-avatar" style="background:#eaecff;">
                         <i data-lucide="message-square" class="w-5 h-5 text-indigo-500 group-hover:scale-110 transition-transform"></i>
@@ -818,7 +832,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initIdleDetection();
 
     lucide.createIcons();
-    AOS.init({ once: true, offset: 60, duration: 680, easing: 'ease-out-cubic' });
+    AOS.init({ once: true, offset: 50, duration: 700, easing: 'ease-out-cubic', delay: 0 });
     typeWriter();
     calculateBudget();
 
