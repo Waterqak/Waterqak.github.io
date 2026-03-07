@@ -31,8 +31,8 @@ function initLocalSystem() {
     var alreadyCounted = sessionStorage.getItem(todayKey);
 
     var endpoint = alreadyCounted
-        ? 'https://api.countapi.xyz/get/waterqak/schale-visits'
-        : 'https://api.countapi.xyz/hit/waterqak/schale-visits';
+        ? 'https://api.counterapi.dev/v1/waterqaks-team/schale-visits'
+        : 'https://api.counterapi.dev/v1/waterqaks-team/schale-visits/up';
 
     fetch(endpoint)
         .then(function (r) { return r.json(); })
