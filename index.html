@@ -787,6 +787,7 @@ tailwind.config = {
 <script src="js/calculator.js?v=4.0"></script>
 <script src="js/reviews.js?v=4.0"></script>
 <script src="js/ui.js?v=4.0"></script>
+<script src="js/events.js?v=4.0"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -812,6 +813,9 @@ document.addEventListener('DOMContentLoaded', function () {
     initUptimeCounter();
     startRandomToasts();
     initSectionReveals();
+    initAchievements();
+    initRandomEvents();
+    initIdleDetection();
 
     lucide.createIcons();
     AOS.init({ once: true, offset: 60, duration: 680, easing: 'ease-out-cubic' });
