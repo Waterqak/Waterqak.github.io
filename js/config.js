@@ -18,7 +18,14 @@ const config = {
     // 📊 Visitor counter base number (cosmetic)
     visitorBase: 14200,
 
-    // 🎮 Konami code easter egg sequence (don't need to change this)
+    // 🎮 Konami code easter egg sequence
     konamiCode: ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'],
+
+    // 🔒 PIN to protect profile picture updates (change this to your own secret PIN)
+    //    Visitors will be asked for this PIN before they can change the avatar photo.
+    profilePin: "water2025",
+
+    // 🔒 Admin PIN for review management (used in terminal: reviews clear)
+    adminPin: "water2025",
 
 };
