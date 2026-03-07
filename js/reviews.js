@@ -175,27 +175,26 @@ function initReviewForm() {
         starSel.innerHTML = renderStars(5, true, 'stars');
     }
 
-    // Star hover/click
-    document.addEventListener('mouseenter', e => {
-        if (!e.target.classList.contains('star-icon')) return;
-        syncStarUI(parseInt(e.target.getAttribute('data-val')));
-    }, true);
-    document.addEventListener('mouseleave', e => {
-        if (!e.target.classList.contains('star-icon')) return;
-        const checked = form.querySelector('input[name="stars"]:checked');
-        syncStarUI(checked ? parseInt(checked.value) : 5);
-    }, true);
-    document.addEventListener('click', e => {
-        const lbl = e.target.closest('.star-label');
-        if (!lbl) return;
-        const svg = lbl.querySelector('.star-icon');
-        if (!svg) return;
-        const v = parseInt(svg.getAttribute('data-val'));
-        const radio = lbl.querySelector('input[type="radio"]');
-        if (radio) radio.checked = true;
-        syncStarUI(v);
-        if (typeof playClick === 'function') playClick(600 + v * 80, 0.05);
-    });
+    // Star hover/click — direct listeners (no document delegation)
+    function bindStars() {
+        document.querySelectorAll('.star-label').forEach(lbl => {
+            const svg   = lbl.querySelector('.star-icon');
+            const radio = lbl.querySelector('input[type="radio"]');
+            if (!svg) return;
+            const v = parseInt(svg.getAttribute('data-val'));
+            lbl.addEventListener('mouseenter', () => syncStarUI(v));
+            lbl.addEventListener('mouseleave', () => {
+                const checked = form.querySelector('input[name="stars"]:checked');
+                syncStarUI(checked ? parseInt(checked.value) : 5);
+            });
+            lbl.addEventListener('click', () => {
+                if (radio) radio.checked = true;
+                syncStarUI(v);
+                if (typeof playClick === 'function') playClick(600 + v * 80, 0.05);
+            });
+        });
+    }
+    bindStars();
 
     // Character counter
     const textarea   = document.getElementById('review-text');
