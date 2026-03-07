@@ -1,6 +1,6 @@
 /* ============================================================
    ✏️  TRANSLATIONS.JS — EN / TH text strings
-   Edit the text values to change what shows on the site.
+   BUG FIX: now syncs #lang-display-mobile
    ============================================================ */
 
 const translations = {
@@ -32,8 +32,8 @@ const translations = {
         nav_work:         "ผลงาน",
         nav_estimator:    "ราคา",
         nav_hire:         "MomoTalk",
-        hero_prefix:      "เซ็นเซย์ครับ... ผมซ่อม",
-        hero_desc:        "วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend...",
+        hero_prefix:      "เซ็นเซย์ครับ ผมซ่อม",
+        hero_desc:        "วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend เสถียรภาพของข้อมูล และระบบเกมซับซ้อน",
         status_online:    "สถานะ: ออนไลน์",
         btn_see_work:     "ดูฐานข้อมูล",
         contact_title:    "MomoTalk",
@@ -52,12 +52,19 @@ const translations = {
 };
 
 function toggleLanguage() {
-    const display = document.getElementById('lang-display');
-    const next    = display.innerText === 'EN' ? 'TH' : 'EN';
-    display.innerText = next;
+    const display       = document.getElementById('lang-display');
+    const displayMobile = document.getElementById('lang-display-mobile'); // BUG FIX
+    const next          = (display?.innerText || 'EN') === 'EN' ? 'TH' : 'EN';
+
+    if (display)       display.innerText       = next;
+    if (displayMobile) displayMobile.innerText = next; // BUG FIX: was missing
+
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[next][key]) el.innerText = translations[next][key];
+        const val = translations[next]?.[key];
+        if (val) el.innerText = val;
     });
-    typeWriter();
+
+    // Re-run typewriter in new language
+    if (typeof typeWriter === 'function') typeWriter();
 }
