@@ -1,875 +1,685 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="icon" type="image/png" href="favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Water — Roblox Systems Engineer. Backend specialist. Bug exterminator. Available for hire.">
+<meta name="description" content="Water — Roblox Systems Engineer. Backend specialist. Bug exterminator.">
 <title>Water.Logs | Schale Database</title>
+<link rel="icon" type="image/png" href="favicon.png">
 
-<!-- Fonts: added Nunito v4 -->
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- Libraries -->
+<!-- Libs -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<link  href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <link  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
 
 <script>
 tailwind.config = {
-    darkMode: 'class',
-    theme: { extend: {
-        fontFamily: { sans:['Nunito','Plus Jakarta Sans','Inter','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Rajdhani','sans-serif'] },
-        colors: { schale:'var(--accent)', dark:'#05091A', panel:'#070C1E', alert:'#FF4455', gold:'#FFB83A', momo:'#FFA8C5' },
-        animation: {
-            'pulse-fast':'pulse 1.5s cubic-bezier(0.4,0,0.6,1) infinite',
-            'crt-off':'crtOff 0.5s forwards',
-            'shake':'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
-            'float':'float 6s ease-in-out infinite',
-        },
-        keyframes: {
-            crtOff:{'0%':{opacity:1,transform:'scale(1,1)'},'40%':{opacity:1,transform:'scale(1,0.05)'},'100%':{opacity:0,transform:'scale(0,0)'}},
-            shake:{'10%,90%':{transform:'translate3d(-1px,0,0)'},'20%,80%':{transform:'translate3d(2px,0,0)'},'30%,50%,70%':{transform:'translate3d(-4px,0,0)'},'40%,60%':{transform:'translate3d(4px,0,0)'}},
-            float:{'0%,100%':{transform:'translateY(0)'},'50%':{transform:'translateY(-8px)'}},
-        }
-    }}
+  darkMode:'class',
+  theme:{ extend:{
+    fontFamily:{ sans:['Nunito','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Rajdhani','sans-serif'] },
+    colors:{ accent:'var(--accent)', gold:'var(--gold)', momo:'#FFA8C5' }
+  }}
 };
 </script>
-<link rel="stylesheet" href="css/styles.css?v=4.1">
-<style>@keyframes ripple-anim{to{transform:scale(4);opacity:0;}}</style>
+<link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="antialiased">
+<body>
 
-<!-- ══ LOADING SCREEN ══════════════════════════════════════ -->
-<div id="start-overlay">
-    <div class="relative z-10 flex flex-col items-center">
-        <div class="w-20 h-20 rounded-2xl flex items-center justify-center border border-schale/20 mb-8 animate-pulse-fast"
-             style="background:rgba(26,168,255,0.05);box-shadow:0 0 40px rgba(26,168,255,0.15),inset 0 0 20px rgba(26,168,255,0.05);">
-            <i data-lucide="database" class="w-10 h-10 text-schale"></i>
-        </div>
-        <h1 class="text-4xl font-black mb-1 text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
-            SCHALE<span class="text-schale">.DB</span>
-        </h1>
-        <p class="text-[10px] font-mono text-gray-700 mb-8 tracking-[0.2em]">v4.0 // KIVOTOS RESEARCH INSTITUTE</p>
-        <div id="boot-log-container" class="flex flex-col gap-1 min-h-[180px]"></div>
-        <button id="connect-btn" onclick="startExperience()" data-ripple
-            class="opacity-0 translate-y-4 transition-all duration-700 mt-8 px-12 py-3.5 font-bold tracking-[0.15em] text-xs relative overflow-hidden"
-            style="background:rgba(26,168,255,0.08);border:1px solid rgba(26,168,255,0.35);color:var(--accent);border-radius:6px;">
-            CONNECT_TO_SERVER
-        </button>
+<!-- ══ BOOT SCREEN ════════════════════════════════════════════ -->
+<div id="boot">
+  <div class="relative z-10 flex flex-col items-center">
+    <!-- Logo mark -->
+    <div class="w-16 h-16 rounded-2xl flex items-center justify-center border mb-7 animate-pulse"
+         style="background:rgba(26,168,255,0.05);border-color:rgba(26,168,255,0.2);box-shadow:0 0 32px rgba(26,168,255,0.1)">
+      <i data-lucide="database" style="width:32px;height:32px;color:var(--accent)"></i>
     </div>
-    <div class="absolute bottom-10 text-[9px] font-mono text-gray-700 tracking-[0.2em]">
-        SCHALE RESEARCH INSTITUTE // KIVOTOS // <span class="blink-text text-schale/40">&#x25A0;</span>
-    </div>
+    <h1 class="display font-black text-white mb-1" style="font-size:2.2rem;letter-spacing:0.08em">
+      SCHALE<span style="color:var(--accent)">.DB</span>
+    </h1>
+    <p class="mono mb-7" style="font-size:9px;letter-spacing:0.22em;color:var(--muted)">v5.0 // KIVOTOS RESEARCH INSTITUTE</p>
+
+    <div id="boot-log" class="flex flex-col gap-0.5" style="min-height:160px"></div>
+
+    <button id="boot-btn" onclick="startExperience()" data-ripple
+            class="btn btn-primary mt-8 mono"
+            style="opacity:0;transform:translateY(14px);transition:all 0.6s ease;font-size:11px;letter-spacing:0.15em;padding:12px 40px">
+      CONNECT_TO_SERVER
+    </button>
+  </div>
+  <div class="absolute bottom-8 mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">
+    SCHALE RESEARCH INSTITUTE // KIVOTOS // <span class="blink" style="color:var(--accent)">■</span>
+  </div>
 </div>
 
+<!-- ══ GLOBAL UI ══════════════════════════════════════════════ -->
 <audio id="bgm" loop></audio>
-<div id="scroll-progress"></div>
-
-<!-- Background layers -->
+<div id="scroll-bar"></div>
+<div id="section-bar" style="width:0%"></div>
+<div id="tooltip"></div>
 <div class="bg-noise"></div>
-<div class="mesh-bg"></div>
-<div class="diag-bg"></div>
-<div class="grid-bg"></div>
+<div class="bg-mesh"></div>
 <canvas id="particles-canvas"></canvas>
 
-<!-- Music pill — bottom RIGHT (achievement panel owns bottom-left) -->
-<div class="music-pill group" onclick="toggleMute()" data-tip="Toggle music — SCHALE RADIO is live">
-    <div class="live-dot"></div>
-    <div class="flex flex-col leading-tight">
-        <span class="text-[8px] font-mono text-gray-600 tracking-widest group-hover:text-schale/60 transition-colors">NOW PLAYING</span>
-        <span class="text-[10px] text-white font-bold group-hover:text-schale transition-colors" style="font-family:'JetBrains Mono',monospace;">SCHALE RADIO</span>
-    </div>
-    <i id="mute-icon" data-lucide="volume-2" class="w-3.5 h-3.5 text-gray-600 group-hover:text-schale transition-colors"></i>
+<!-- Music pill -->
+<div class="music-pill" onclick="toggleMute()" data-tip="Toggle SCHALE RADIO">
+  <div class="live-dot"></div>
+  <div class="flex flex-col leading-tight">
+    <span class="mono" style="font-size:7px;letter-spacing:0.15em;color:var(--muted)">NOW PLAYING</span>
+    <span class="mono font-bold" style="font-size:9px;color:#fff">SCHALE RADIO</span>
+  </div>
+  <i id="mute-icon" data-lucide="volume-2" style="width:13px;height:13px;color:var(--dim)"></i>
 </div>
 
-<!-- ══ NAVIGATION ══════════════════════════════════════════ -->
-<nav class="fixed w-full z-50 nav-bar">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between" style="height:68px;">
-        <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
-             onclick="playClick(); window.scrollTo({top:0,behavior:'smooth'})"
-             data-tip="SCHALE.DB — click me 7 times">
-            <div class="bg-schale/8 text-schale p-2 rounded-lg border border-schale/15 group-hover:bg-schale group-hover:text-white transition-all duration-300">
-                <i data-lucide="database" class="w-4 h-4"></i>
-            </div>
-            <span class="font-black text-lg text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.06em;">
-                SCHALE<span class="text-schale">.DB</span>
-            </span>
-        </div>
-        <div class="hidden md:flex items-center gap-7 text-gray-500">
-            <a href="#about"      class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Home</a>
-            <a href="#code"       class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Code Vault</a>
-            <a href="#history"    class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">History</a>
-            <a href="#projects"   class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Projects</a>
-            <a href="#calculator" class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Estimator</a>
-            <a href="#reviews"    class="nav-link hover:text-white transition-colors underline-anim" onclick="playClick()">Reviews</a>
-        </div>
-        <div class="hidden md:flex items-center gap-3">
-            <button onclick="toggleLanguage(); playClick()"
-                    class="text-[10px] font-mono font-bold text-schale border border-schale/20 px-3 py-1.5 rounded-lg transition-all duration-200 hover:bg-schale/10 hover:border-schale/40 hover:scale-105 active:scale-95"
-                    style="letter-spacing:0.12em;" data-tip="Switch language / ภาษา">
-                <span id="lang-display">EN</span>
-            </button>
-            <a href="#contact" onclick="playClick()" data-magnetic data-ripple
-               class="nav-cta inline-flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-black shadow-lg"
-               style="background:#FFA8C5;color:#3d1f2c;letter-spacing:0.05em;">
-                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-                <span data-i18n="nav_hire">MomoTalk</span>
-            </a>
-        </div>
-        <button onclick="toggleMobileMenu(); playClick()" class="md:hidden text-white p-2 rounded-lg border border-white/8"
-                style="background:rgba(255,255,255,0.04);">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
+<!-- Achievement button + panel -->
+<div id="ach-btn">
+  <span style="font-size:17px">🏆</span>
+  <span id="ach-badge" class="mono" style="font-size:7px;color:var(--gold);font-weight:700">0/12</span>
+</div>
+<div id="ach-panel">
+  <div style="padding:12px 14px;border-bottom:1px solid rgba(255,184,58,0.1);background:rgba(255,184,58,0.04);flex-shrink:0">
+    <div class="flex justify-between items-center mb-2">
+      <span class="display font-black text-white" style="font-size:12px;letter-spacing:0.1em">ACHIEVEMENTS</span>
+      <span id="ach-pct" class="mono" style="font-size:8px;color:var(--gold)">0/12 · 0%</span>
     </div>
+    <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+      <div id="ach-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffcc44);border-radius:99px;transition:width 0.5s ease;box-shadow:0 0 6px rgba(255,184,58,0.4)"></div>
+    </div>
+  </div>
+  <div id="ach-list" style="overflow-y:auto;padding:8px;flex:1"></div>
+</div>
+
+<!-- Dot navigator -->
+<div id="nav-dots"></div>
+
+<!-- ══ NAVIGATION ═════════════════════════════════════════════ -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
+         onclick="playClick(); navigateTo('home')" data-tip="SCHALE.DB — click me 7 times">
+      <div class="p-2 rounded-lg border transition-all duration-300 group-hover:bg-[color:var(--accent)]"
+           style="background:rgba(26,168,255,0.07);border-color:rgba(26,168,255,0.15)">
+        <i data-lucide="database" style="width:15px;height:15px;color:var(--accent)"></i>
+      </div>
+      <span class="display font-black text-white" style="font-size:1.15rem;letter-spacing:0.06em">
+        SCHALE<span style="color:var(--accent)">.DB</span>
+      </span>
+    </div>
+
+    <!-- Desktop links -->
+    <div class="hidden md:flex items-center gap-7">
+      <a class="nav-link" data-section="home"      onclick="navigateTo('home');playClick()">Home</a>
+      <a class="nav-link" data-section="code"      onclick="navigateTo('code');playClick()">Code Vault</a>
+      <a class="nav-link" data-section="history"   onclick="navigateTo('history');playClick()">History</a>
+      <a class="nav-link" data-section="projects"  onclick="navigateTo('projects');playClick()">Projects</a>
+      <a class="nav-link" data-section="estimator" onclick="navigateTo('estimator');playClick()">Estimator</a>
+      <a class="nav-link" data-section="reviews"   onclick="navigateTo('reviews');playClick()">Reviews</a>
+    </div>
+
+    <!-- Desktop right -->
+    <div class="hidden md:flex items-center gap-3">
+      <button onclick="toggleLanguage()" class="mono font-bold"
+              style="font-size:10px;letter-spacing:0.12em;color:var(--accent);border:1px solid rgba(26,168,255,0.2);padding:6px 12px;border-radius:8px;background:transparent;cursor:pointer;transition:all .2s"
+              onmouseover="this.style.background='rgba(26,168,255,0.08)'" onmouseout="this.style.background='transparent'"
+              data-tip="Switch language / ภาษา">
+        <span id="lang-d">EN</span>
+      </button>
+      <button onclick="navigateTo('contact');playClick()" data-mag data-ripple class="btn btn-momo">
+        <i data-lucide="message-circle" style="width:13px;height:13px"></i>
+        MomoTalk
+      </button>
+    </div>
+
+    <!-- Hamburger -->
+    <button onclick="toggleMenu();playClick()" class="md:hidden p-2 rounded-lg border"
+            style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer">
+      <i data-lucide="menu" style="width:20px;height:20px;color:#fff"></i>
+    </button>
+  </div>
 </nav>
 
 <!-- Mobile menu -->
-<div id="mobile-menu" class="mobile-menu fixed inset-0 z-40 md:hidden flex flex-col pt-24 px-8 gap-8 border-l border-schale/20"
-     style="background:#05091A;">
-    <button onclick="toggleMobileMenu(); playClick()" class="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
-        <i data-lucide="x" class="w-7 h-7"></i>
-    </button>
-    <div class="flex flex-col gap-5 text-2xl font-black" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.1em;">
-        <a href="#about"      onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">HOME</a>
-        <a href="#code"       onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">CODE VAULT</a>
-        <a href="#history"    onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">HISTORY</a>
-        <a href="#projects"   onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">PROJECTS</a>
-        <a href="#calculator" onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">ESTIMATOR</a>
-        <a href="#reviews"    onclick="toggleMobileMenu()" class="text-white hover:text-schale transition-colors">REVIEWS</a>
-    </div>
-    <div class="h-px w-full" style="background:rgba(255,255,255,0.06);"></div>
-    <button onclick="toggleLanguage(); playClick()" class="text-left text-xl font-bold text-gray-500" style="font-family:'Rajdhani',sans-serif;">
-        LANGUAGE: <span id="lang-display-mobile" class="text-white">EN</span>
-    </button>
-    <div class="mt-auto pb-12 text-[9px] font-mono text-gray-700 tracking-widest">SCHALE.DB v4.0 // KIVOTOS</div>
+<div id="mobile-menu">
+  <button onclick="toggleMenu();playClick()" class="absolute top-5 right-6" style="background:none;border:none;cursor:pointer">
+    <i data-lucide="x" style="width:26px;height:26px;color:var(--dim)"></i>
+  </button>
+  <div class="flex flex-col gap-5 mt-2">
+    <a data-section="home"      onclick="navigateTo('home');playClick()">HOME</a>
+    <a data-section="code"      onclick="navigateTo('code');playClick()">CODE VAULT</a>
+    <a data-section="history"   onclick="navigateTo('history');playClick()">HISTORY</a>
+    <a data-section="projects"  onclick="navigateTo('projects');playClick()">PROJECTS</a>
+    <a data-section="estimator" onclick="navigateTo('estimator');playClick()">ESTIMATOR</a>
+    <a data-section="reviews"   onclick="navigateTo('reviews');playClick()">REVIEWS</a>
+    <a data-section="contact"   onclick="navigateTo('contact');playClick()">CONTACT</a>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:24px 0"></div>
+  <button onclick="toggleLanguage();playClick()" style="background:none;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:900;color:var(--dim)">
+    LANGUAGE: <span id="lang-dm" style="color:#fff">EN</span>
+  </button>
+  <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">SCHALE.DB v5.0 // KIVOTOS</div>
 </div>
 
-<!-- ══ HERO · 01 ═══════════════════════════════════════════ -->
-<header class="min-h-screen flex items-center relative overflow-hidden pt-20" id="about">
-    <div class="halo-container"></div>
-    <!-- Ambient orbs -->
-    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div style="position:absolute;top:10%;left:-8%;width:500px;height:500px;border-radius:50%;
-                    background:radial-gradient(circle,rgba(26,168,255,.055) 0%,transparent 70%);
-                    filter:blur(50px);animation:floatOrb1 22s ease-in-out infinite;will-change:transform;"></div>
-        <div style="position:absolute;bottom:5%;right:-5%;width:380px;height:380px;border-radius:50%;
-                    background:radial-gradient(circle,rgba(168,85,247,.04) 0%,transparent 70%);
-                    filter:blur(45px);animation:floatOrb2 28s ease-in-out infinite;will-change:transform;"></div>
-        <div style="position:absolute;top:50%;left:50%;width:250px;height:250px;border-radius:50%;
-                    transform:translate(-50%,-50%);
-                    background:radial-gradient(circle,rgba(255,111,174,.025) 0%,transparent 70%);
-                    filter:blur(40px);animation:floatOrb1 18s ease-in-out infinite reverse;will-change:transform;"></div>
-    </div>
-    <div class="section-num" style="top:80px;right:40px;">01</div>
-    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full z-10 py-16">
+<!-- ══ PAGES CONTAINER ════════════════════════════════════════ -->
+<div id="app">
 
+  <!-- ══ 01 HOME ══════════════════════════════════════════════ -->
+  <div id="pg-home" class="page active">
+    <div style="padding-top:var(--nav-h);min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
+      <!-- Ambient orbs -->
+      <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(26,168,255,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
+      <div style="position:absolute;bottom:6%;right:-4%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,0.04) 0%,transparent 70%);filter:blur(42px);animation:float2 28s ease-in-out infinite;pointer-events:none"></div>
+
+      <!-- Section number watermark -->
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(26,168,255,0.05);pointer-events:none;user-select:none;line-height:1">01</div>
+
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full py-16 z-10">
         <!-- Left -->
         <div>
-            <div data-aos="fade-right" data-aos-duration="700">
-                <button onclick="toggleSystemOverride()" class="hero-badge mb-8" data-tip="Click to toggle system status">
-                    <span class="relative flex h-2 w-2">
-                        <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                        <span id="status-dot"  class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    <span id="system-status-text" class="tracking-widest" data-i18n="status_online">System Online</span>
-                </button>
+          <!-- Status badge -->
+          <div class="reveal mb-8">
+            <button onclick="toggleOverride()" class="hero-badge" data-tip="Click to toggle system status">
+              <span style="position:relative;display:flex;width:8px;height:8px">
+                <span id="status-ping" style="position:absolute;display:inline-flex;width:100%;height:100%;border-radius:50%;background:#22c55e;opacity:0.75;animation:livePulse 2s ease-out infinite"></span>
+                <span id="status-dot"  style="position:relative;display:inline-flex;width:8px;height:8px;border-radius:50%;background:#22c55e"></span>
+              </span>
+              <span id="status-txt" class="mono" data-lang="status" style="letter-spacing:0.14em">System Online</span>
+            </button>
+          </div>
+
+          <!-- Headline -->
+          <h1 class="display font-black reveal mb-6" style="font-size:clamp(2.4rem,6vw,4.8rem);line-height:0.95;letter-spacing:-0.02em">
+            <span class="block text-white" style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px" data-lang="hero_prefix">Sensei, I fix</span>
+            <span id="typewriter" class="gradient-text block"></span>
+          </h1>
+
+          <!-- Bio blurb -->
+          <p class="reveal mb-10 pl-4" data-lang="hero_desc"
+             style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(26,168,255,0.3)">
+            Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.
+          </p>
+
+          <!-- CTA buttons -->
+          <div class="flex flex-wrap gap-4 mb-10 reveal">
+            <button onclick="navigateTo('projects');playClick()" data-mag data-ripple class="btn btn-primary" style="font-size:12px;letter-spacing:0.1em">
+              VIEW DATABASE <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
+            </button>
+            <button onclick="navigateTo('contact');playClick()" data-mag class="btn btn-outline" style="font-size:11px;letter-spacing:0.1em">
+              <i data-lucide="message-circle" style="width:14px;height:14px"></i> HIRE ME
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-3 max-w-xs reveal">
+            <div class="stat-card" data-tip="50+ satisfied clients">
+              <div class="stat-val" data-count="50" data-suffix="+">50+</div>
+              <div class="stat-lbl">Commissions</div>
             </div>
-
-            <h1 class="hero-title mb-6 cursor-default" data-aos="fade-right" data-aos-delay="80" data-aos-duration="800">
-                <span data-i18n="hero_prefix" class="block text-white/80 mb-1">Sensei, I fix</span>
-                <span id="typewriter" class="text-gradient block"></span>
-            </h1>
-
-            <p class="text-gray-400 mb-10 max-w-lg leading-relaxed pl-5 border-l-2 border-schale/35 text-sm"
-               data-aos="fade-right" data-aos-delay="160" data-i18n="hero_desc">
-                I'm a Roblox Systems Engineer. I turn your laggy, spaghetti code into beautiful, scalable backends. Yes, I accept Robux. Let's make your game survive contact with actual players.
-            </p>
-
-            <div class="flex flex-wrap gap-4 mb-10" data-aos="fade-up" data-aos-delay="220">
-                <a href="#projects" onclick="playClick()" data-magnetic data-ripple
-                   class="btn-primary bg-white text-black px-8 py-3.5 rounded-lg text-sm"
-                   style="box-shadow:4px 4px 0 var(--accent);">
-                    <span data-i18n="btn_see_work">VIEW DATABASE</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </a>
-                <a href="#contact" onclick="playClick()" data-magnetic
-                   class="btn-secondary px-8 py-3.5 rounded-lg text-xs font-bold border"
-                   style="border-color:rgba(255,255,255,0.12);color:#a0a8c0;letter-spacing:0.1em;">
-                    <i data-lucide="message-circle" class="w-4 h-4"></i>
-                    HIRE ME
-                </a>
+            <div class="stat-card" data-tip="Started scripting at age 11">
+              <div class="stat-val" data-count="4" data-suffix="yrs">4yrs</div>
+              <div class="stat-lbl">Experience</div>
             </div>
-
-            <div class="grid grid-cols-3 gap-3 max-w-sm" data-aos="fade-up" data-aos-delay="300" data-stagger="80">
-                <div class="hero-stat tilt-card" data-tip="50+ satisfied clients (and counting)">
-                    <div class="hero-stat-num" data-counter="50" data-suffix="+">50+</div>
-                    <div class="hero-stat-label">Commissions</div>
-                </div>
-                <div class="hero-stat tilt-card" data-tip="Started scripting at age 11. Send help.">
-                    <div class="hero-stat-num" data-counter="4" data-suffix="yrs">4yrs</div>
-                    <div class="hero-stat-label">Experience</div>
-                </div>
-                <div class="hero-stat tilt-card" data-tip="Average server lag reduction per optimization">
-                    <div class="hero-stat-num" data-counter="40" data-suffix="%">40%</div>
-                    <div class="hero-stat-label">Avg Lag Fix</div>
-                </div>
+            <div class="stat-card" data-tip="Average server lag reduction">
+              <div class="stat-val" data-count="40" data-suffix="%">40%</div>
+              <div class="stat-lbl">Avg Lag Fix</div>
             </div>
+          </div>
         </div>
 
         <!-- Right: Terminal -->
-        <div class="relative hidden md:block" data-aos="zoom-in" data-aos-delay="200">
-            <div class="terminal-wrap">
-                <div class="scanline"></div>
-                <div style="background:rgba(6,8,12,0.98);padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between;">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="terminal" class="w-3.5 h-3.5 text-schale"></i>
-                        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;letter-spacing:0.1em;">INTERACTIVE_TERMINAL</span>
-                    </div>
-                    <div class="flex gap-1.5">
-                        <div class="w-2.5 h-2.5 bg-red-500/70 rounded-full hover:bg-red-500 transition-colors cursor-pointer" data-tip="Does nothing. I just like the aesthetic."></div>
-                        <div class="w-2.5 h-2.5 bg-yellow-500/70 rounded-full hover:bg-yellow-500 transition-colors cursor-pointer"></div>
-                        <div class="w-2.5 h-2.5 bg-green-500/70 rounded-full hover:bg-green-500 transition-colors cursor-pointer"></div>
-                    </div>
-                </div>
-                <div style="padding:14px 18px 0;font-family:'JetBrains Mono',monospace;font-size:10px;">
-                    <div class="flex justify-between items-center mb-2">
-                        <span style="color:#444;">CORE_LOAD</span>
-                        <div class="flex items-center gap-2">
-                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;">
-                                <div style="width:40%;height:100%;background:#00ff88;box-shadow:0 0 6px #00ff88;animation:pulse 2s ease-in-out infinite;"></div>
-                            </div>
-                            <span style="color:#00ff88;font-weight:700;font-size:9px;">40%</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center mb-2">
-                        <span style="color:#444;">NET_UPLINK</span>
-                        <div class="flex items-center gap-2">
-                            <div style="width:80px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;">
-                                <div style="width:72%;height:100%;background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse 2.5s ease-in-out infinite;"></div>
-                            </div>
-                            <span style="color:var(--accent);font-weight:700;font-size:9px;">72%</span>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center mb-1">
-                        <span style="color:#444;">BUGS_IN_PROD</span>
-                        <span style="color:#00ff88;font-weight:700;font-size:9px;" data-tip="Definitely accurate">0 ✓</span>
-                    </div>
-                    <div style="height:1px;background:rgba(255,255,255,0.04);margin:10px 0;"></div>
-                </div>
-                <div style="padding:0 18px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;" onclick="document.getElementById('cli-input').focus()">
-                    <div id="cli-output" style="height:155px;overflow-y:auto;margin-bottom:10px;color:#666;line-height:1.9;">
-                        <span style="color:var(--accent);">visitor@schale:~$</span> <span style="color:#666">type 'help' for commands</span><br>
-                        <span style="color:#333;font-size:9px;">· · · try: coffee, hack, uwu, neofetch · · ·</span><br>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:10px;">
-                        <span style="color:var(--accent);">visitor@schale:~$</span>
-                        <input id="cli-input" type="text" class="cli-input" autocomplete="off" spellcheck="false" placeholder="">
-                        <span class="cli-cursor blink-text" style="width:7px;height:13px;background:var(--accent);display:block;border-radius:1px;"></span>
-                    </div>
-                </div>
+        <div class="relative hidden md:block reveal">
+          <div class="terminal">
+            <div class="scanline"></div>
+            <!-- Terminal top bar -->
+            <div style="background:rgba(5,7,16,0.98);padding:9px 15px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="terminal" style="width:12px;height:12px;color:var(--accent)"></i>
+                <span class="mono" style="font-size:9px;letter-spacing:0.1em;color:var(--muted)">INTERACTIVE_TERMINAL</span>
+              </div>
+              <div class="flex gap-1.5">
+                <div class="code-dot" style="background:#ef4444;opacity:0.7" data-tip="Does nothing. Aesthetic only."></div>
+                <div class="code-dot" style="background:#eab308;opacity:0.7"></div>
+                <div class="code-dot" style="background:#22c55e;opacity:0.7"></div>
+              </div>
             </div>
-            <div class="absolute -z-10 -top-6 -right-6 w-28 h-28 border-t-2 border-r-2 border-schale/15 rounded-tr-3xl pointer-events-none"></div>
-            <div class="absolute -z-10 -bottom-6 -left-6 w-28 h-28 border-b-2 border-l-2 border-schale/15 rounded-bl-3xl pointer-events-none"></div>
+            <!-- System meters -->
+            <div style="padding:12px 16px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px">
+              <div class="flex justify-between items-center mb-2">
+                <span style="color:var(--muted)">CORE_LOAD</span>
+                <div class="flex items-center gap-2">
+                  <div style="width:72px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden">
+                    <div style="width:40%;height:100%;background:#00ff88;box-shadow:0 0 5px #00ff88;animation:pulse 2s ease-in-out infinite"></div>
+                  </div>
+                  <span style="color:#00ff88;font-weight:700;font-size:8px">40%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span style="color:var(--muted)">NET_UPLINK</span>
+                <div class="flex items-center gap-2">
+                  <div style="width:72px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden">
+                    <div style="width:72%;height:100%;background:var(--accent);box-shadow:0 0 5px var(--accent);animation:pulse 2.5s ease-in-out infinite"></div>
+                  </div>
+                  <span style="color:var(--accent);font-weight:700;font-size:8px">72%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mb-1">
+                <span style="color:var(--muted)">BUGS_IN_PROD</span>
+                <span style="color:#00ff88;font-weight:700;font-size:8px" data-tip="Definitely accurate">0 ✓</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0"></div>
+            </div>
+            <!-- CLI -->
+            <div style="padding:0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:9.5px" onclick="document.getElementById('cli-input').focus()">
+              <div id="cli-output" style="height:145px;overflow-y:auto;margin-bottom:9px;color:var(--muted);line-height:1.9">
+                <span style="color:var(--accent)">visitor@schale:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
+                <span style="color:var(--muted);font-size:8.5px">· · · try: coffee · hack · uwu · neofetch · · ·</span><br>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:9px">
+                <span style="color:var(--accent)">visitor@schale:~$</span>
+                <input id="cli-input" type="text" autocomplete="off" spellcheck="false"
+                       style="flex:1;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px">
+                <span class="blink" style="width:6px;height:12px;background:var(--accent);display:block;border-radius:1px"></span>
+              </div>
+            </div>
+          </div>
+          <!-- Decorative corners -->
+          <div style="position:absolute;z-index:-1;top:-20px;right:-20px;width:80px;height:80px;border-top:2px solid rgba(26,168,255,0.12);border-right:2px solid rgba(26,168,255,0.12);border-radius:0 12px 0 0;pointer-events:none"></div>
+          <div style="position:absolute;z-index:-1;bottom:-20px;left:-20px;width:80px;height:80px;border-bottom:2px solid rgba(26,168,255,0.12);border-left:2px solid rgba(26,168,255,0.12);border-radius:0 0 0 12px;pointer-events:none"></div>
         </div>
+      </div>
     </div>
-</header>
+  </div>
 
-<!-- ══ PERSONNEL FILE · 02 ═════════════════════════════════ -->
-<section id="file" class="py-24 bg-dark relative" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">02</div>
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid md:grid-cols-12 gap-12 items-center">
-            <!-- Profile card -->
-            <div class="md:col-span-5" data-aos="fade-right">
-                <div class="relative group">
-                    <div class="glass-card tilt-card rounded-2xl p-7 relative z-10">
-                        <div class="card-header-strip strip-blue"></div>
-                        <div class="flex items-center justify-between mb-6">
-                            <!-- Avatar — click to update (PIN protected) -->
-                            <div id="pfp-container" onclick="updateProfilePicture()"
-                                 class="w-24 h-24 rounded-2xl flex items-center justify-center border border-schale/20 cursor-pointer overflow-hidden transition-all duration-300 relative"
-                                 style="background:rgba(26,168,255,0.05);"
-                                 data-tip="Click to update profile photo (PIN required)">
-                                <img id="avatar-img" src="" class="w-full h-full object-cover hidden"
-                                     onerror="this.classList.add('hidden');document.getElementById('avatar-placeholder').classList.remove('hidden');"/>
-                                <i id="avatar-placeholder" data-lucide="user" class="w-10 h-10 text-schale"></i>
-                                <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-2xl" style="background:rgba(0,0,0,0.65);">
-                                    <div class="text-center">
-                                        <i data-lucide="lock" class="w-4 h-4 text-white mx-auto mb-1"></i>
-                                        <span class="text-[9px] text-white font-mono">PIN PROTECTED</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-[9px] font-mono text-gray-600 mb-1 tracking-widest">CLEARANCE LEVEL</div>
-                                <div class="text-xl font-black text-white" style="font-family:'Rajdhani',sans-serif;">
-                                    PRODIGY <span class="text-schale">01</span>
-                                </div>
-                                <div class="text-[9px] font-mono text-gray-700 mt-1">⬛⬛⬛⬛⬜ CLASSIFIED</div>
-                            </div>
-                        </div>
-                        <div class="space-y-3 font-mono text-xs">
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                                <span class="text-gray-600">CODENAME</span><span class="text-white font-bold">WATER</span>
-                            </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                                <span class="text-gray-600">AGE</span><span class="text-white font-bold">15 <span class="text-gray-700">(yes, really)</span></span>
-                            </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                                <span class="text-gray-600">AFFILIATION</span><span class="text-schale font-bold">SCHALE (INDIE)</span>
-                            </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                                <span class="text-gray-600">SPECIALTY</span><span class="text-white font-bold">BACKEND / SYSTEMS</span>
-                            </div>
-                            <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04);">
-                                <span class="text-gray-600">EXPERIENCE</span><span class="text-white font-bold">4+ YRS</span>
-                            </div>
-                            <div class="flex justify-between py-2">
-                                <span class="text-gray-600">STATUS</span>
-                                <span class="text-green-400 font-bold flex items-center gap-1.5">
-                                    <span class="live-dot" style="width:6px;height:6px;"></span> AVAILABLE
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mt-5 text-[9px] text-gray-700 text-center tracking-widest font-mono">🔒 admin PIN required to update avatar</div>
-                    </div>
-                    <div class="absolute inset-0 bg-schale/8 blur-3xl -z-10 opacity-0 group-hover:opacity-50 transition-opacity duration-700 rounded-2xl"></div>
-                </div>
-            </div>
+  <!-- ══ 02 ABOUT / PERSONNEL FILE ════════════════════════════ -->
+  <div id="pg-about" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div style="position:absolute;right:32px;top:90px" class="display" style="font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(26,168,255,0.05);pointer-events:none;user-select:none">02</div>
 
-            <!-- Bio -->
-            <div class="md:col-span-7" data-aos="fade-left">
-                <div class="section-tag mb-4"><i data-lucide="file-text" class="w-3 h-3"></i> Personnel File</div>
-                <h2 class="text-3xl font-black text-white mb-6" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;">
-                    PERSONNEL FILE <span class="text-schale">#8080</span>
-                </h2>
-                <p class="text-gray-400 leading-loose mb-5 text-sm">
-                    Hey, I'm Water! I'm a 15-year-old self-taught Roblox Systems Engineer. I basically got tired of playing games that crashed every five minutes, so I learned how to fix them myself. Turns out, people will actually pay you to exorcise demons from their codebases.
-                </p>
-                <p class="text-gray-400 leading-loose mb-5 text-sm">
-                    A lot of scripters write code that <em class="text-white not-italic">"just works"</em>, right up until a player breathes on it wrong. I build systems designed to survive 10,000 concurrent players, terrifying DataStore migrations, and that one exploiter who makes it their life's mission to dupe items. My philosophy is brutally simple:
-                </p>
-                <div class="p-4 rounded-xl mb-6" style="background:rgba(26,168,255,0.04);border-left:3px solid var(--accent);">
-                    <p class="text-white font-semibold text-sm italic">
-                        "Clean Code → Fewer Bugs → Players Don't Riot → Happy Client → I can afford snacks."
-                    </p>
+      <div class="grid md:grid-cols-12 gap-12 items-start">
+        <!-- Profile card -->
+        <div class="md:col-span-5">
+          <div class="card reveal" style="padding:26px">
+            <div class="strip strip-blue"></div>
+            <div class="flex items-center justify-between mb-6" style="padding-top:8px">
+              <!-- Avatar -->
+              <div id="pfp-wrap" class="cursor-pointer" onclick="updatePfp()" data-tip="Click to update photo (PIN required)"
+                   style="width:86px;height:86px;border-radius:14px;background:rgba(26,168,255,0.05);border:1px solid rgba(26,168,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+                <img id="avatar-img" class="hidden" style="width:100%;height:100%;object-fit:cover">
+                <i id="avatar-ph" data-lucide="user" style="width:34px;height:34px;color:var(--accent)"></i>
+                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:14px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                  <i data-lucide="lock" style="width:14px;height:14px;color:#fff"></i>
+                  <span class="mono" style="font-size:7.5px;color:#fff;margin-top:3px">PIN LOCK</span>
                 </div>
-                <p class="text-gray-400 text-sm leading-loose mb-8">
-                    I've got 4 years of Roblox backend experience, over 50 shipped commissions, and exactly zero production fires that I couldn't eventually put out (just don't ask about the ones I accidentally started on my local machine).
-                </p>
-                <div class="flex flex-wrap gap-3 mb-8" data-stagger="70">
-                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-schale/30 hover:text-schale transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
-                        <div class="w-1.5 h-1.5 rounded-full" style="background:#60a5fa;box-shadow:0 0 5px #60a5fa;"></div>LuaU Expert
-                    </div>
-                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-purple-500/30 hover:text-purple-400 transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
-                        <div class="w-1.5 h-1.5 rounded-full" style="background:#c084fc;box-shadow:0 0 5px #c084fc;"></div>Rojo Workflow
-                    </div>
-                    <div class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/8 text-xs font-mono text-gray-400 hover:border-green-500/30 hover:text-green-400 transition-all cursor-default" style="background:rgba(255,255,255,0.025);">
-                        <div class="w-1.5 h-1.5 rounded-full" style="background:#34d399;box-shadow:0 0 5px #34d399;"></div>Open to Commissions
-                    </div>
-                </div>
-                <div class="p-4 rounded-xl border border-schale/12 flex items-center gap-3 text-xs font-mono" style="background:rgba(26,168,255,0.03);">
-                    <i data-lucide="zap" class="w-4 h-4 text-schale flex-shrink-0"></i>
-                    <span class="text-gray-500">Quickest way to reach me → Discord:</span>
-                    <span class="text-schale font-bold cursor-pointer hover:underline" onclick="copyDiscord();playClick()">hokpy</span>
-                    <span class="text-gray-700">(click to copy)</span>
-                </div>
+              </div>
+              <div class="text-right">
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-bottom:3px;letter-spacing:0.1em">CLEARANCE</div>
+                <div class="display font-black text-white" style="font-size:1.3rem">PRODIGY <span style="color:var(--accent)">01</span></div>
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">⬛⬛⬛⬛⬜ CLASSIFIED</div>
+              </div>
             </div>
+            <!-- Stats table -->
+            <div class="mono" style="font-size:11px">
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AGE</span><span class="font-bold text-white">15 <span style="color:var(--muted)">(yes, really)</span></span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AFFILIATION</span><span class="font-bold" style="color:var(--accent)">SCHALE (INDIE)</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">BACKEND / SYSTEMS</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS</span></div>
+              <div class="flex justify-between py-2">
+                <span style="color:var(--dim)">STATUS</span>
+                <span class="font-bold flex items-center gap-1.5" style="color:var(--green)">
+                  <span class="live-dot" style="width:6px;height:6px"></span> AVAILABLE
+                </span>
+              </div>
+            </div>
+            <div class="mono text-center mt-4" style="font-size:8px;color:var(--muted)">🔒 admin PIN required to update avatar</div>
+          </div>
         </div>
+
+        <!-- Bio -->
+        <div class="md:col-span-7">
+          <div class="s-tag mb-4 reveal"><i data-lucide="file-text" style="width:11px;height:11px"></i> Personnel File</div>
+          <h2 class="section-title mb-6 reveal">PERSONNEL FILE <span style="color:var(--accent)">#8080</span></h2>
+
+          <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
+            Hey, I'm Water. I'm a 15-year-old self-taught Roblox Systems Engineer. I got tired of playing games that crashed every five minutes, so I learned how to fix them myself. Turns out, people will pay you to exorcise demons from their codebases.
+          </p>
+          <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
+            A lot of scripters write code that <em class="text-white not-italic">"just works"</em>, right up until a player breathes on it wrong. I build systems designed to survive 10,000 concurrent players and that one exploiter who makes it their life's mission to dupe items.
+          </p>
+
+          <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(26,168,255,0.04);border-left:3px solid var(--accent)">
+            <p class="text-white font-semibold italic" style="font-size:13px">
+              "Clean Code → Fewer Bugs → Players Don't Riot → Happy Client → I can afford snacks."
+            </p>
+          </div>
+
+          <!-- Tech tags -->
+          <div class="flex flex-wrap gap-2 mb-8 reveal">
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;box-shadow:0 0 4px #60a5fa;margin-right:6px"></span>LuaU Expert
+            </span>
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c084fc;box-shadow:0 0 4px #c084fc;margin-right:6px"></span>Rojo Workflow
+            </span>
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green);margin-right:6px"></span>Open to Commissions
+            </span>
+          </div>
+
+          <!-- Quick contact -->
+          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(26,168,255,0.03);border:1px solid rgba(26,168,255,0.1);font-size:11px">
+            <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
+            <span style="color:var(--dim)">Fastest way to reach me → Discord:</span>
+            <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">hokpy</span>
+            <span style="color:var(--muted)">(click)</span>
+          </div>
+        </div>
+      </div>
     </div>
-</section>
+  </div>
 
-<!-- ══ SKILLS · 03 ═════════════════════════════════════════ -->
-<section id="skills" class="py-24 bg-panel relative" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">03</div>
-    <div class="max-w-7xl mx-auto px-6">
-        <div data-aos="fade-up" class="mb-3">
-            <div class="section-tag"><i data-lucide="cpu" class="w-3 h-3"></i> Specifications</div>
-        </div>
-        <h2 class="text-3xl font-black text-white mb-3" data-aos="fade-up" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="SYSTEM SPECS">SYSTEM SPECS</h2>
-        <p class="text-gray-600 text-sm mb-12 font-mono" data-aos="fade-up" data-aos-delay="50">— hover the percentage. you won't. —</p>
+  <!-- ══ 03 SKILLS ════════════════════════════════════════════ -->
+  <div id="pg-skills" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="s-tag mb-3 reveal"><i data-lucide="cpu" style="width:11px;height:11px"></i> Specifications</div>
+      <h2 class="section-title mb-2 reveal">SYSTEM SPECS</h2>
+      <p class="mono mb-12 reveal" style="font-size:11px;color:var(--muted)">— hover the percentage. you won't. —</p>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger="60">
-            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="0">
-                <div class="card-header-strip strip-blue"></div>
-                <div class="flex justify-between items-end mb-5 pt-2">
-                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Luau</h3>
-                    <span class="text-schale font-mono text-[10px] tracking-widest skill-pct" data-tip="Metatables? OOP? Closures? Yes.">98%</span>
-                </div>
-                <div class="skill-bar-track mb-3"><div class="skill-bar-fill" data-width="98%"></div></div>
-                <p class="text-xs text-gray-600">OOP, Metatables, Parallel Luau</p>
-            </div>
-            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="70">
-                <div class="card-header-strip strip-blue"></div>
-                <div class="flex justify-between items-end mb-5 pt-2">
-                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">DataStores</h3>
-                    <span class="text-schale font-mono text-[10px] tracking-widest skill-pct" data-tip="I've read the API docs more times than I've slept.">95%</span>
-                </div>
-                <div class="skill-bar-track mb-3"><div class="skill-bar-fill" data-width="95%"></div></div>
-                <p class="text-xs text-gray-600">ProfileService, Session Locking</p>
-            </div>
-            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="140">
-                <div class="card-header-strip strip-purple"></div>
-                <div class="flex justify-between items-end mb-5 pt-2">
-                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Interface</h3>
-                    <span class="text-purple-400 font-mono text-[10px] tracking-widest skill-pct" data-tip="I can make it look nice. I just prefer it to work.">85%</span>
-                </div>
-                <div class="skill-bar-track mb-3">
-                    <div class="skill-bar-fill" data-width="85%" style="background:linear-gradient(90deg,#a855f7,#c084fc);box-shadow:0 0 8px rgba(168,85,247,0.4);"></div>
-                </div>
-                <p class="text-xs text-gray-600">Roact, Fusion, TweenService</p>
-            </div>
-            <div class="skill-card tilt-card" data-aos="fade-up" data-aos-delay="210">
-                <div class="card-header-strip strip-gold"></div>
-                <div class="flex justify-between items-end mb-5 pt-2">
-                    <h3 class="font-bold text-white text-lg" style="font-family:'Rajdhani',sans-serif;">Systems</h3>
-                    <span class="text-gold font-mono text-[10px] tracking-widest skill-pct" data-tip="Knit, ECS, event-driven, modular.">92%</span>
-                </div>
-                <div class="skill-bar-track mb-3">
-                    <div class="skill-bar-fill" data-width="92%" style="background:linear-gradient(90deg,var(--gold),#ffcc44);box-shadow:0 0 8px rgba(255,168,0,0.4);"></div>
-                </div>
-                <p class="text-xs text-gray-600">Knit Framework, ECS Pattern</p>
-            </div>
-        </div>
-        <!-- Fun skills -->
-        <div class="mt-5 grid md:grid-cols-2 lg:grid-cols-4 gap-5" data-stagger="55">
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="280" style="opacity:0.6;">
-                <div class="flex justify-between items-end mb-4 pt-1">
-                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Sleep Schedule</h3><span class="text-red-500 font-mono text-[10px]">2%</span>
-                </div>
-                <div class="skill-bar-track mb-2"><div class="skill-bar-fill" data-width="2%" style="background:#FF4455;box-shadow:0 0 6px rgba(255,68,85,0.5);"></div></div>
-                <p class="text-[10px] text-gray-700">caffeine-dependent</p>
-            </div>
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="330" style="opacity:0.6;">
-                <div class="flex justify-between items-end mb-4 pt-1">
-                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Touching Grass</h3><span class="text-red-500 font-mono text-[10px]">5%</span>
-                </div>
-                <div class="skill-bar-track mb-2"><div class="skill-bar-fill" data-width="5%" style="background:#34d399;box-shadow:0 0 6px rgba(52,211,153,0.4);"></div></div>
-                <p class="text-[10px] text-gray-700">rare event, treat with care</p>
-            </div>
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="380" style="opacity:0.6;">
-                <div class="flex justify-between items-end mb-4 pt-1">
-                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Googling Errors</h3><span class="text-gold font-mono text-[10px]">99%</span>
-                </div>
-                <div class="skill-bar-track mb-2"><div class="skill-bar-fill" data-width="99%" style="background:var(--gold);box-shadow:0 0 6px var(--gold-glow);"></div></div>
-                <p class="text-[10px] text-gray-700">Stack Overflow MVP</p>
-            </div>
-            <div class="skill-card" data-aos="fade-up" data-aos-delay="430" style="opacity:0.6;">
-                <div class="flex justify-between items-end mb-4 pt-1">
-                    <h3 class="font-bold text-gray-500 text-sm" style="font-family:'Rajdhani',sans-serif;">Charging Fair Rates</h3><span class="text-schale font-mono text-[10px]">actually yes</span>
-                </div>
-                <div class="skill-bar-track mb-2"><div class="skill-bar-fill" data-width="75%"></div></div>
-                <p class="text-[10px] text-gray-700">use the estimator ↓</p>
-            </div>
-        </div>
+      <div id="skills-main" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5"></div>
+      <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
     </div>
-</section>
+  </div>
 
-<!-- ══ HISTORY · 04 ════════════════════════════════════════ -->
-<section id="history" class="py-24 bg-dark relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">04</div>
-    <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-schale/3 to-transparent pointer-events-none"></div>
-    <div class="max-w-4xl mx-auto px-6 relative z-10">
-        <div class="text-center mb-14" data-aos="fade-up">
-            <div class="section-tag mb-3 mx-auto w-fit">Career Timeline</div>
-            <h2 class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="MISSION LOG">MISSION LOG</h2>
-            <p class="text-gray-600 text-sm mt-2 font-mono">the origin story nobody asked for</p>
-        </div>
-        <div class="relative" data-aos="fade-up" data-aos-delay="100">
-            <div class="timeline-line"></div>
-            <div class="timeline-item group reveal-on-scroll" data-reveal="left" data-reveal-delay="0">
-                <div class="timeline-dot"></div>
-                <div class="glass-card p-6 rounded-xl">
-                    <div class="card-header-strip strip-blue"></div>
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 pt-1">
-                        <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">Freelance Systems Engineer</h3>
-                        <span class="text-schale font-mono text-xs mt-1 md:mt-0 bg-schale/8 px-2 py-0.5 rounded">2022 – PRESENT</span>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">Building and maintaining backend systems for high-traffic Roblox games. 50+ commissions shipped. Zero clients reported memory leaks. <span class="text-gray-600">(that I know of)</span></p>
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">DataStore2</span>
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">ProfileService</span>
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">Anti-Exploit</span>
-                        <span class="text-[10px] px-2 py-1 rounded font-mono text-gray-400" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">Optimization</span>
-                    </div>
-                    <div class="reveal-detail text-xs text-gray-600 font-mono pt-2" style="border-top:1px solid rgba(255,255,255,0.04);">↳ available now — see estimator to get a quote</div>
-                </div>
-            </div>
-            <div class="timeline-item group reveal-on-scroll" data-reveal="left" data-reveal-delay="100">
-                <div class="timeline-dot"></div>
-                <div class="glass-card p-6 rounded-xl">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">Junior Developer</h3>
-                        <span class="text-gray-500 font-mono text-xs mt-1 md:mt-0">2021 – 2022</span>
-                    </div>
-                    <p class="text-gray-400 text-sm leading-relaxed">Started the journey with Lua. Made terrible code. Googled a lot. Slowly became less wrong. Created open-source modules that are somehow still used today.</p>
-                    <div class="reveal-detail text-xs text-gray-600 font-mono pt-2 mt-2" style="border-top:1px solid rgba(255,255,255,0.04);">↳ first commit message: "added stuff" — genuine growth</div>
-                </div>
-            </div>
-            <div class="timeline-item group reveal-on-scroll" data-reveal="left" data-reveal-delay="200">
-                <div class="timeline-dot" style="border-color:rgba(255,255,255,0.2);box-shadow:none;"></div>
-                <div class="glass-card p-6 rounded-xl" style="opacity:0.5;">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                        <h3 class="text-xl font-bold text-white" style="font-family:'Rajdhani',sans-serif;">The Beginning</h3>
-                        <span class="text-gray-600 font-mono text-xs mt-1 md:mt-0">~2020</span>
-                    </div>
-                    <p class="text-gray-500 text-sm italic">Opened Studio for the first time. Moved a baseplate brick around for 40 minutes. Thought I was a developer.</p>
-                </div>
-            </div>
-        </div>
+  <!-- ══ 04 HISTORY ═══════════════════════════════════════════ -->
+  <div id="pg-history" class="page">
+    <div class="max-w-3xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="text-center mb-14">
+        <div class="s-tag mb-3 reveal" style="margin:0 auto;width:fit-content">Career Timeline</div>
+        <h2 class="section-title reveal">MISSION LOG</h2>
+        <p class="mono mt-2 reveal" style="font-size:11px;color:var(--muted)">the origin story nobody asked for</p>
+      </div>
+      <div id="timeline" class="relative"></div>
     </div>
-</section>
+  </div>
 
-<!-- ══ CODE VAULT · 05 ═════════════════════════════════════ -->
-<section id="code" class="py-24 bg-panel relative" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">05</div>
-    <div class="max-w-6xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6" data-aos="fade-up">
+  <!-- ══ 05 CODE VAULT ════════════════════════════════════════ -->
+  <div id="pg-code" class="page">
+    <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-5">
+        <div>
+          <div class="s-tag mb-3 reveal"><i data-lucide="code-2" style="width:11px;height:11px"></i> Open Source</div>
+          <h2 class="section-title reveal">CODE VAULT</h2>
+          <p class="reveal mt-1" style="color:var(--dim);font-size:13px">Real modules from real projects. Steal them. I don't care.</p>
+        </div>
+        <div class="flex gap-4 mono reveal" style="font-size:9px;color:var(--dim)">
+          <span class="flex items-center gap-1"><i data-lucide="check" style="width:11px;height:11px;color:var(--green)"></i> CLEAN</span>
+          <span class="flex items-center gap-1"><i data-lucide="check" style="width:11px;height:11px;color:var(--green)"></i> OPTIMIZED</span>
+          <span class="flex items-center gap-1"><i data-lucide="check" style="width:11px;height:11px;color:var(--green)"></i> DOCUMENTED</span>
+        </div>
+      </div>
+
+      <div class="code-win reveal">
+        <div class="code-hdr">
+          <div class="flex gap-1.5 mr-3 flex-shrink-0">
+            <div class="code-dot" style="background:#ef4444" data-tip="Close (aesthetic only)"></div>
+            <div class="code-dot" style="background:#eab308"></div>
+            <div class="code-dot" style="background:#22c55e"></div>
+          </div>
+          <div id="code-tabs" class="flex overflow-x-auto gap-0.5 flex-1"></div>
+          <button onclick="copyCode()" data-ripple class="mono ml-3 flex-shrink-0"
+                  style="font-size:8.5px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07);color:var(--dim);cursor:pointer;transition:all .2s"
+                  onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--dim)'"
+                  data-tip="Copy to clipboard">
+            <i data-lucide="copy" style="width:11px;height:11px;display:inline"></i> COPY
+          </button>
+        </div>
+        <pre class="code-body"><code id="code-body" class="language-lua"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 06 PROJECTS ══════════════════════════════════════════ -->
+  <div id="pg-projects" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
+        <div>
+          <div class="s-tag mb-3 reveal"><i data-lucide="folder-open" style="width:11px;height:11px"></i> Database</div>
+          <h2 class="section-title reveal">MISSION REPORTS</h2>
+          <p class="reveal mt-1" style="color:var(--dim);font-size:13px">Things I built. Some look cool. All of them work.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 reveal">
+          <button class="filter-btn active" onclick="filterProjects('all',this)">ALL</button>
+          <button class="filter-btn" onclick="filterProjects('GAMEPLAY',this)">SYSTEMS</button>
+          <button class="filter-btn" onclick="filterProjects('FULL GAME',this)">GAMES</button>
+          <button class="filter-btn" onclick="filterProjects('OPTIMIZATION',this)">FIXES</button>
+          <button class="filter-btn" onclick="filterProjects('RPG SYSTEM',this)">RPG</button>
+        </div>
+      </div>
+      <div id="proj-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
+    </div>
+  </div>
+
+  <!-- ══ 07 ESTIMATOR ═════════════════════════════════════════ -->
+  <div id="pg-estimator" class="page">
+    <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="s-tag mb-4 reveal"><i data-lucide="calculator" style="width:11px;height:11px"></i> Pricing</div>
+
+      <div class="grid md:grid-cols-12 gap-10 items-start">
+        <!-- Controls -->
+        <div class="md:col-span-7 space-y-7">
+          <div>
+            <h2 class="section-title mb-1 reveal" data-lang="calc_title">RESOURCE ESTIMATOR</h2>
+            <p class="reveal" style="color:var(--dim);font-size:13px">No surprises. Calculate before you commit.</p>
+          </div>
+
+          <!-- Service select -->
+          <div class="reveal">
+            <div class="mono mb-3" style="font-size:9px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">OPERATION TYPE</div>
+            <div class="grid grid-cols-2 gap-3" id="svc-grid"></div>
+          </div>
+
+          <!-- Sliders -->
+          <div class="reveal p-6 rounded-xl space-y-6" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05)">
             <div>
-                <div class="section-tag mb-3"><i data-lucide="code-2" class="w-3 h-3"></i> Open Source</div>
-                <h2 class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="CODE VAULT">CODE VAULT</h2>
-                <p class="text-gray-600 text-sm mt-1">Real modules from real projects. Steal them. I don't care.</p>
-            </div>
-            <div class="flex gap-4 text-[10px] font-mono text-gray-600">
-                <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> CLEAN</span>
-                <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> OPTIMIZED</span>
-                <span class="flex items-center gap-1.5"><i data-lucide="check" class="w-3 h-3 text-green-500"></i> DOCUMENTED</span>
-            </div>
-        </div>
-        <div class="code-window" data-aos="fade-up" data-aos-delay="150">
-            <div class="code-header">
-                <div class="flex gap-1.5 items-center mr-4 flex-shrink-0">
-                    <div class="code-dot bg-red-500" data-tip="Close (does nothing)"></div>
-                    <div class="code-dot bg-yellow-500"></div>
-                    <div class="code-dot bg-green-500"></div>
-                </div>
-                <div id="code-tabs" class="flex overflow-x-auto gap-0.5"></div>
-            </div>
-            <div class="relative group">
-                <button onclick="copyCode()" data-ripple
-                        class="absolute top-3 right-3 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10 text-gray-500 hover:text-white"
-                        style="background:rgba(255,255,255,0.06);" data-tip="Copy to clipboard">
-                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                </button>
-                <pre class="code-content"><code id="code-display" class="language-lua"></code></pre>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══ PROJECTS · 06 ═══════════════════════════════════════ -->
-<section id="projects" class="py-32 relative bg-dark" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">06</div>
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6" data-aos="fade-up">
-            <div>
-                <div class="section-tag mb-3"><i data-lucide="folder-open" class="w-3 h-3"></i> Database</div>
-                <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="MISSION REPORTS">MISSION REPORTS</h2>
-                <p class="text-gray-600 text-sm mt-2">Things I built. Some look cool. All of them work.</p>
-            </div>
-            <div class="flex flex-wrap gap-2" data-stagger="50">
-                <button onclick="filterProjects('all')" class="filter-btn bg-schale text-white text-xs font-bold rounded-full px-5 py-2 shadow-md hover:scale-105 transition-all" data-ripple>ALL</button>
-                <button onclick="filterProjects('GAMEPLAY')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all" data-ripple>SYSTEMS</button>
-                <button onclick="filterProjects('FULL GAME')" class="filter-btn bg-dark text-gold border border-gold/20 text-xs font-bold rounded-full px-5 py-2 hover:bg-gold hover:text-black transition-all" data-ripple>GAMES</button>
-                <button onclick="filterProjects('OPTIMIZATION')" class="filter-btn bg-dark text-gray-500 border border-white/8 text-xs font-bold rounded-full px-5 py-2 hover:border-schale/50 hover:text-white transition-all" data-ripple>FIXES</button>
-            </div>
-        </div>
-        <div id="projects-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-    </div>
-</section>
-
-<!-- ══ CALCULATOR · 07 ═════════════════════════════════════ -->
-<section id="calculator" class="py-32 relative bg-panel" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">07</div>
-    <div class="max-w-5xl mx-auto px-6" data-aos="fade-up">
-        <div class="section-tag mb-4 w-fit"><i data-lucide="calculator" class="w-3 h-3"></i> Pricing</div>
-        <div class="grid md:grid-cols-12 gap-10 items-start">
-            <div class="md:col-span-7 space-y-7">
-                <div>
-                    <h2 class="text-3xl font-black text-white mb-1" style="font-family:'Rajdhani',sans-serif;" data-i18n="calc_title">RESOURCE ESTIMATOR</h2>
-                    <p class="text-gray-500 text-sm" data-i18n="calc_subtitle">No surprises. Calculate before you commit.</p>
-                </div>
-                <div class="space-y-3">
-                    <label class="text-schale text-[10px] font-bold tracking-[0.15em] block" data-i18n="calc_type">OPERATION TYPE</label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button onclick="selectService(500,this);playClick()" class="service-btn" data-ripple><div class="text-white font-bold text-sm mb-1" data-i18n="serv_quick">Quick Task</div><div class="text-gray-600 text-[10px] font-mono">500+ R$ · ~$1.75 USD</div></button>
-                        <button onclick="selectService(2500,this);playClick()" class="service-btn" data-ripple style="border-color:var(--accent);background:rgba(26,168,255,0.06);"><div class="text-white font-bold text-sm mb-1" data-i18n="serv_fix">Bug Fix</div><div class="text-gray-600 text-[10px] font-mono">2,500+ R$ · ~$8.75 USD</div></button>
-                        <button onclick="selectService(10000,this);playClick()" class="service-btn" data-ripple><div class="text-white font-bold text-sm mb-1" data-i18n="serv_sys">System</div><div class="text-gray-600 text-[10px] font-mono">10k+ R$ · ~$35 USD</div></button>
-                        <button onclick="selectService(30000,this);playClick()" class="service-btn" data-ripple><div class="text-white font-bold text-sm mb-1" data-i18n="serv_game">Full Game</div><div class="text-gray-600 text-[10px] font-mono">30k+ R$ · ~$105 USD</div></button>
-                    </div>
-                </div>
-                <div style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:24px;" class="space-y-6">
-                    <div>
-                        <div class="flex justify-between mb-3">
-                            <label class="text-gray-400 text-xs font-bold tracking-widest" data-i18n="label_complexity">Complexity</label>
-                            <span id="complexity-val" class="text-gray-400 text-xs font-mono px-2 py-0.5 rounded" style="background:rgba(255,255,255,0.06);">Standard</span>
-                        </div>
-                        <input type="range" min="1" max="2" step="0.1" value="1" id="complexity-range" oninput="calculateBudget()" data-tip="How complex is the work?">
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-3">
-                            <label class="text-gray-400 text-xs font-bold tracking-widest" data-i18n="label_timeline">Urgency</label>
-                            <span id="rush-val" class="text-gray-400 text-xs font-mono px-2 py-0.5 rounded" style="background:rgba(255,255,255,0.06);">Standard</span>
-                        </div>
-                        <input type="range" min="1" max="1.5" step="0.1" value="1" id="rush-range" oninput="calculateBudget()" data-tip="Rush fee applies if you need it YESTERDAY">
-                    </div>
-                </div>
-            </div>
-            <div class="md:col-span-5 rounded-2xl p-7 relative overflow-hidden tilt-card" style="background:var(--bg);border:1px solid rgba(255,255,255,0.07);box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-                <div class="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none" style="background:radial-gradient(circle,rgba(26,168,255,0.07),transparent 70%);"></div>
-                <div class="flex justify-between items-center mb-7">
-                    <span class="text-[10px] font-bold text-gray-600 tracking-widest">INVOICE PREVIEW</span>
-                    <select id="currency-select" onchange="calculateBudget();playClick()"
-                            class="text-white text-xs font-bold px-3 py-1.5 rounded-lg border border-white/10 outline-none hover:border-schale/40 transition-colors"
-                            style="background:rgba(0,0,0,0.4);">
-                        <option value="R$">R$</option>
-                        <option value="USD">USD</option>
-                        <option value="THB">THB</option>
-                        <option value="VND">VND</option>
-                    </select>
-                </div>
-                <div class="space-y-3 mb-7 pb-7 font-mono text-sm" style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <div class="flex justify-between text-gray-500"><span>Base Cost</span><span class="text-white" id="receipt-base">--</span></div>
-                    <div class="flex justify-between text-gray-500"><span>Complexity ×</span><span class="text-schale" id="receipt-comp">x1.0</span></div>
-                    <div class="flex justify-between text-gray-500"><span>Rush Fee ×</span><span class="text-alert" id="receipt-rush">x1.0</span></div>
-                </div>
-                <div class="text-right mb-7">
-                    <span class="text-[10px] text-schale font-bold uppercase tracking-widest block mb-1">Total Estimated</span>
-                    <div id="total-price" class="text-4xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:-0.01em;">2,500 R$</div>
-                    <div id="sub-price" class="text-xs text-gray-600 font-mono mt-1">approx $8.75 USD</div>
-                </div>
-                <a href="#contact" onclick="playClick()" data-ripple
-                   class="w-full text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 text-sm hover:bg-white hover:text-schale"
-                   style="background:var(--accent);box-shadow:0 4px 20px rgba(26,168,255,0.25);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
-                    <i data-lucide="message-square" class="w-4 h-4"></i> DISCUSS QUOTE
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══ REVIEWS · 08 ════════════════════════════════════════ -->
-<section id="reviews" class="py-32 bg-dark relative" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="section-num" style="right:24px;top:40px;">08</div>
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6" data-aos="fade-up">
-            <div>
-                <div class="section-tag mb-3" style="color:var(--gold);background:rgba(255,184,58,0.07);border-color:rgba(255,184,58,0.2);">
-                    <i data-lucide="star" class="w-3 h-3"></i> Testimonials
-                </div>
-                <h2 class="text-4xl md:text-5xl font-black text-white" style="font-family:'Rajdhani',sans-serif;letter-spacing:0.02em;" data-scramble="FIELD REPORTS">FIELD REPORTS</h2>
-                <div class="flex items-center gap-4 mt-2">
-                    <span id="reviews-count" class="text-xl font-mono text-gold px-3 py-1 rounded-full"
-                          style="background:rgba(255,184,58,0.07);border:1px solid rgba(255,184,58,0.2);">0</span>
-                    <span id="reviews-avg" class="text-sm font-mono text-gray-500"></span>
-                    <p class="text-gray-600 text-sm">Real reviews. From real clients. Allegedly.</p>
-                </div>
-            </div>
-            <button onclick="openReviewModal()" data-magnetic data-ripple
-                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:-translate-y-1"
-                style="background:rgba(255,184,58,0.07);border:1px solid rgba(255,184,58,0.25);color:var(--gold);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
-                <i data-lucide="edit-3" class="w-4 h-4"></i>
-                SUBMIT FIELD REPORT
-            </button>
-        </div>
-        <div id="reviews-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
-    </div>
-</section>
-
-<!-- REVIEW MODAL -->
-<div id="review-modal" class="hidden fixed inset-0 z-[200] items-center justify-center px-4"
-     style="background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);"
-     onclick="if(event.target===this)closeReviewModal()">
-    <div class="w-full max-w-lg rounded-2xl overflow-hidden"
-         style="background:#090B10;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7);">
-        <div style="background:rgba(255,184,58,0.05);border-bottom:1px solid rgba(255,184,58,0.1);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
-            <div class="flex items-center gap-3">
-                <i data-lucide="file-text" class="w-4 h-4 text-gold"></i>
-                <span class="font-black text-white text-sm tracking-widest" style="font-family:'Rajdhani',sans-serif;">SUBMIT FIELD REPORT</span>
-            </div>
-            <button onclick="closeReviewModal()" class="text-gray-600 hover:text-white transition-colors">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-        </div>
-        <form id="review-form" class="p-6 space-y-5">
-            <div>
-                <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-2">OPERATIVE HANDLE</label>
-                <input id="review-name" type="text" placeholder="Your name or username"
-                    class="w-full rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-700 outline-none transition-colors"
-                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);"
-                    onfocus="this.style.borderColor='rgba(255,184,58,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"
-                    maxlength="40" required>
+              <div class="flex justify-between mb-2">
+                <label class="mono font-bold" style="font-size:9.5px;letter-spacing:0.12em;color:var(--dim)">Complexity</label>
+                <span id="c-lbl" class="mono" style="font-size:9.5px;color:var(--dim)">Standard</span>
+              </div>
+              <input id="c-range" type="range" min="1" max="2" step="0.1" value="1" oninput="calcBudget()" data-tip="How complex is the work?">
             </div>
             <div>
-                <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-3">MISSION RATING</label>
-                <div id="star-selector" class="flex gap-1"></div>
+              <div class="flex justify-between mb-2">
+                <label class="mono font-bold" style="font-size:9.5px;letter-spacing:0.12em;color:var(--dim)">Urgency</label>
+                <span id="r-lbl" class="mono" style="font-size:9.5px;color:var(--dim)">Standard</span>
+              </div>
+              <input id="r-range" type="range" min="1" max="1.5" step="0.1" value="1" oninput="calcBudget()" data-tip="Rush fee applies">
             </div>
-            <div>
-                <label class="text-[10px] font-bold text-gray-600 tracking-widest block mb-2">FIELD NOTES</label>
-                <textarea id="review-text" placeholder="Was it good? Terrible? Did he fix it? Tell us."
-                    class="w-full rounded-lg px-4 py-3 text-white text-sm font-mono placeholder-gray-700 outline-none transition-colors resize-none h-28"
-                    style="background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);"
-                    onfocus="this.style.borderColor='rgba(255,184,58,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"
-                    maxlength="280" required></textarea>
-                <div class="flex justify-end mt-1">
-                    <span id="review-char-count" class="text-[9px] font-mono text-gray-700">0/280</span>
-                </div>
-            </div>
-            <button id="reviews-submit-btn" type="submit" data-ripple
-                class="w-full text-white font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-sm hover:opacity-90"
-                style="background:var(--accent);box-shadow:0 4px 20px rgba(26,168,255,0.2);font-family:'Rajdhani',sans-serif;letter-spacing:0.08em;">
-                <i data-lucide="send" class="w-4 h-4"></i> TRANSMIT REPORT
-            </button>
-        </form>
+          </div>
+        </div>
+
+        <!-- Invoice card -->
+        <div class="md:col-span-5 card reveal" style="padding:24px">
+          <div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 0;background:radial-gradient(circle,rgba(26,168,255,0.06),transparent 70%);pointer-events:none"></div>
+          <div class="flex justify-between items-center mb-6">
+            <span class="mono" style="font-size:8px;font-weight:700;letter-spacing:0.14em;color:var(--muted)">INVOICE PREVIEW</span>
+            <select id="currency" onchange="calcBudget()" class="mono text-white"
+                    style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.4);outline:none;cursor:pointer">
+              <option>R$</option><option>USD</option><option>THB</option><option>VND</option>
+            </select>
+          </div>
+          <!-- Line items -->
+          <div class="mono space-y-3 mb-6 pb-6" style="font-size:12px;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div class="flex justify-between" style="color:var(--dim)"><span>Base Cost</span><span class="text-white" id="r-base">--</span></div>
+            <div class="flex justify-between" style="color:var(--dim)"><span>Complexity ×</span><span style="color:var(--accent)" id="r-comp">×1.0</span></div>
+            <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee ×</span><span style="color:var(--red)" id="r-rush">×1.0</span></div>
+          </div>
+          <!-- Total -->
+          <div class="text-right mb-6">
+            <span class="mono block mb-1" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">Total Estimated</span>
+            <div id="total-price" class="display font-black text-white" style="font-size:2.6rem;letter-spacing:-0.01em">--</div>
+            <div id="sub-price"   class="mono mt-1" style="font-size:10px;color:var(--muted)"></div>
+          </div>
+          <button onclick="navigateTo('contact');playClick()" data-ripple class="btn btn-accent w-full justify-center" style="font-size:12px;letter-spacing:0.08em">
+            <i data-lucide="message-square" style="width:14px;height:14px"></i> DISCUSS QUOTE
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- ══ 08 REVIEWS ═══════════════════════════════════════════ -->
+  <div id="pg-reviews" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
+        <div>
+          <div class="s-tag mb-3 reveal" style="color:var(--gold);background:rgba(255,184,58,0.07);border-color:rgba(255,184,58,0.2)">
+            <i data-lucide="star" style="width:11px;height:11px"></i> Testimonials
+          </div>
+          <h2 class="section-title reveal">FIELD REPORTS</h2>
+          <div class="flex items-center gap-4 mt-2 reveal">
+            <span id="reviews-count" class="mono font-bold" style="font-size:1.2rem;color:var(--gold);background:rgba(255,184,58,0.07);border:1px solid rgba(255,184,58,0.2);padding:4px 12px;border-radius:999px">0</span>
+            <span id="reviews-avg" class="mono" style="font-size:12px;color:var(--dim)"></span>
+            <span style="color:var(--dim);font-size:13px">Real reviews. From real clients. Allegedly.</span>
+          </div>
+        </div>
+        <button onclick="openReviewModal()" data-ripple class="btn reveal"
+                style="background:rgba(255,184,58,0.07);border:1px solid rgba(255,184,58,0.25);color:var(--gold);padding:10px 22px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:900;font-size:12px;letter-spacing:0.08em">
+          <i data-lucide="edit-3" style="width:14px;height:14px"></i> SUBMIT FIELD REPORT
+        </button>
+      </div>
+      <div id="reviews-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </div>
+
+  <!-- ══ 09 CONTACT / MOMOTALK ════════════════════════════════ -->
+  <div id="pg-contact" class="page">
+    <div class="max-w-2xl mx-auto px-6 text-center py-24" style="padding-top:calc(var(--nav-h) + 5rem)">
+      <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">MomoTalk</div>
+      <h2 class="section-title reveal mb-2">MomoTalk</h2>
+      <p class="reveal mb-2" style="color:var(--dim);font-size:14px" data-lang="contact_sub">Sensei, you have a new message.</p>
+      <p class="mono mb-10 reveal" style="font-size:9px;color:var(--muted)">response time: fast (unless I'm asleep, which is often)</p>
+
+      <!-- Status strip -->
+      <div class="inline-flex items-center gap-5 px-6 py-3 rounded-full border mb-10 reveal"
+           style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05);backdrop-filter:blur(8px)">
+        <div class="flex items-center gap-2">
+          <span class="live-dot"></span>
+          <span class="mono font-bold" style="font-size:8.5px;letter-spacing:0.14em;color:var(--green)">STATUS: ONLINE</span>
+        </div>
+        <div style="width:1px;height:12px;background:rgba(255,255,255,0.07)"></div>
+        <div class="mono" style="font-size:9px;color:var(--dim)">UPTIME: <span id="uptime" class="uptime">00:00:00</span></div>
+        <div style="width:1px;height:12px;background:rgba(255,255,255,0.07)"></div>
+        <div class="mono" style="font-size:9px;color:var(--dim)">VISITS: <span id="visitor-count" class="text-white font-bold">---</span></div>
+      </div>
+
+      <!-- MomoTalk widget -->
+      <div class="momo-wrap reveal">
+        <div class="momo-head">
+          <i data-lucide="message-circle" style="width:18px;height:18px"></i>
+          MomoTalk
+          <span class="ml-auto mono font-bold" style="font-size:9px;background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:999px">2 unread</span>
+        </div>
+        <!-- Discord -->
+        <div class="momo-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord">
+          <div class="momo-avatar" style="background:#eaecff">
+            <i data-lucide="message-square" style="width:18px;height:18px;color:#6366f1"></i>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="flex justify-between items-center mb-0.5">
+              <span style="font-weight:700;font-size:13px;color:#1f2937">Discord</span>
+              <span style="font-size:10px;color:#9ca3af">now</span>
+            </div>
+            <div id="discord-text" style="font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">hokpy · click to copy</div>
+          </div>
+          <div class="momo-badge">1</div>
+        </div>
+        <!-- Roblox -->
+        <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momo-item group" onclick="playClick()" style="display:flex;text-decoration:none">
+          <div class="momo-avatar" style="background:#f3f4f6">
+            <i data-lucide="gamepad-2" style="width:18px;height:18px;color:#4b5563"></i>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="flex justify-between items-center mb-0.5">
+              <span style="font-weight:700;font-size:13px;color:#1f2937">Roblox</span>
+              <span style="font-size:10px;color:#9ca3af">1m ago</span>
+            </div>
+            <div style="font-size:11px;color:#6b7280">View my profile — Water @ Roblox</div>
+          </div>
+          <div class="momo-badge">1</div>
+        </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-14 space-y-2 reveal">
+        <div class="mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted);opacity:0.4">SCHALE DATABASE V5.0 // AUTH: HOKPY // KIVOTOS ADMIN</div>
+        <div class="mono" style="font-size:8px;color:var(--muted);opacity:0.25">built at 2am · powered by redbull · no bugs (allegedly)</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══ REVIEW MODAL ═══════════════════════════════════════════ -->
+<div id="review-modal" onclick="if(event.target===this)closeReviewModal()">
+  <div style="width:100%;max-width:480px;border-radius:16px;overflow:hidden;background:#080b14;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7)">
+    <div style="background:rgba(255,184,58,0.05);border-bottom:1px solid rgba(255,184,58,0.1);padding:14px 22px;display:flex;align-items:center;justify-content:space-between">
+      <div class="flex items-center gap-3">
+        <i data-lucide="file-text" style="width:14px;height:14px;color:var(--gold)"></i>
+        <span class="display font-black text-white" style="font-size:13px;letter-spacing:0.1em">SUBMIT FIELD REPORT</span>
+      </div>
+      <button onclick="closeReviewModal()" style="background:none;border:none;cursor:pointer;color:var(--dim);transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--dim)'">
+        <i data-lucide="x" style="width:18px;height:18px"></i>
+      </button>
+    </div>
+    <form id="review-form" style="padding:22px;display:flex;flex-direction:column;gap:18px">
+      <div>
+        <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--muted);display:block;margin-bottom:8px">OPERATIVE HANDLE</label>
+        <input id="review-name" type="text" placeholder="Your name or username" maxlength="40" required
+               style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:11px 14px;color:#fff;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s"
+               onfocus="this.style.borderColor='rgba(255,184,58,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'">
+      </div>
+      <div>
+        <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--muted);display:block;margin-bottom:10px">MISSION RATING</label>
+        <div id="star-sel" class="flex gap-1"></div>
+      </div>
+      <div>
+        <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--muted);display:block;margin-bottom:8px">FIELD NOTES</label>
+        <textarea id="review-text" placeholder="Was it good? Terrible? Did he fix it? Tell us." maxlength="280" required
+                  style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:11px 14px;color:#fff;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;resize:none;height:100px;transition:border-color .2s"
+                  onfocus="this.style.borderColor='rgba(255,184,58,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"></textarea>
+        <div class="flex justify-end mt-1"><span id="char-count" class="mono" style="font-size:8.5px;color:var(--muted)">0/280</span></div>
+      </div>
+      <button type="submit" data-ripple class="btn btn-accent w-full justify-center" style="font-size:12px;letter-spacing:0.08em">
+        <i data-lucide="send" style="width:13px;height:13px"></i> TRANSMIT REPORT
+      </button>
+    </form>
+  </div>
 </div>
 
-<!-- ══ FOOTER / MOMOTALK · 09 ══════════════════════════════ -->
-<footer id="contact" class="bg-dark py-24 relative overflow-hidden" style="border-top:1px solid rgba(255,255,255,0.05);">
-    <div class="absolute inset-0 pointer-events-none" style="background:radial-gradient(ellipse 60% 60% at 50% 100%,rgba(255,168,0,0.03),transparent 60%);"></div>
-    <div class="max-w-3xl mx-auto px-6 text-center z-10 relative">
-        <div class="section-tag mb-4 mx-auto w-fit">MomoTalk</div>
-        <h2 class="text-5xl font-black text-white mb-2" style="font-family:'Rajdhani',sans-serif;" data-i18n="contact_title">MomoTalk</h2>
-        <p class="text-gray-500 mb-3 text-sm" data-i18n="contact_sub">Sensei, you have a new message.</p>
-        <p class="text-gray-700 text-xs font-mono mb-12">response time: fast (unless I'm asleep, which is often)</p>
-
-        <div class="inline-flex items-center gap-5 px-6 py-3 rounded-full border border-white/5 mb-12" style="background:rgba(255,255,255,0.02);backdrop-filter:blur(8px);">
-            <div class="flex items-center gap-2">
-                <span class="live-dot"></span>
-                <span class="text-[10px] font-bold text-green-500 tracking-widest uppercase">My Status: Online</span>
-            </div>
-            <div class="w-px h-3 bg-white/8"></div>
-            <div class="text-[10px] font-mono text-gray-600">UPTIME: <span id="uptime-counter" class="uptime-display">00:00:00</span></div>
-            <div class="w-px h-3 bg-white/8"></div>
-            <div class="text-[10px] font-mono text-gray-600">VISITS: <span id="visitor-count" class="text-white font-bold">---</span></div>
-        </div>
-
-        <div class="momotalk-container" data-aos="zoom-in">
-            <div class="momotalk-header">
-                <i data-lucide="message-circle" class="w-5 h-5"></i>
-                <span style="font-size:15px;letter-spacing:0.05em;font-family:'Rajdhani',sans-serif;">MomoTalk</span>
-                <span class="ml-auto text-[10px] bg-white/25 text-[#3d1f2c] px-2 py-0.5 rounded-full font-bold">2 unread</span>
-            </div>
-            <div class="p-4" style="background:#efefef;" data-stagger="80">
-                <div class="momotalk-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord username">
-                    <div class="momotalk-avatar" style="background:#eaecff;">
-                        <i data-lucide="message-square" class="w-5 h-5 text-indigo-500 group-hover:scale-110 transition-transform"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <span class="font-bold text-sm text-gray-800">Discord</span>
-                            <span class="text-[10px] text-gray-400">now</span>
-                        </div>
-                        <div class="text-xs text-gray-500 truncate font-medium" id="contact-discord-text">hokpy · click to copy</div>
-                    </div>
-                    <div class="unread-badge">1</div>
-                </div>
-                <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momotalk-item group" onclick="playClick()">
-                    <div class="momotalk-avatar" style="background:#f2f2f2;">
-                        <i data-lucide="gamepad-2" class="w-5 h-5 text-gray-600 group-hover:rotate-12 transition-transform"></i>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <span class="font-bold text-sm text-gray-800">Roblox</span>
-                            <span class="text-[10px] text-gray-400">1m ago</span>
-                        </div>
-                        <div class="text-xs text-gray-500 truncate font-medium">View my profile — Water @ Roblox</div>
-                    </div>
-                    <div class="unread-badge">1</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="mt-16 space-y-2">
-            <div class="text-[9px] text-gray-700 font-mono uppercase tracking-[0.2em] opacity-40">SCHALE DATABASE V4.0 // AUTH: HOKPY // KIVOTOS ADMIN</div>
-            <div class="text-[9px] text-gray-800 font-mono opacity-30">built at 2am · powered by redbull · no bugs (allegedly)</div>
-        </div>
-    </div>
-</footer>
-
-<!-- ══ SCRIPTS ══════════════════════════════════════════════ -->
-<script src="js/config.js?v=4.0"></script>
-<script src="js/translations.js?v=4.0"></script>
-<script src="js/projects.js?v=4.0"></script>
-<script src="js/snippets.js?v=4.0"></script>
-<script src="js/audio.js?v=4.0"></script>
-<script src="js/calculator.js?v=4.0"></script>
-<script src="js/reviews.js?v=4.0"></script>
-<script src="js/ui.js?v=4.0"></script>
-<script src="js/events.js?v=4.0"></script>
-
+<!-- ══ ESTIMATOR SERVICE BUTTONS (injected by JS) ════════════ -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Core init
-    initLocalSystem();
-    runBootSequence();
-    renderProjects();
-    initParticles();
-    initCLI();
-    initCardSpotlight();
-    buildCodeTabs();
-    initSkillBars();
-    initCounters();
-    initActiveNav();
-    initNavScroll();
-    initTooltips();
-    initCursorTrail();
-    initMagneticButtons();
-    initCardTilt();
-    initRippleButtons();
-    initScrambleHeadings();
-    initLogoEasterEgg();
-    initUptimeCounter();
-    startRandomToasts();
-    initSectionReveals();
-    initAchievements();
-    initRandomEvents();
-    initIdleDetection();
-
-    lucide.createIcons();
-    AOS.init({ once: true, offset: 50, duration: 700, easing: 'ease-out-cubic', delay: 0 });
-    typeWriter();
-    calculateBudget();
-
-    // Select default service
-    var serviceBtns = document.querySelectorAll('.service-btn');
-    if (serviceBtns.length > 1) serviceBtns[1].click();
-
-    // Load first code snippet
-    var codeEl = document.getElementById('code-display');
-    if (codeEl && typeof codeSnippets !== 'undefined' && codeSnippets.length) {
-        codeEl.textContent = codeSnippets[0].content;
-        Prism.highlightElement(codeEl);
-    }
-
-    // Reviews
-    renderReviews();
-    var starSel = document.getElementById('star-selector');
-    if (starSel) starSel.innerHTML = renderStars(5, true, 'stars');
-    initReviewForm();
-
-    // Scroll progress bar
-    window.addEventListener('scroll', function () {
-        var pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-        var bar = document.getElementById('scroll-progress');
-        if (bar) bar.style.width = (pct * 100) + '%';
-    }, { passive: true });
-
-    // Auto-close mobile menu on link click
-    document.querySelectorAll('#mobile-menu a').forEach(function (a) {
-        a.addEventListener('click', function () {
-            document.getElementById('mobile-menu').classList.remove('open');
-        });
-    });
-
-    // Welcome toast
-    setTimeout(function () { showFunnyToast('Welcome, Sensei. Try the terminal.'); }, 3000);
+// Build service buttons after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('svc-grid');
+  if (!grid) return;
+  SITE.pricing.services.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'svc-btn' + (i === 1 ? ' selected' : '');
+    btn.dataset.ripple = '';
+    btn.innerHTML = `<div class="font-bold text-white" style="font-size:13px;margin-bottom:3px;font-family:'Rajdhani',sans-serif">${s.label}</div>
+                     <div class="mono" style="font-size:9px;color:var(--muted)">${s.base.toLocaleString()}+ R$</div>`;
+    btn.addEventListener('click', () => selectService(s.base, btn));
+    grid.appendChild(btn);
+  });
 });
 </script>
+
+<!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
