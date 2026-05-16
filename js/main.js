@@ -38,9 +38,9 @@ let _active = 0;
 let _busy   = false;
 const _inited = {};
 
-const EASE_EXIT  = 'transform 460ms cubic-bezier(0.4,0,1,1), opacity 340ms cubic-bezier(0.4,0,1,1)';
-const EASE_ENTER = 'transform 560ms cubic-bezier(0.22,1,0.36,1), opacity 440ms cubic-bezier(0,0,0.2,1)';
-const NAV_DUR    = 580;
+const EASE_EXIT  = 'transform 400ms cubic-bezier(0.4,0,1,1), opacity 300ms ease, filter 400ms ease';
+const EASE_ENTER = 'clip-path 680ms cubic-bezier(0.22,1,0.36,1), opacity 500ms ease, filter 500ms ease';
+const NAV_DUR    = 720;
 
 function navigateTo(id, instant) {
     const ids  = SITE.sections.map(s => s.id);
@@ -65,24 +65,25 @@ function navigateTo(id, instant) {
     }
 
     _busy = true;
-    const dir = next > _active ? 1 : -1;
 
-    curEl.style.willChange = 'transform, opacity';
+    curEl.style.willChange = 'transform, opacity, filter';
     requestAnimationFrame(() => {
         curEl.style.transition = EASE_EXIT;
-        curEl.style.transform  = `translate3d(0, ${dir * -30}px, 0) scale(0.96)`;
+        curEl.style.transform  = 'scale(0.91)';
         curEl.style.opacity    = '0';
+        curEl.style.filter     = 'blur(14px)';
     });
 
-    nextEl.style.cssText = `transform:translate3d(0,${dir * 42}px,0) scale(0.97);opacity:0;will-change:transform,opacity;`;
+    nextEl.style.cssText = `clip-path:circle(0% at 50% 50%);opacity:0;filter:blur(6px);will-change:clip-path,opacity,filter;`;
     nextEl.classList.add('active');
     nextEl.scrollTop = 0;
 
     setTimeout(() => {
         nextEl.style.transition = EASE_ENTER;
-        nextEl.style.transform  = 'translate3d(0,0,0) scale(1)';
+        nextEl.style.clipPath   = 'circle(150% at 50% 50%)';
         nextEl.style.opacity    = '1';
-    }, 55);
+        nextEl.style.filter     = 'blur(0px)';
+    }, 60);
 
     setTimeout(() => {
         curEl.classList.remove('active');
