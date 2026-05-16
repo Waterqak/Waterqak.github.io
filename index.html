@@ -254,10 +254,11 @@ tailwind.config = {
                 <span style="color:var(--muted);font-size:8.5px">· · · try: coffee · hack · uwu · neofetch · · ·</span><br>
               </div>
               <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:9px">
-                <span style="color:var(--accent)">visitor@schale:~$</span>
-                <input id="cli-input" type="text" autocomplete="off" spellcheck="false"
-                       style="flex:1;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px">
-                <span class="blink" style="width:6px;height:12px;background:var(--accent);display:block;border-radius:1px"></span>
+                  <span style="color:var(--accent)">visitor@schale:~$</span>
+                  <label for="cli-input" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">Terminal command input</label>
+                  <input id="cli-input" type="text" autocomplete="off" spellcheck="false"
+                    style="flex:1;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px">
+                  <span class="blink" style="width:6px;height:12px;background:var(--accent);display:block;border-radius:1px"></span>
               </div>
             </div>
           </div>
