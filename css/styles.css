@@ -65,27 +65,10 @@ body {
     scrollbar-width: thin;
     scrollbar-color: rgba(26,168,255,0.14) transparent;
     backface-visibility: hidden;
-    transform-origin: center center;
 }
 .page::-webkit-scrollbar { width: 3px; }
 .page::-webkit-scrollbar-thumb { background: rgba(26,168,255,0.14); border-radius: 99px; }
 .page.active { opacity: 1; pointer-events: auto; z-index: 2; }
-
-.page-num {
-    position: absolute;
-    right: 32px;
-    top: calc(var(--nav-h) + 12px);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(72px, 9vw, 108px);
-    font-weight: 900;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(26,168,255,0.05);
-    pointer-events: none;
-    user-select: none;
-    line-height: 1;
-    z-index: 0;
-    letter-spacing: -0.02em;
-}
 
 nav {
     position: fixed; top: 0; width: 100%; z-index: 50;
@@ -240,6 +223,7 @@ nav.scrolled {
         inset 0 1px 0 rgba(255,255,255,0.06);
     transform: translateY(-2px);
 }
+
 .card::before {
     content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
     background: radial-gradient(400px circle at var(--mx,-9999px) var(--my,-9999px), rgba(26,168,255,0.07), transparent 40%);
@@ -305,7 +289,7 @@ nav.scrolled {
 }
 .stat-card:hover {
     border-color: rgba(26,168,255,0.22);
-    box-shadow: 0 0 24px rgba(26,168,255,0.08), inset 0 1px 0 rgba(26,168,168,0.08);
+    box-shadow: 0 0 24px rgba(26,168,255,0.08), inset 0 1px 0 rgba(26,168,255,0.08);
     transform: translateY(-2px);
 }
 .stat-val {

@@ -18,7 +18,7 @@ const SITE = {
 
     // Hero stats
     stats: [
-        { value: "10+",  label: "Commissions" },
+        { value: "50+",  label: "Commissions" },
         { value: "4 yrs", label: "Experience"  },
         { value: "40%",  label: "Avg Lag Fix"  },
     ],
