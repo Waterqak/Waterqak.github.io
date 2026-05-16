@@ -29,7 +29,9 @@ function toggleMute() {
     const icon = document.getElementById('mute-icon');
     bgm[muted ? 'pause' : 'play']();
     icon.setAttribute('data-lucide', muted ? 'volume-x' : 'volume-2');
-    lucide.createIcons();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
 }
 
 let _active = 0;
@@ -1239,7 +1241,9 @@ document.addEventListener('DOMContentLoaded', () => {
     buildTabs();
     initReviewForm();
 
-    lucide.createIcons();
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+    }
     typeWriter();
     calcBudget();
 
