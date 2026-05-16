@@ -151,38 +151,47 @@ function initKeyboardNav() {
 }
 
 function initWheelNav() {
-    let cd = false;
+    let cd = false; // Cooldown timer
 
     document.addEventListener('wheel', e => {
         if (_busy || cd) return;
 
-        const trappedEl = e.target.closest('iframe, .card, #proj-grid, .code-win, pre, .code-body');
-
-        if (trappedEl) {
-            const atInnerTop = trappedEl.scrollTop <= 0;
-            const atInnerBottom = trappedEl.scrollTop + trappedEl.clientHeight >= trappedEl.scrollHeight - 1;
-            if (e.deltaY > 0 && !atInnerBottom) return;
-            if (e.deltaY < 0 && !atInnerTop) return;
-        }   
+        // Ignore zooming (Ctrl + Scroll)
+        if (e.ctrlKey) return;
 
         const pg = document.querySelector('.page.active');
         if (!pg) return;
 
+        // --- 1. Handle Inner Scrollable Elements (Code Vault, Cards, etc.) ---
+        const innerEl = e.target.closest('iframe, .card, #proj-grid, .code-win, pre, .code-body');
+        if (innerEl) {
+            const atInnerTop = innerEl.scrollTop <= 0;
+            // Math.ceil helps prevent fractional pixel rounding errors
+            const atInnerBottom = Math.ceil(innerEl.scrollTop + innerEl.clientHeight) >= innerEl.scrollHeight - 1;
+
+            // If they are scrolling down but haven't hit the bottom of the code box, let them scroll normally.
+            if (e.deltaY > 0 && !atInnerBottom) return; 
+            // If they are scrolling up but haven't hit the top of the code box, let them scroll normally.
+            if (e.deltaY < 0 && !atInnerTop) return;    
+        }
+
+        // --- 2. Handle Main Page Navigation ---
+        // Check if the main page itself is at the top or bottom
+        const atBot = Math.ceil(pg.scrollTop + pg.clientHeight) >= pg.scrollHeight - 2;
+        const atTop = pg.scrollTop <= 2;
+
         const ids = SITE.sections.map(s => s.id);
 
-        const atBot = pg.scrollHeight - pg.scrollTop - pg.clientHeight < 3;
-        const atTop = pg.scrollTop < 3;
-
         if (e.deltaY > 40 && atBot) {
-            e.preventDefault();
-            cd = true;
-            setTimeout(() => { cd = false; }, 700);
+            e.preventDefault(); // Stop native scroll bouncing
+            cd = true; 
+            setTimeout(() => { cd = false; }, 800); // 800ms cooldown so it doesn't double-skip
             navigateTo(ids[Math.min(_active + 1, ids.length - 1)]);
         }
         else if (e.deltaY < -40 && atTop) {
             e.preventDefault();
-            cd = true;
-            setTimeout(() => { cd = false; }, 700);
+            cd = true; 
+            setTimeout(() => { cd = false; }, 800);
             navigateTo(ids[Math.max(_active - 1, 0)]);
         }
 
