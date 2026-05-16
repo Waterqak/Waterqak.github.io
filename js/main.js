@@ -156,11 +156,14 @@ function initWheelNav() {
     document.addEventListener('wheel', e => {
         if (_busy || cd) return;
 
-        // Ignore scrolling inside embeds/cards/videos
+        // --- FIX: Ignore scrolling inside code vault, embeds, cards, project grid ---
         if (
-            e.target.closest('iframe') ||
-            e.target.closest('.card') ||
-            e.target.closest('#proj-grid')
+            e.target.closest('iframe')      ||
+            e.target.closest('.card')       ||
+            e.target.closest('#proj-grid')  ||
+            e.target.closest('.code-win')   ||
+            e.target.closest('pre')         ||
+            e.target.closest('.code-body')
         ) return;
 
         const pg = document.querySelector('.page.active');
@@ -174,17 +177,13 @@ function initWheelNav() {
         if (e.deltaY > 40 && atBot) {
             e.preventDefault();
             cd = true;
-
             setTimeout(() => { cd = false; }, 700);
-
             navigateTo(ids[Math.min(_active + 1, ids.length - 1)]);
         }
         else if (e.deltaY < -40 && atTop) {
             e.preventDefault();
             cd = true;
-
             setTimeout(() => { cd = false; }, 700);
-
             navigateTo(ids[Math.max(_active - 1, 0)]);
         }
 
