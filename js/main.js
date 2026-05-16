@@ -152,20 +152,42 @@ function initKeyboardNav() {
 
 function initWheelNav() {
     let cd = false;
+
     document.addEventListener('wheel', e => {
         if (_busy || cd) return;
+
+        // Ignore scrolling inside embeds/cards/videos
+        if (
+            e.target.closest('iframe') ||
+            e.target.closest('.card') ||
+            e.target.closest('#proj-grid')
+        ) return;
+
         const pg = document.querySelector('.page.active');
         if (!pg) return;
-        const ids   = SITE.sections.map(s => s.id);
+
+        const ids = SITE.sections.map(s => s.id);
+
         const atBot = pg.scrollHeight - pg.scrollTop - pg.clientHeight < 3;
         const atTop = pg.scrollTop < 3;
+
         if (e.deltaY > 40 && atBot) {
-            e.preventDefault(); cd = true; setTimeout(() => { cd = false; }, 900);
-            navigateTo(ids[Math.min(_active+1, ids.length-1)]);
-        } else if (e.deltaY < -40 && atTop) {
-            e.preventDefault(); cd = true; setTimeout(() => { cd = false; }, 900);
-            navigateTo(ids[Math.max(_active-1, 0)]);
+            e.preventDefault();
+            cd = true;
+
+            setTimeout(() => { cd = false; }, 700);
+
+            navigateTo(ids[Math.min(_active + 1, ids.length - 1)]);
         }
+        else if (e.deltaY < -40 && atTop) {
+            e.preventDefault();
+            cd = true;
+
+            setTimeout(() => { cd = false; }, 700);
+
+            navigateTo(ids[Math.max(_active - 1, 0)]);
+        }
+
     }, { passive: false });
 }
 
@@ -614,7 +636,7 @@ const COLOR_MAP = {
 
 function _toEmbed(url) {
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
-    return m ? `https://www.youtube.com/embed/${m[1]}?autoplay=1&mute=1&controls=0&loop=1&playlist=${m[1]}` : url;
+    return m ? `https://www.youtube.com/embed/${m[1]}?mute=1&controls=0&playlist=${m[1]}` : url;
 }
 
 function _media(p) {
