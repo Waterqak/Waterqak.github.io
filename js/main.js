@@ -1,25 +1,20 @@
-/* main.js */
-
 const _loop = (() => {
     const fns = new Map();
     let id = null;
-    function tick() {
-        fns.forEach(fn => fn());
-        id = requestAnimationFrame(tick);
-    }
+    function tick() { fns.forEach(fn => fn()); id = requestAnimationFrame(tick); }
     return {
         add(k, fn) { fns.set(k, fn); if (!id) id = requestAnimationFrame(tick); },
         del(k)     { fns.delete(k); },
     };
 })();
 
-/* ── Audio ──────────────────────────────────────────────────── */
+/* ── Audio ─────────────────────────────────────────────────── */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let muted = false;
 
 function playClick(freq = 600, dur = 0.08) {
     if (muted) return;
-    const osc = audioCtx.createOscillator();
+    const osc  = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain); gain.connect(audioCtx.destination);
     osc.type = 'square';
@@ -41,8 +36,11 @@ function toggleMute() {
 /* ── SPA Navigation ─────────────────────────────────────────── */
 let _active = 0;
 let _busy   = false;
-const DUR   = 520;
 const _inited = {};
+
+const EASE_EXIT  = 'transform 460ms cubic-bezier(0.4,0,1,1), opacity 340ms cubic-bezier(0.4,0,1,1)';
+const EASE_ENTER = 'transform 560ms cubic-bezier(0.22,1,0.36,1), opacity 440ms cubic-bezier(0,0,0.2,1)';
+const NAV_DUR    = 580;
 
 function navigateTo(id, instant) {
     const ids  = SITE.sections.map(s => s.id);
@@ -58,7 +56,7 @@ function navigateTo(id, instant) {
     _updateSectionBar(next);
 
     if (instant || !curEl || curEl === nextEl) {
-        if (curEl && curEl !== nextEl) curEl.classList.remove('active');
+        curEl?.classList.remove('active');
         nextEl.classList.add('active');
         nextEl.scrollTop = 0;
         _active = next;
@@ -68,26 +66,23 @@ function navigateTo(id, instant) {
 
     _busy = true;
     const dir = next > _active ? 1 : -1;
-    const ease = `${DUR}ms cubic-bezier(0.4,0,0.2,1)`;
 
-    curEl.style.willChange  = 'transform,opacity';
-    nextEl.style.willChange = 'transform,opacity';
-    nextEl.style.transform  = `translate3d(0,${dir * 50}px,0)`;
-    nextEl.style.opacity    = '0';
+    curEl.style.willChange = 'transform, opacity';
+    requestAnimationFrame(() => {
+        curEl.style.transition = EASE_EXIT;
+        curEl.style.transform  = `translate3d(0, ${dir * -30}px, 0) scale(0.96)`;
+        curEl.style.opacity    = '0';
+    });
+
+    nextEl.style.cssText = `transform:translate3d(0,${dir * 42}px,0) scale(0.97);opacity:0;will-change:transform,opacity;`;
     nextEl.classList.add('active');
     nextEl.scrollTop = 0;
 
-    void nextEl.offsetWidth;
-
-    curEl.style.transition  = `transform ${ease},opacity ${ease}`;
-    nextEl.style.transition = `transform ${ease},opacity ${ease}`;
-
-    requestAnimationFrame(() => {
-        nextEl.style.transform = 'translate3d(0,0,0)';
-        nextEl.style.opacity   = '1';
-        curEl.style.transform  = `translate3d(0,${dir * -38}px,0)`;
-        curEl.style.opacity    = '0';
-    });
+    setTimeout(() => {
+        nextEl.style.transition = EASE_ENTER;
+        nextEl.style.transform  = 'translate3d(0,0,0) scale(1)';
+        nextEl.style.opacity    = '1';
+    }, 55);
 
     setTimeout(() => {
         curEl.classList.remove('active');
@@ -96,7 +91,7 @@ function navigateTo(id, instant) {
         _active = next;
         _busy   = false;
         _onEnter(id);
-    }, DUR + 30);
+    }, NAV_DUR);
 }
 
 function _onEnter(id) {
@@ -122,6 +117,18 @@ function _updateSectionBar(idx) {
     const pct = Math.round((idx / (SITE.sections.length - 1)) * 100);
     const bar = document.getElementById('section-bar');
     if (bar) bar.style.width = pct + '%';
+}
+
+/* ── Page number watermarks ─────────────────────────────────── */
+function injectPageNumbers() {
+    SITE.sections.forEach((s, i) => {
+        const pg = document.getElementById('pg-' + s.id);
+        if (!pg) return;
+        const el = document.createElement('div');
+        el.className = 'page-num';
+        el.textContent = String(i + 1).padStart(2, '0');
+        pg.appendChild(el);
+    });
 }
 
 /* ── Nav dots ───────────────────────────────────────────────── */
@@ -243,7 +250,7 @@ function startExperience() {
     boot.style.animation = 'crtOff 0.5s forwards';
     setTimeout(() => {
         boot.style.display = 'none';
-        document.body.style.opacity = '0';
+        document.body.style.opacity    = '0';
         document.body.style.transition = 'opacity 0.6s ease';
         requestAnimationFrame(() => { document.body.style.opacity = '1'; });
         const bgm = document.getElementById('bgm');
@@ -252,25 +259,24 @@ function startExperience() {
     }, 470);
 }
 
-/* ── Particles (typed arrays, single RAF via _loop) ─────────── */
+/* ── Particles ──────────────────────────────────────────────── */
 function initParticles() {
     const cv = document.getElementById('particles-canvas');
     if (!cv) return;
     const ctx = cv.getContext('2d', { alpha: true });
 
-    const N = 35;
-    const px   = new Float32Array(N);
-    const py   = new Float32Array(N);
-    const pvx  = new Float32Array(N);
-    const pvy  = new Float32Array(N);
-    const pz   = new Float32Array(N);
-    const TAU  = Math.PI * 2;
+    const N        = 35;
+    const px       = new Float32Array(N);
+    const py       = new Float32Array(N);
+    const pvx      = new Float32Array(N);
+    const pvy      = new Float32Array(N);
+    const pz       = new Float32Array(N);
+    const TAU      = Math.PI * 2;
     const CDIST    = 110;
     const CDIST_SQ = CDIST * CDIST;
-    const RDIST_SQ = 8100; // 90^2
+    const RDIST_SQ = 8100;
 
-    let W = 0, H = 0;
-    let _mx = -9999, _my = -9999;
+    let W = 0, H = 0, _mx = -9999, _my = -9999;
 
     function spawn() {
         W = cv.width  = innerWidth;
@@ -286,7 +292,6 @@ function initParticles() {
     spawn();
 
     window.addEventListener('mousemove', e => { _mx = e.clientX; _my = e.clientY; }, { passive: true });
-
     let resizeT;
     window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(spawn, 150); }, { passive: true });
 
@@ -298,37 +303,27 @@ function initParticles() {
         ctx.fillStyle = 'rgba(26,168,255,0.9)';
 
         for (let i = 0; i < N; i++) {
-            px[i] += pvx[i];
-            py[i] += pvy[i];
+            px[i] += pvx[i]; py[i] += pvy[i];
             if (px[i] < 0 || px[i] > W) pvx[i] *= -1;
             if (py[i] < 0 || py[i] > H) pvy[i] *= -1;
-
-            const dx  = _mx - px[i];
-            const dy  = _my - py[i];
+            const dx = _mx - px[i], dy = _my - py[i];
             const dsq = dx * dx + dy * dy;
             if (dsq < RDIST_SQ && dsq > 0) {
                 const d = Math.sqrt(dsq);
                 px[i] -= dx / d * 1.2;
                 py[i] -= dy / d * 1.2;
             }
-
             ctx.globalAlpha = 0.45;
-            ctx.beginPath();
-            ctx.arc(px[i], py[i], pz[i], 0, TAU);
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(px[i], py[i], pz[i], 0, TAU); ctx.fill();
         }
 
         for (let i = 0; i < N - 1; i++) {
             for (let j = i + 1; j < N; j++) {
-                const dx  = px[i] - px[j];
-                const dy  = py[i] - py[j];
-                const dsq = dx * dx + dy * dy;
+                const dx = px[i]-px[j], dy = py[i]-py[j];
+                const dsq = dx*dx + dy*dy;
                 if (dsq < CDIST_SQ) {
                     ctx.globalAlpha = (1 - Math.sqrt(dsq) / CDIST) * 0.07;
-                    ctx.beginPath();
-                    ctx.moveTo(px[i], py[i]);
-                    ctx.lineTo(px[j], py[j]);
-                    ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(px[i], py[i]); ctx.lineTo(px[j], py[j]); ctx.stroke();
                 }
             }
         }
@@ -395,11 +390,7 @@ function _applyPfp(url) {
     img.src = url;
     img.classList.remove('hidden');
     ph.classList.add('hidden');
-    img.onerror = () => {
-        img.classList.add('hidden');
-        ph.classList.remove('hidden');
-        localStorage.removeItem('schale_pfp');
-    };
+    img.onerror = () => { img.classList.add('hidden'); ph.classList.remove('hidden'); localStorage.removeItem('schale_pfp'); };
 }
 
 window.updatePfp = function() {
@@ -459,9 +450,9 @@ function toggleOverride() {
         root.style.setProperty('--accent',  '#1AA8FF');
         root.style.setProperty('--accent2', '#5CCFFF');
         root.style.setProperty('--glow',    'rgba(26,168,255,0.28)');
-        if (st)   st.textContent = 'System Online';
-        if (dot)  dot.classList.replace('bg-red-500','bg-green-500');
-        if (ping) ping.classList.replace('bg-red-500','bg-green-500');
+        if (st)    st.textContent = 'System Online';
+        if (dot)   dot.classList.replace('bg-red-500','bg-green-500');
+        if (ping)  ping.classList.replace('bg-red-500','bg-green-500');
         if (badge) badge.classList.remove('critical');
         playClick(1200, 0.25);
     }
@@ -516,13 +507,13 @@ function showToast(msg, color) {
     _toastN++;
     const t = document.createElement('div');
     const c = color || 'var(--accent)';
-    t.style.cssText = `position:fixed;bottom:${84 + (_toastN - 1) * 76}px;right:22px;z-index:9998;background:rgba(5,9,26,0.97);border:1px solid rgba(255,255,255,0.07);border-left:3px solid ${c};color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;padding:11px 16px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7);max-width:300px;line-height:1.5;transform:translate3d(16px,0,0) scale(0.97);opacity:0;pointer-events:none;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.4s ease;will-change:transform,opacity;`;
+    t.style.cssText = `position:fixed;bottom:${84 + (_toastN-1)*76}px;right:22px;z-index:9998;background:rgba(5,9,26,0.97);border:1px solid rgba(255,255,255,0.07);border-left:3px solid ${c};color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;padding:11px 16px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7);max-width:300px;line-height:1.5;transform:translate3d(16px,0,0) scale(0.97);opacity:0;pointer-events:none;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.4s ease;will-change:transform,opacity;`;
     t.innerHTML = `<div style="font-size:8px;color:${c};letter-spacing:.12em;margin-bottom:3px;opacity:.7;">SCHALE.DB</div><div>${msg}</div>`;
     document.body.appendChild(t);
     requestAnimationFrame(() => requestAnimationFrame(() => { t.style.transform = 'translate3d(0,0,0) scale(1)'; t.style.opacity = '1'; }));
     setTimeout(() => {
         t.style.transform = 'translate3d(16px,0,0) scale(0.97)'; t.style.opacity = '0';
-        setTimeout(() => { t.remove(); _toastN = Math.max(0, _toastN - 1); }, 420);
+        setTimeout(() => { t.remove(); _toastN = Math.max(0, _toastN-1); }, 420);
     }, 4500);
 }
 
@@ -542,7 +533,7 @@ function startToasts() {
     }, 4500);
 }
 
-/* ── Tooltip (RAF-positioned, not mousemove-positioned) ─────── */
+/* ── Tooltip ────────────────────────────────────────────────── */
 function initTooltips() {
     const tip = document.getElementById('tooltip');
     if (!tip) return;
@@ -550,13 +541,11 @@ function initTooltips() {
 
     document.querySelectorAll('[data-tip]').forEach(el => {
         el.addEventListener('mouseenter', () => { tip.textContent = el.dataset.tip; tip.classList.add('show'); vis = true; }, { passive: true });
-        el.addEventListener('mousemove', e => { tx = e.clientX + 14; ty = e.clientY - 8; }, { passive: true });
+        el.addEventListener('mousemove',  e => { tx = e.clientX + 14; ty = e.clientY - 8; }, { passive: true });
         el.addEventListener('mouseleave', () => { tip.classList.remove('show'); vis = false; }, { passive: true });
     });
 
-    _loop.add('tooltip', () => {
-        if (vis) { tip.style.left = tx + 'px'; tip.style.top = ty + 'px'; }
-    });
+    _loop.add('tooltip', () => { if (vis) { tip.style.left = tx + 'px'; tip.style.top = ty + 'px'; } });
 }
 
 /* ── Ripple ─────────────────────────────────────────────────── */
@@ -565,7 +554,7 @@ function initRipple() {
         btn.addEventListener('click', e => {
             const r = btn.getBoundingClientRect();
             const s = document.createElement('span');
-            s.style.cssText = `position:absolute;border-radius:50%;pointer-events:none;animation:ripple 0.55s linear;background:rgba(255,255,255,0.16);z-index:100;left:${e.clientX - r.left}px;top:${e.clientY - r.top}px;width:80px;height:80px;margin:-40px 0 0 -40px;transform:scale(0);`;
+            s.style.cssText = `position:absolute;border-radius:50%;pointer-events:none;animation:ripple 0.55s linear;background:rgba(255,255,255,0.16);z-index:100;left:${e.clientX-r.left}px;top:${e.clientY-r.top}px;width:80px;height:80px;margin:-40px 0 0 -40px;transform:scale(0);`;
             btn.style.position = 'relative'; btn.style.overflow = 'hidden';
             btn.appendChild(s);
             setTimeout(() => s.remove(), 600);
@@ -579,8 +568,8 @@ function initMagnetic() {
         btn.addEventListener('mouseenter', () => { btn.style.transition = 'transform 0.1s'; }, { passive: true });
         btn.addEventListener('mousemove', e => {
             const r  = btn.getBoundingClientRect();
-            const dx = (e.clientX - r.left - r.width / 2) * 0.24;
-            const dy = (e.clientY - r.top - r.height / 2) * 0.24;
+            const dx = (e.clientX - r.left - r.width/2) * 0.24;
+            const dy = (e.clientY - r.top - r.height/2) * 0.24;
             btn.style.transform = `translate3d(${dx}px,${dy}px,0)`;
         }, { passive: true });
         btn.addEventListener('mouseleave', () => {
@@ -590,31 +579,28 @@ function initMagnetic() {
     });
 }
 
-/* ── Card spotlight (RAF-throttled) ─────────────────────────── */
+/* ── Card spotlight ─────────────────────────────────────────── */
 function initCardSpotlight() {
     document.querySelectorAll('.card').forEach(c => {
-        let pending = false;
-        let ex = 0, ey = 0;
+        let pending = false, ex = 0, ey = 0;
         c.addEventListener('mousemove', e => {
             ex = e.clientX; ey = e.clientY;
             if (pending) return;
             pending = true;
             requestAnimationFrame(() => {
                 const r = c.getBoundingClientRect();
-                c.style.setProperty('--mx', (ex - r.left) + 'px');
-                c.style.setProperty('--my', (ey - r.top)  + 'px');
+                c.style.setProperty('--mx', (ex-r.left) + 'px');
+                c.style.setProperty('--my', (ey-r.top)  + 'px');
                 pending = false;
             });
         }, { passive: true });
     });
 }
 
-/* ── Cursor trail (static styles, transform-only updates) ───── */
+/* ── Cursor trail ───────────────────────────────────────────── */
 function initCursorTrail() {
     if (window.matchMedia('(pointer:coarse)').matches) return;
-    const N     = 10;
-    const trail = [];
-
+    const N = 10, trail = [];
     for (let i = 0; i < N; i++) {
         const sz = Math.max(1.5, 5 - i * 0.35);
         const al = Math.max(0, 0.4 - i * 0.04);
@@ -623,18 +609,16 @@ function initCursorTrail() {
         document.body.appendChild(el);
         trail.push({ el, x: -500, y: -500, half: sz * 0.5 });
     }
-
     let mx = -500, my = -500;
     window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
-
     _loop.add('cursor', () => {
         for (let i = 0; i < N; i++) {
-            const t  = trail[i];
-            const sx = i === 0 ? mx : trail[i - 1].x;
-            const sy = i === 0 ? my : trail[i - 1].y;
+            const t = trail[i];
+            const sx = i === 0 ? mx : trail[i-1].x;
+            const sy = i === 0 ? my : trail[i-1].y;
             t.x += (sx - t.x) * 0.4;
             t.y += (sy - t.y) * 0.4;
-            t.el.style.transform = `translate3d(${t.x - t.half}px,${t.y - t.half}px,0)`;
+            t.el.style.transform = `translate3d(${t.x-t.half}px,${t.y-t.half}px,0)`;
         }
     });
 }
@@ -660,7 +644,7 @@ function _toEmbed(url) {
 function _media(p) {
     if (p.media === 'youtube') return `<iframe class="w-full h-full" style="opacity:0.65;transition:opacity .4s" src="${_toEmbed(p.src)}" frameborder="0" allow="autoplay"></iframe>`;
     if (p.media === 'image')   return `<img src="${p.src}" class="w-full h-full object-cover" style="opacity:0.65;transition:opacity .4s">`;
-    return `<div class="w-full h-full flex items-center justify-center" style="background:rgba(20,24,40,0.8);"><i data-lucide="gamepad-2" style="width:40px;height:40px;color:var(--dim)"></i></div>`;
+    return `<div class="w-full h-full flex items-center justify-center" style="background:rgba(20,24,40,0.8)"><i data-lucide="gamepad-2" style="width:40px;height:40px;color:var(--dim)"></i></div>`;
 }
 
 let _projFilter = 'all';
@@ -680,13 +664,13 @@ function renderProjects() {
     grid.innerHTML = list.map(p => {
         const s   = COLOR_MAP[p.color] || COLOR_MAP.blue;
         const btn = p.link
-            ? `<a href="${p.link}" target="_blank" onclick="event.stopPropagation()" class="btn btn-outline mt-4 w-full justify-center" style="padding:8px;border-radius:8px;font-size:10px;letter-spacing:.1em;"><i data-lucide="gamepad-2" style="width:13px;height:13px"></i> PLAY GAME</a>`
+            ? `<a href="${p.link}" target="_blank" onclick="event.stopPropagation()" class="btn btn-outline mt-4 w-full justify-center" style="padding:8px;border-radius:8px;font-size:10px;letter-spacing:.1em"><i data-lucide="gamepad-2" style="width:13px;height:13px"></i> PLAY GAME</a>`
             : '';
         return `
         <div class="card group">
             <div class="strip ${s.strip}"></div>
             <div style="height:186px;overflow:hidden;background:rgba(0,0,0,0.5);border-bottom:1px solid rgba(255,255,255,0.05);position:relative">${_media(p)}
-                <span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.78);border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#ccc">${p.tags[0] || ''}</span>
+                <span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.78);border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#ccc">${p.tags[0]||''}</span>
             </div>
             <div style="padding:20px">
                 <div class="flex justify-between items-start mb-2">
@@ -702,19 +686,19 @@ function renderProjects() {
     initCardSpotlight();
 }
 
-/* ── Skills rendering ───────────────────────────────────────── */
+/* ── Skills ─────────────────────────────────────────────────── */
 function renderSkills() {
     const main = document.getElementById('skills-main');
     const fun  = document.getElementById('skills-fun');
     if (!main || !fun) return;
 
     const renderCard = (s, dim) => `
-    <div class="card reveal" style="${dim ? 'opacity:0.55' : ''}">
-        <div class="strip ${s.color === 'purple' ? 'strip-purple' : s.color === 'gold' ? 'strip-gold' : 'strip-blue'}"></div>
+    <div class="card reveal" style="${dim?'opacity:0.55':''}">
+        <div class="strip ${s.color==='purple'?'strip-purple':s.color==='gold'?'strip-gold':'strip-blue'}"></div>
         <div style="padding:18px 16px;padding-top:22px">
             <div class="flex justify-between items-end mb-4">
                 <h3 class="display font-bold text-white" style="font-size:1.2rem">${s.name}</h3>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:${s.color === 'purple' ? 'var(--purple)' : s.color === 'gold' ? 'var(--gold)' : 'var(--accent)'}">${s.pct}%</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:${s.color==='purple'?'var(--purple)':s.color==='gold'?'var(--gold)':'var(--accent)'}">${s.pct}%</span>
             </div>
             <div class="bar-track mb-3"><div class="bar-fill ${s.color}" data-w="${s.pct}%"></div></div>
             <p style="font-size:11px;color:var(--dim)">${s.desc}</p>
@@ -725,21 +709,21 @@ function renderSkills() {
     fun.innerHTML  = SITE.funSkills.map(s => renderCard(s, true)).join('');
 }
 
-/* ── Timeline rendering ─────────────────────────────────────── */
+/* ── Timeline ───────────────────────────────────────────────── */
 function renderTimeline() {
     const wrap = document.getElementById('timeline');
     if (!wrap) return;
     wrap.innerHTML = `<div class="tl-line"></div>` + SITE.timeline.map(t => `
     <div class="tl-item group reveal">
-        <div class="tl-dot" style="${!t.accent ? 'border-color:rgba(255,255,255,0.2);box-shadow:none' : ''}"></div>
-        <div class="card p-6 ${t.dim ? 'opacity-50' : ''}">
-            ${t.accent ? '<div class="strip strip-blue"></div>' : ''}
+        <div class="tl-dot" style="${!t.accent?'border-color:rgba(255,255,255,0.2);box-shadow:none':''}"></div>
+        <div class="card p-6 ${t.dim?'opacity-50':''}">
+            ${t.accent?'<div class="strip strip-blue"></div>':''}
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 pt-1 gap-1">
                 <h3 class="display font-black text-white" style="font-size:1.25rem">${t.title}</h3>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${t.accent ? 'var(--accent)' : 'var(--dim)'};${t.accent ? 'background:rgba(26,168,255,0.08);border:1px solid rgba(26,168,255,0.2);' : ''}padding:3px 10px;border-radius:4px;white-space:nowrap">${t.period}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${t.accent?'var(--accent)':'var(--dim)'};${t.accent?'background:rgba(26,168,255,0.08);border:1px solid rgba(26,168,255,0.2);':''}padding:3px 10px;border-radius:4px;white-space:nowrap">${t.period}</span>
             </div>
-            <p style="color:var(--dim);font-size:13px;line-height:1.6;margin-bottom:${t.tags?.length ? '12px' : '0'}">${t.desc}</p>
-            ${t.tags?.length ? `<div class="flex flex-wrap gap-2">${t.tags.map(tag => `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:3px 9px;border-radius:4px">${tag}</span>`).join('')}</div>` : ''}
+            <p style="color:var(--dim);font-size:13px;line-height:1.6;margin-bottom:${t.tags?.length?'12px':'0'}">${t.desc}</p>
+            ${t.tags?.length?`<div class="flex flex-wrap gap-2">${t.tags.map(tag=>`<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:3px 9px;border-radius:4px">${tag}</span>`).join('')}</div>`:''}
         </div>
     </div>`).join('');
 }
@@ -749,7 +733,7 @@ function buildTabs() {
     const tabs = document.getElementById('code-tabs');
     if (!tabs) return;
     tabs.innerHTML = SITE.snippets.map((s, i) =>
-        `<div class="code-tab${i === 0 ? ' active' : ''}" onclick="switchTab(${i},this)">${s.name}</div>`
+        `<div class="code-tab${i===0?' active':''}" onclick="switchTab(${i},this)">${s.name}</div>`
     ).join('');
     const code = document.getElementById('code-body');
     if (code && SITE.snippets.length) { code.textContent = SITE.snippets[0].code; Prism.highlightElement(code); }
@@ -810,21 +794,19 @@ function calcBudget() {
     if (rb) rb.textContent = _basePrice.toLocaleString();
     if (rc) rc.textContent = `×${c.toFixed(1)}`;
     if (rr) rr.textContent = `×${r.toFixed(1)}`;
-    if (sp) sp.textContent = cur !== 'USD' ? `≈ $${Math.ceil(total * 0.0035)} USD` : `≈ ${Math.ceil(total).toLocaleString()} R$`;
+    if (sp) sp.textContent = cur !== 'USD' ? `≈ $${Math.ceil(total*0.0035)} USD` : `≈ ${Math.ceil(total).toLocaleString()} R$`;
 }
 
 /* ── Reviews ────────────────────────────────────────────────── */
 const REVIEWS_KEY = 'schale_reviews_v4';
 let _starRating = 5;
 
-function _getReviews() {
-    try { return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]'); } catch { return []; }
-}
+function _getReviews() { try { return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]'); } catch { return []; } }
 function _allReviews() { return [...SITE.seedReviews, ..._getReviews()]; }
 
 function _stars(n, size) {
-    return Array.from({ length: 5 }, (_, i) =>
-        `<svg style="width:${size || 14}px;height:${size || 14}px;display:inline-block" fill="${i < n ? '#FFA800' : 'none'}" stroke="#FFA800" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`
+    return Array.from({length:5}, (_,i) =>
+        `<svg style="width:${size||14}px;height:${size||14}px;display:inline-block" fill="${i<n?'#FFA800':'none'}" stroke="#FFA800" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`
     ).join('');
 }
 
@@ -840,7 +822,7 @@ function renderReviews() {
     if (avgEl)   avgEl.textContent   = avg.toFixed(1) + ' ★';
 
     grid.innerHTML = all.map((r, i) => `
-    <div class="card reveal" style="animation-delay:${i * 50}ms">
+    <div class="card reveal" style="animation-delay:${i*50}ms">
         <div class="strip strip-gold"></div>
         <div style="padding:20px;padding-top:24px">
             <div class="flex items-start justify-between gap-3 mb-3">
@@ -849,7 +831,7 @@ function renderReviews() {
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <span style="font-weight:700;font-size:13px;color:#fff">${r.name}</span>
-                            ${r.verified ? `<span style="font-size:8px;font-weight:700;padding:1px 7px;border-radius:99px;background:rgba(46,232,154,0.1);color:var(--green);border:1px solid rgba(46,232,154,0.25)">✓ VERIFIED</span>` : ''}
+                            ${r.verified?`<span style="font-size:8px;font-weight:700;padding:1px 7px;border-radius:99px;background:rgba(46,232,154,0.1);color:var(--green);border:1px solid rgba(46,232,154,0.25)">✓ VERIFIED</span>`:''}
                         </div>
                         <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px">${r.date}</div>
                     </div>
@@ -867,16 +849,16 @@ function closeReviewModal() { playClick(400, 0.1); document.getElementById('revi
 function _buildStars() {
     const sel = document.getElementById('star-sel');
     if (!sel) return;
-    sel.innerHTML = Array.from({ length: 5 }, (_, i) => `
-        <span class="star-pick" data-v="${i + 1}" style="font-size:26px;cursor:pointer;transition:transform .15s">
-            <svg style="width:28px;height:28px;transition:all .15s" fill="${i < 5 ? '#FFA800' : 'none'}" stroke="#FFA800" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    sel.innerHTML = Array.from({length:5}, (_,i) => `
+        <span class="star-pick" data-v="${i+1}" style="font-size:26px;cursor:pointer;transition:transform .15s">
+            <svg style="width:28px;height:28px;transition:all .15s" fill="${i<5?'#FFA800':'none'}" stroke="#FFA800" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
         </span>`
     ).join('');
     sel.querySelectorAll('.star-pick').forEach(s => {
         const v = parseInt(s.dataset.v);
         s.addEventListener('mouseenter', () => _syncStars(v), { passive: true });
         s.addEventListener('mouseleave', () => _syncStars(_starRating), { passive: true });
-        s.addEventListener('click', () => { _starRating = v; _syncStars(v); playClick(600 + v * 80, 0.05); });
+        s.addEventListener('click', () => { _starRating = v; _syncStars(v); playClick(600 + v*80, 0.05); });
     });
 }
 
@@ -900,7 +882,7 @@ function initReviewForm() {
         const text = ta?.value.trim();
         if (!name || !text) return;
         const stored = _getReviews();
-        stored.unshift({ id: 'u_' + Date.now(), name, stars: _starRating, text, date: new Date().toISOString().slice(0, 10), verified: false });
+        stored.unshift({ id: 'u_'+Date.now(), name, stars: _starRating, text, date: new Date().toISOString().slice(0,10), verified: false });
         localStorage.setItem(REVIEWS_KEY, JSON.stringify(stored));
         renderReviews();
         closeReviewModal();
@@ -910,10 +892,7 @@ function initReviewForm() {
     });
 }
 
-window.adminClearReviews = function() {
-    localStorage.removeItem(REVIEWS_KEY);
-    renderReviews();
-};
+window.adminClearReviews = function() { localStorage.removeItem(REVIEWS_KEY); renderReviews(); };
 
 /* ── Achievements ────────────────────────────────────────────── */
 const ACHS = {
@@ -942,7 +921,7 @@ function unlockAch(id) {
     const a = ACHS[id];
     const n = Object.keys(_unlocked).length;
     const card = document.createElement('div');
-    card.style.cssText = `position:fixed;bottom:${88 + (n % 3) * 88}px;left:22px;z-index:9997;width:280px;background:rgba(5,9,26,.98);border:1px solid rgba(255,184,58,.35);border-left:3px solid var(--gold);padding:11px 15px;border-radius:10px;box-shadow:0 8px 36px rgba(0,0,0,.7);transform:translateX(-320px);opacity:0;pointer-events:none;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
+    card.style.cssText = `position:fixed;bottom:${88+(n%3)*88}px;left:22px;z-index:9997;width:280px;background:rgba(5,9,26,.98);border:1px solid rgba(255,184,58,.35);border-left:3px solid var(--gold);padding:11px 15px;border-radius:10px;box-shadow:0 8px 36px rgba(0,0,0,.7);transform:translateX(-320px);opacity:0;pointer-events:none;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
     card.innerHTML = `<div style="font-size:7.5px;letter-spacing:.14em;color:var(--gold);margin-bottom:5px">★ ACHIEVEMENT UNLOCKED</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:24px">${a.icon}</span><div><div style="color:#fff;font-weight:900;font-size:10.5px;letter-spacing:.06em">${a.title}</div><div style="color:var(--dim);font-size:8.5px;margin-top:2px">${a.desc}</div></div></div>`;
     document.body.appendChild(card);
     requestAnimationFrame(() => requestAnimationFrame(() => { card.style.transform = 'translateX(0)'; card.style.opacity = '1'; }));
@@ -954,7 +933,7 @@ function _buildAchList() {
     return Object.keys(ACHS).map(id => {
         const a  = ACHS[id];
         const ok = !!_unlocked[id];
-        return `<div style="display:flex;align-items:center;gap:9px;padding:7px;border-radius:8px;margin-bottom:3px;background:${ok ? 'rgba(255,184,58,.05)' : 'rgba(255,255,255,.015)'};border:1px solid ${ok ? 'rgba(255,184,58,.2)' : 'rgba(255,255,255,.04)'}"><span style="font-size:18px;flex-shrink:0;${ok ? '' : 'filter:grayscale(1);opacity:.2'}">${a.icon}</span><div style="min-width:0"><div style="font-size:9.5px;font-weight:900;letter-spacing:.05em;font-family:'Rajdhani',sans-serif;color:${ok ? '#fff' : 'var(--muted)'}">${a.title}</div><div style="font-size:7.5px;font-family:'JetBrains Mono',monospace;color:${ok ? 'var(--dim)' : 'var(--muted)'}margin-top:1px">${ok ? a.desc : '???'}</div></div>${ok ? '<span style="margin-left:auto;font-size:8px;color:var(--gold);flex-shrink:0">✓</span>' : ''}</div>`;
+        return `<div style="display:flex;align-items:center;gap:9px;padding:7px;border-radius:8px;margin-bottom:3px;background:${ok?'rgba(255,184,58,.05)':'rgba(255,255,255,.015)'};border:1px solid ${ok?'rgba(255,184,58,.2)':'rgba(255,255,255,.04)'}"><span style="font-size:18px;flex-shrink:0;${ok?'':'filter:grayscale(1);opacity:.2'}">${a.icon}</span><div style="min-width:0"><div style="font-size:9.5px;font-weight:900;letter-spacing:.05em;font-family:'Rajdhani',sans-serif;color:${ok?'#fff':'var(--muted)'}">${a.title}</div><div style="font-size:7.5px;font-family:'JetBrains Mono',monospace;color:${ok?'var(--dim)':'var(--muted)'};margin-top:1px">${ok?a.desc:'???'}</div></div>${ok?'<span style="margin-left:auto;font-size:8px;color:var(--gold);flex-shrink:0">✓</span>':''}</div>`;
     }).join('');
 }
 
@@ -1039,7 +1018,7 @@ function initAchHooks() {
 
     let idleT = Date.now(), warned30 = false, warned60 = false;
     const resetIdle = () => { idleT = Date.now(); warned30 = warned60 = false; };
-    ['mousemove', 'keydown', 'click'].forEach(ev => window.addEventListener(ev, resetIdle, { passive: true }));
+    ['mousemove','keydown','click'].forEach(ev => window.addEventListener(ev, resetIdle, { passive: true }));
     setInterval(() => {
         const idle = Date.now() - idleT;
         if (idle > 30000 && !warned30) { warned30 = true; showToast('👀 Sensei… still there?', 'var(--dim)'); }
@@ -1088,7 +1067,7 @@ function triggerAnomaly() {
 }
 
 const OPERATIVES = ['CryptoSage_88','Yuki_Phantom','NullPtr_Dev','ByteWitch_42','GhostScripter','DataVoid_7','NekoBytes_99','w4ter_fan_lol'];
-function triggerOperative() { showToast(`👤 <b>${OPERATIVES[Math.floor(Math.random() * OPERATIVES.length)]}</b> connected.`, 'var(--green)'); playClick(880, 0.06); }
+function triggerOperative() { showToast(`👤 <b>${OPERATIVES[Math.floor(Math.random()*OPERATIVES.length)]}</b> connected.`, 'var(--green)'); playClick(880, 0.06); }
 
 function triggerSyslog() {
     const out = document.getElementById('cli-output');
@@ -1096,7 +1075,7 @@ function triggerSyslog() {
     const msgs = ['Routine integrity check: <span style="color:#00ff88">PASSED</span>','Garbage collection: <span style="color:var(--accent)">847ms</span>','Coffee.reserve: <span style="color:var(--gold)">CRITICAL LOW</span>','DataStore heartbeat: <span style="color:#00ff88">NOMINAL</span>','Sleep.schedule: <span style="color:var(--red)">UNDEFINED</span>'];
     const d = document.createElement('div');
     d.style.cssText = 'margin-bottom:3px;font-size:9px;';
-    d.innerHTML = `<span style="color:var(--muted)">[SYS]</span> <span style="color:#2e3d5a">${msgs[Math.floor(Math.random() * msgs.length)]}</span>`;
+    d.innerHTML = `<span style="color:var(--muted)">[SYS]</span> <span style="color:#2e3d5a">${msgs[Math.floor(Math.random()*msgs.length)]}</span>`;
     out.appendChild(d); out.scrollTop = out.scrollHeight;
     playClick(1100, 0.012);
 }
@@ -1114,7 +1093,7 @@ function _pickAndFire() {
     const pool = EVENTS.filter(e => !_lastFired[e.id] || (now - _lastFired[e.id]) > e.cd);
     if (!pool.length) return;
     const tot = pool.reduce((s, e) => s + e.w, 0);
-    let pick = Math.random() * tot, cum = 0, chosen = pool[pool.length - 1];
+    let pick = Math.random() * tot, cum = 0, chosen = pool[pool.length-1];
     for (const e of pool) { cum += e.w; if (pick <= cum) { chosen = e; break; } }
     _lastFired[chosen.id] = now;
     chosen.fn();
@@ -1140,25 +1119,25 @@ function initCLI() {
     const go = (id, msg) => { setTimeout(() => navigateTo(id), 200); return `<span style="${D}">${msg}</span>`; };
 
     const cmds = {
-        help:      () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about skills projects code estimator reviews contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
-        about:     () => go('home',      'Navigating to home...'),
-        skills:    () => go('skills',    'Loading system specs...'),
-        projects:  () => go('projects',  'Accessing mission reports...'),
-        code:      () => go('code',      'Opening code vault...'),
-        estimator: () => go('estimator', 'Loading estimator...'),
-        reviews:   () => go('reviews',   'Loading field reports...'),
-        contact:   () => go('contact',   'Opening MomoTalk...'),
-        date:      () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
-        whoami:    () => `<span style="${D}">Guest · Level 1 · Node: Kivotos-Alpha · IP: 127.0.0.1</span>`,
-        status:    () => _override ? `<span style="${R}">CRITICAL — Override active.</span>` : `<span style="${GN}">✓ NOMINAL — All nodes green.</span>`,
-        neofetch:  () => [`<span style="${B}">WATER</span>@<span style="${B}">kivotos</span>`, '  OS: KivotOS x64 · Host: SCHALE.DB v5', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
-        coffee:    () => [`<span style="${G}">Brewing...</span>`, `<span style="${D}">Caffeine: 9000mg. Bugs fixed: still 0.</span>`].join('<br>'),
-        uwu:       () => [`<span style="${P}">UwU what's this?? a stwange tewminal??</span>`, `<span style="${M}">[ this was a mistake. deeply sorry. ]</span>`].join('<br>'),
-        sudo:      () => `<span style="${R}">Permission denied. Incident reported. (it wasn't)</span>`,
-        hack:      () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing mainframe... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
-        clear:     () => { out.innerHTML = ''; return null; },
-        ls:        () => `<span style="${D}">home/ about/ skills/ history/ code/ projects/ estimator/ reviews/ contact/ secret_bugs/ TODO_never_fix/</span>`,
-        ping:      () => `<span style="${GN}">PONG — 1ms (it's localhost, obviously)</span>`,
+        help:            () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about skills projects code estimator reviews contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
+        about:           () => go('home',      'Navigating to home...'),
+        skills:          () => go('skills',    'Loading system specs...'),
+        projects:        () => go('projects',  'Accessing mission reports...'),
+        code:            () => go('code',      'Opening code vault...'),
+        estimator:       () => go('estimator', 'Loading estimator...'),
+        reviews:         () => go('reviews',   'Loading field reports...'),
+        contact:         () => go('contact',   'Opening MomoTalk...'),
+        date:            () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
+        whoami:          () => `<span style="${D}">Guest · Level 1 · Node: Kivotos-Alpha · IP: 127.0.0.1</span>`,
+        status:          () => _override ? `<span style="${R}">CRITICAL — Override active.</span>` : `<span style="${GN}">✓ NOMINAL — All nodes green.</span>`,
+        neofetch:        () => [`<span style="${B}">WATER</span>@<span style="${B}">kivotos</span>`, '  OS: KivotOS x64 · Host: SCHALE.DB v5', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
+        coffee:          () => [`<span style="${G}">Brewing...</span>`, `<span style="${D}">Caffeine: 9000mg. Bugs fixed: still 0.</span>`].join('<br>'),
+        uwu:             () => [`<span style="${P}">UwU what's this?? a stwange tewminal??</span>`, `<span style="${M}">[ this was a mistake. deeply sorry. ]</span>`].join('<br>'),
+        sudo:            () => `<span style="${R}">Permission denied. Incident reported. (it wasn't)</span>`,
+        hack:            () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing mainframe... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
+        clear:           () => { out.innerHTML = ''; return null; },
+        ls:              () => `<span style="${D}">home/ about/ skills/ history/ code/ projects/ estimator/ reviews/ contact/ secret_bugs/ TODO_never_fix/</span>`,
+        ping:            () => `<span style="${GN}">PONG — 1ms (it's localhost, obviously)</span>`,
         'git blame':     () => `<span style="${D}">git blame: Water (100% of commits, 100% of bugs)</span>`,
         'git push':      () => `<span style="${R}">remote: Permission denied (this isn't your repo)</span>`,
         'touch grass':   () => `<span style="${GN}">✓ Grass touched. Achievement unlocked. Rare event.</span>`,
@@ -1227,7 +1206,7 @@ function initMobileLinks() {
 }
 
 /* ── Console art ────────────────────────────────────────────── */
-(function () {
+(function() {
     setTimeout(() => console.log(
         '%c\n  SCHALE.DB — WATER PORTFOLIO v5\n  Hey, devtools lurker. Respect.\n  Bug count: 0 (official lie)\n  Try CLI: coffee · hack · neofetch\n',
         'color:#1AA8FF;font-family:monospace;font-size:11px;'
@@ -1237,6 +1216,7 @@ function initMobileLinks() {
 /* ── Init ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     initVisitorCounter();
+    injectPageNumbers();
     runBoot();
     initDots();
     initKeyboardNav();
