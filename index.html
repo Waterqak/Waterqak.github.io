@@ -7,10 +7,8 @@
 <title>Water.Logs | Schale Database</title>
 <link rel="icon" type="image/png" href="favicon.png">
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- Libs -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <link  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
@@ -30,10 +28,9 @@ tailwind.config = {
 </head>
 <body>
 
-<!-- ══ BOOT SCREEN ════════════════════════════════════════════ -->
+<!-- BOOT SCREEN -->
 <div id="boot">
   <div class="relative z-10 flex flex-col items-center">
-    <!-- Logo mark -->
     <div class="w-16 h-16 rounded-2xl flex items-center justify-center border mb-7 animate-pulse"
          style="background:rgba(26,168,255,0.05);border-color:rgba(26,168,255,0.2);box-shadow:0 0 32px rgba(26,168,255,0.1)">
       <i data-lucide="database" style="width:32px;height:32px;color:var(--accent)"></i>
@@ -56,7 +53,7 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ══ GLOBAL UI ══════════════════════════════════════════════ -->
+<!-- GLOBAL UI -->
 <audio id="bgm" loop></audio>
 <div id="scroll-bar"></div>
 <div id="section-bar" style="width:0%"></div>
@@ -65,7 +62,6 @@ tailwind.config = {
 <div class="bg-mesh"></div>
 <canvas id="particles-canvas"></canvas>
 
-<!-- Music pill -->
 <div class="music-pill" onclick="toggleMute()" data-tip="Toggle SCHALE RADIO">
   <div class="live-dot"></div>
   <div class="flex flex-col leading-tight">
@@ -75,7 +71,6 @@ tailwind.config = {
   <i id="mute-icon" data-lucide="volume-2" style="width:13px;height:13px;color:var(--dim)"></i>
 </div>
 
-<!-- Achievement button + panel -->
 <div id="ach-btn">
   <span style="font-size:17px">🏆</span>
   <span id="ach-badge" class="mono" style="font-size:7px;color:var(--gold);font-weight:700">0/12</span>
@@ -93,13 +88,11 @@ tailwind.config = {
   <div id="ach-list" style="overflow-y:auto;padding:8px;flex:1"></div>
 </div>
 
-<!-- Dot navigator -->
 <div id="nav-dots"></div>
 
-<!-- ══ NAVIGATION ═════════════════════════════════════════════ -->
+<!-- NAVIGATION -->
 <nav>
   <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
-    <!-- Logo -->
     <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
          onclick="playClick(); navigateTo('home')" data-tip="SCHALE.DB — click me 7 times">
       <div class="p-2 rounded-lg border transition-all duration-300 group-hover:bg-[color:var(--accent)]"
@@ -111,7 +104,6 @@ tailwind.config = {
       </span>
     </div>
 
-    <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-7">
       <a class="nav-link" data-section="home"      onclick="navigateTo('home');playClick()">Home</a>
       <a class="nav-link" data-section="code"      onclick="navigateTo('code');playClick()">Code Vault</a>
@@ -121,7 +113,6 @@ tailwind.config = {
       <a class="nav-link" data-section="reviews"   onclick="navigateTo('reviews');playClick()">Reviews</a>
     </div>
 
-    <!-- Desktop right -->
     <div class="hidden md:flex items-center gap-3">
       <button onclick="toggleLanguage()" class="mono font-bold"
               style="font-size:10px;letter-spacing:0.12em;color:var(--accent);border:1px solid rgba(26,168,255,0.2);padding:6px 12px;border-radius:8px;background:transparent;cursor:pointer;transition:all .2s"
@@ -135,7 +126,6 @@ tailwind.config = {
       </button>
     </div>
 
-    <!-- Hamburger -->
     <button onclick="toggleMenu();playClick()" class="md:hidden p-2 rounded-lg border"
             style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer">
       <i data-lucide="menu" style="width:20px;height:20px;color:#fff"></i>
@@ -143,7 +133,6 @@ tailwind.config = {
   </div>
 </nav>
 
-<!-- Mobile menu -->
 <div id="mobile-menu">
   <button onclick="toggleMenu();playClick()" class="absolute top-5 right-6" style="background:none;border:none;cursor:pointer">
     <i data-lucide="x" style="width:26px;height:26px;color:var(--dim)"></i>
@@ -164,23 +153,17 @@ tailwind.config = {
   <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">SCHALE.DB v5.0 // KIVOTOS</div>
 </div>
 
-<!-- ══ PAGES CONTAINER ════════════════════════════════════════ -->
+<!-- PAGES -->
 <div id="app">
 
-  <!-- ══ 01 HOME ══════════════════════════════════════════════ -->
+  <!-- 01 HOME -->
   <div id="pg-home" class="page active">
     <div style="padding-top:var(--nav-h);min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
-      <!-- Ambient orbs -->
       <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(26,168,255,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
       <div style="position:absolute;bottom:6%;right:-4%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,0.04) 0%,transparent 70%);filter:blur(42px);animation:float2 28s ease-in-out infinite;pointer-events:none"></div>
 
-      <!-- Section number watermark -->
-      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(26,168,255,0.05);pointer-events:none;user-select:none;line-height:1">01</div>
-
       <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full py-16 z-10">
-        <!-- Left -->
         <div>
-          <!-- Status badge -->
           <div class="reveal mb-8">
             <button onclick="toggleOverride()" class="hero-badge" data-tip="Click to toggle system status">
               <span style="position:relative;display:flex;width:8px;height:8px">
@@ -191,19 +174,16 @@ tailwind.config = {
             </button>
           </div>
 
-          <!-- Headline -->
           <h1 class="display font-black reveal mb-6" style="font-size:clamp(2.4rem,6vw,4.8rem);line-height:0.95;letter-spacing:-0.02em">
             <span class="block text-white" style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px" data-lang="hero_prefix">Sensei, I fix</span>
             <span id="typewriter" class="gradient-text block"></span>
           </h1>
 
-          <!-- Bio blurb -->
           <p class="reveal mb-10 pl-4" data-lang="hero_desc"
              style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(26,168,255,0.3)">
             Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.
           </p>
 
-          <!-- CTA buttons -->
           <div class="flex flex-wrap gap-4 mb-10 reveal">
             <button onclick="navigateTo('projects');playClick()" data-mag data-ripple class="btn btn-primary" style="font-size:12px;letter-spacing:0.1em">
               VIEW DATABASE <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
@@ -213,7 +193,6 @@ tailwind.config = {
             </button>
           </div>
 
-          <!-- Stats -->
           <div class="grid grid-cols-3 gap-3 max-w-xs reveal">
             <div class="stat-card" data-tip="50+ satisfied clients">
               <div class="stat-val" data-count="50" data-suffix="+">50+</div>
@@ -230,11 +209,9 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Right: Terminal -->
         <div class="relative hidden md:block reveal">
           <div class="terminal">
             <div class="scanline"></div>
-            <!-- Terminal top bar -->
             <div style="background:rgba(5,7,16,0.98);padding:9px 15px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="terminal" style="width:12px;height:12px;color:var(--accent)"></i>
@@ -246,7 +223,6 @@ tailwind.config = {
                 <div class="code-dot" style="background:#22c55e;opacity:0.7"></div>
               </div>
             </div>
-            <!-- System meters -->
             <div style="padding:12px 16px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px">
               <div class="flex justify-between items-center mb-2">
                 <span style="color:var(--muted)">CORE_LOAD</span>
@@ -272,7 +248,6 @@ tailwind.config = {
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0"></div>
             </div>
-            <!-- CLI -->
             <div style="padding:0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:9.5px" onclick="document.getElementById('cli-input').focus()">
               <div id="cli-output" style="height:145px;overflow-y:auto;margin-bottom:9px;color:var(--muted);line-height:1.9">
                 <span style="color:var(--accent)">visitor@schale:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
@@ -286,7 +261,6 @@ tailwind.config = {
               </div>
             </div>
           </div>
-          <!-- Decorative corners -->
           <div style="position:absolute;z-index:-1;top:-20px;right:-20px;width:80px;height:80px;border-top:2px solid rgba(26,168,255,0.12);border-right:2px solid rgba(26,168,255,0.12);border-radius:0 12px 0 0;pointer-events:none"></div>
           <div style="position:absolute;z-index:-1;bottom:-20px;left:-20px;width:80px;height:80px;border-bottom:2px solid rgba(26,168,255,0.12);border-left:2px solid rgba(26,168,255,0.12);border-radius:0 0 0 12px;pointer-events:none"></div>
         </div>
@@ -294,18 +268,14 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 02 ABOUT / PERSONNEL FILE ════════════════════════════ -->
+  <!-- 02 ABOUT / PERSONNEL FILE -->
   <div id="pg-about" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
-      <div style="position:absolute;right:32px;top:90px" class="display" style="font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(26,168,255,0.05);pointer-events:none;user-select:none">02</div>
-
       <div class="grid md:grid-cols-12 gap-12 items-start">
-        <!-- Profile card -->
         <div class="md:col-span-5">
           <div class="card reveal" style="padding:26px">
             <div class="strip strip-blue"></div>
             <div class="flex items-center justify-between mb-6" style="padding-top:8px">
-              <!-- Avatar -->
               <div id="pfp-wrap" class="cursor-pointer" onclick="updatePfp()" data-tip="Click to update photo (PIN required)"
                    style="width:86px;height:86px;border-radius:14px;background:rgba(26,168,255,0.05);border:1px solid rgba(26,168,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
                 <img id="avatar-img" class="hidden" style="width:100%;height:100%;object-fit:cover">
@@ -321,7 +291,6 @@ tailwind.config = {
                 <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">⬛⬛⬛⬛⬜ CLASSIFIED</div>
               </div>
             </div>
-            <!-- Stats table -->
             <div class="mono" style="font-size:11px">
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AGE</span><span class="font-bold text-white">15 <span style="color:var(--muted)">(yes, really)</span></span></div>
@@ -339,25 +308,20 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Bio -->
         <div class="md:col-span-7">
           <div class="s-tag mb-4 reveal"><i data-lucide="file-text" style="width:11px;height:11px"></i> Personnel File</div>
           <h2 class="section-title mb-6 reveal">PERSONNEL FILE <span style="color:var(--accent)">#8080</span></h2>
-
           <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
             Hey, I'm Water. I'm a 15-year-old self-taught Roblox Systems Engineer. I got tired of playing games that crashed every five minutes, so I learned how to fix them myself. Turns out, people will pay you to exorcise demons from their codebases.
           </p>
           <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
             A lot of scripters write code that <em class="text-white not-italic">"just works"</em>, right up until a player breathes on it wrong. I build systems designed to survive 10,000 concurrent players and that one exploiter who makes it their life's mission to dupe items.
           </p>
-
           <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(26,168,255,0.04);border-left:3px solid var(--accent)">
             <p class="text-white font-semibold italic" style="font-size:13px">
               "Clean Code → Fewer Bugs → Players Don't Riot → Happy Client → I can afford snacks."
             </p>
           </div>
-
-          <!-- Tech tags -->
           <div class="flex flex-wrap gap-2 mb-8 reveal">
             <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
               <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;box-shadow:0 0 4px #60a5fa;margin-right:6px"></span>LuaU Expert
@@ -369,9 +333,7 @@ tailwind.config = {
               <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green);margin-right:6px"></span>Open to Commissions
             </span>
           </div>
-
-          <!-- Quick contact -->
-          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(26,168,255,0.03);border:1px solid rgba(26,168,255,0.1);font-size:11px">
+          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(26,168,255,0.03);border:1px solid rgba(26,168,168,0.1);font-size:11px">
             <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
             <span style="color:var(--dim)">Fastest way to reach me → Discord:</span>
             <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">hokpy</span>
@@ -382,19 +344,18 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 03 SKILLS ════════════════════════════════════════════ -->
+  <!-- 03 SKILLS -->
   <div id="pg-skills" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="s-tag mb-3 reveal"><i data-lucide="cpu" style="width:11px;height:11px"></i> Specifications</div>
       <h2 class="section-title mb-2 reveal">SYSTEM SPECS</h2>
       <p class="mono mb-12 reveal" style="font-size:11px;color:var(--muted)">— hover the percentage. you won't. —</p>
-
       <div id="skills-main" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5"></div>
       <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
     </div>
   </div>
 
-  <!-- ══ 04 HISTORY ═══════════════════════════════════════════ -->
+  <!-- 04 HISTORY -->
   <div id="pg-history" class="page">
     <div class="max-w-3xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="text-center mb-14">
@@ -406,7 +367,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 05 CODE VAULT ════════════════════════════════════════ -->
+  <!-- 05 CODE VAULT -->
   <div id="pg-code" class="page">
     <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-5">
@@ -421,7 +382,6 @@ tailwind.config = {
           <span class="flex items-center gap-1"><i data-lucide="check" style="width:11px;height:11px;color:var(--green)"></i> DOCUMENTED</span>
         </div>
       </div>
-
       <div class="code-win reveal">
         <div class="code-hdr">
           <div class="flex gap-1.5 mr-3 flex-shrink-0">
@@ -442,7 +402,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 06 PROJECTS ══════════════════════════════════════════ -->
+  <!-- 06 PROJECTS -->
   <div id="pg-projects" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
@@ -463,26 +423,20 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 07 ESTIMATOR ═════════════════════════════════════════ -->
+  <!-- 07 ESTIMATOR -->
   <div id="pg-estimator" class="page">
     <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="s-tag mb-4 reveal"><i data-lucide="calculator" style="width:11px;height:11px"></i> Pricing</div>
-
       <div class="grid md:grid-cols-12 gap-10 items-start">
-        <!-- Controls -->
         <div class="md:col-span-7 space-y-7">
           <div>
             <h2 class="section-title mb-1 reveal" data-lang="calc_title">RESOURCE ESTIMATOR</h2>
             <p class="reveal" style="color:var(--dim);font-size:13px">No surprises. Calculate before you commit.</p>
           </div>
-
-          <!-- Service select -->
           <div class="reveal">
             <div class="mono mb-3" style="font-size:9px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">OPERATION TYPE</div>
             <div class="grid grid-cols-2 gap-3" id="svc-grid"></div>
           </div>
-
-          <!-- Sliders -->
           <div class="reveal p-6 rounded-xl space-y-6" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05)">
             <div>
               <div class="flex justify-between mb-2">
@@ -501,7 +455,6 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Invoice card -->
         <div class="md:col-span-5 card reveal" style="padding:24px">
           <div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 0;background:radial-gradient(circle,rgba(26,168,255,0.06),transparent 70%);pointer-events:none"></div>
           <div class="flex justify-between items-center mb-6">
@@ -511,13 +464,11 @@ tailwind.config = {
               <option>R$</option><option>USD</option><option>THB</option><option>VND</option>
             </select>
           </div>
-          <!-- Line items -->
           <div class="mono space-y-3 mb-6 pb-6" style="font-size:12px;border-bottom:1px solid rgba(255,255,255,0.05)">
             <div class="flex justify-between" style="color:var(--dim)"><span>Base Cost</span><span class="text-white" id="r-base">--</span></div>
             <div class="flex justify-between" style="color:var(--dim)"><span>Complexity ×</span><span style="color:var(--accent)" id="r-comp">×1.0</span></div>
             <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee ×</span><span style="color:var(--red)" id="r-rush">×1.0</span></div>
           </div>
-          <!-- Total -->
           <div class="text-right mb-6">
             <span class="mono block mb-1" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">Total Estimated</span>
             <div id="total-price" class="display font-black text-white" style="font-size:2.6rem;letter-spacing:-0.01em">--</div>
@@ -531,7 +482,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 08 REVIEWS ═══════════════════════════════════════════ -->
+  <!-- 08 REVIEWS -->
   <div id="pg-reviews" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
@@ -555,7 +506,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 09 CONTACT / MOMOTALK ════════════════════════════════ -->
+  <!-- 09 CONTACT / MOMOTALK -->
   <div id="pg-contact" class="page">
     <div class="max-w-2xl mx-auto px-6 text-center py-24" style="padding-top:calc(var(--nav-h) + 5rem)">
       <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">MomoTalk</div>
@@ -563,7 +514,6 @@ tailwind.config = {
       <p class="reveal mb-2" style="color:var(--dim);font-size:14px" data-lang="contact_sub">Sensei, you have a new message.</p>
       <p class="mono mb-10 reveal" style="font-size:9px;color:var(--muted)">response time: fast (unless I'm asleep, which is often)</p>
 
-      <!-- Status strip -->
       <div class="inline-flex items-center gap-5 px-6 py-3 rounded-full border mb-10 reveal"
            style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05);backdrop-filter:blur(8px)">
         <div class="flex items-center gap-2">
@@ -576,14 +526,12 @@ tailwind.config = {
         <div class="mono" style="font-size:9px;color:var(--dim)">VISITS: <span id="visitor-count" class="text-white font-bold">---</span></div>
       </div>
 
-      <!-- MomoTalk widget -->
       <div class="momo-wrap reveal">
         <div class="momo-head">
           <i data-lucide="message-circle" style="width:18px;height:18px"></i>
           MomoTalk
           <span class="ml-auto mono font-bold" style="font-size:9px;background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:999px">2 unread</span>
         </div>
-        <!-- Discord -->
         <div class="momo-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord">
           <div class="momo-avatar" style="background:#eaecff">
             <i data-lucide="message-square" style="width:18px;height:18px;color:#6366f1"></i>
@@ -597,7 +545,6 @@ tailwind.config = {
           </div>
           <div class="momo-badge">1</div>
         </div>
-        <!-- Roblox -->
         <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momo-item group" onclick="playClick()" style="display:flex;text-decoration:none">
           <div class="momo-avatar" style="background:#f3f4f6">
             <i data-lucide="gamepad-2" style="width:18px;height:18px;color:#4b5563"></i>
@@ -613,7 +560,6 @@ tailwind.config = {
         </a>
       </div>
 
-      <!-- Footer -->
       <div class="mt-14 space-y-2 reveal">
         <div class="mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted);opacity:0.4">SCHALE DATABASE V5.0 // AUTH: HOKPY // KIVOTOS ADMIN</div>
         <div class="mono" style="font-size:8px;color:var(--muted);opacity:0.25">built at 2am · powered by redbull · no bugs (allegedly)</div>
@@ -621,9 +567,9 @@ tailwind.config = {
     </div>
   </div>
 
-</div><!-- /app -->
+</div>
 
-<!-- ══ REVIEW MODAL ═══════════════════════════════════════════ -->
+<!-- REVIEW MODAL -->
 <div id="review-modal" onclick="if(event.target===this)closeReviewModal()">
   <div style="width:100%;max-width:480px;border-radius:16px;overflow:hidden;background:#080b14;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7)">
     <div style="background:rgba(255,184,58,0.05);border-bottom:1px solid rgba(255,184,58,0.1);padding:14px 22px;display:flex;align-items:center;justify-content:space-between">
@@ -660,9 +606,7 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ══ ESTIMATOR SERVICE BUTTONS (injected by JS) ════════════ -->
 <script>
-// Build service buttons after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('svc-grid');
   if (!grid) return;
@@ -678,7 +622,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
 <script src="js/config.js"></script>
 <script src="js/main.js"></script>
 </body>
