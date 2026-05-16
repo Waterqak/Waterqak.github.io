@@ -84,7 +84,9 @@ const RBLX = (() => {
             p._uid = info.uid;
         });
 
-        if (changed) renderProjects();
+        if (changed && document.getElementById('pg-projects')?.classList.contains('active')) {
+          requestAnimationFrame(() => renderProjects());
+        }
 
         const total = Object.values(statsMap).reduce((s, g) => s + (g.visits || 0), 0);
         const visEl = el('rblx-visits');

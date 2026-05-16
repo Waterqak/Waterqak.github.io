@@ -645,7 +645,7 @@ const COLOR_MAP = {
 
 function _toEmbed(url) {
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
-    return m ? `https://www.youtube.com/embed/${m[1]}?mute=1&controls=0&playlist=${m[1]}` : url;
+    return m ? `https://www.youtube.com/embed/${m[1]}?mute=1&controls=0` : url;
 }
 
 function _media(p) {
