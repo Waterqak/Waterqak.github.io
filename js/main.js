@@ -156,15 +156,14 @@ function initWheelNav() {
     document.addEventListener('wheel', e => {
         if (_busy || cd) return;
 
-        // --- FIX: Ignore scrolling inside code vault, embeds, cards, project grid ---
-        if (
-            e.target.closest('iframe')      ||
-            e.target.closest('.card')       ||
-            e.target.closest('#proj-grid')  ||
-            e.target.closest('.code-win')   ||
-            e.target.closest('pre')         ||
-            e.target.closest('.code-body')
-        ) return;
+        const trappedEl = e.target.closest('iframe, .card, #proj-grid, .code-win, pre, .code-body');
+
+        if (trappedEl) {
+            const atInnerTop = trappedEl.scrollTop <= 0;
+            const atInnerBottom = trappedEl.scrollTop + trappedEl.clientHeight >= trappedEl.scrollHeight - 1;
+            if (e.deltaY > 0 && !atInnerBottom) return;
+            if (e.deltaY < 0 && !atInnerTop) return;
+        }   
 
         const pg = document.querySelector('.page.active');
         if (!pg) return;
