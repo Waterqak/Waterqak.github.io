@@ -8,7 +8,6 @@ const _loop = (() => {
     };
 })();
 
-/* ── Audio ─────────────────────────────────────────────────── */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let muted = false;
 
@@ -33,7 +32,6 @@ function toggleMute() {
     lucide.createIcons();
 }
 
-/* ── SPA Navigation ─────────────────────────────────────────── */
 let _active = 0;
 let _busy   = false;
 const _inited = {};
@@ -120,7 +118,6 @@ function _updateSectionBar(idx) {
     if (bar) bar.style.width = pct + '%';
 }
 
-/* ── Page number watermarks ─────────────────────────────────── */
 function injectPageNumbers() {
     SITE.sections.forEach((s, i) => {
         const pg = document.getElementById('pg-' + s.id);
@@ -132,7 +129,6 @@ function injectPageNumbers() {
     });
 }
 
-/* ── Nav dots ───────────────────────────────────────────────── */
 function initDots() {
     const wrap = document.getElementById('nav-dots');
     if (!wrap) return;
@@ -145,7 +141,6 @@ function initDots() {
     });
 }
 
-/* ── Keyboard / wheel / swipe nav ──────────────────────────── */
 function initKeyboardNav() {
     document.addEventListener('keydown', e => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -192,7 +187,6 @@ function initSwipeNav() {
     }, { passive: true });
 }
 
-/* ── Scroll progress bar ────────────────────────────────────── */
 function initScrollProgress() {
     SITE.sections.forEach(s => {
         const pg = document.getElementById('pg-' + s.id);
@@ -207,7 +201,6 @@ function initScrollProgress() {
     });
 }
 
-/* ── Boot ───────────────────────────────────────────────────── */
 function runBoot() {
     const cont = document.getElementById('boot-log');
     if (!cont) return;
@@ -260,7 +253,6 @@ function startExperience() {
     }, 470);
 }
 
-/* ── Particles ──────────────────────────────────────────────── */
 function initParticles() {
     const cv = document.getElementById('particles-canvas');
     if (!cv) return;
@@ -332,14 +324,12 @@ function initParticles() {
     });
 }
 
-/* ── Skill bars ─────────────────────────────────────────────── */
 function _animBars() {
     document.querySelectorAll('.bar-fill').forEach((b, i) => {
         setTimeout(() => { b.style.width = b.dataset.w || '0%'; b.classList.add('done'); }, (i % 4) * 80);
     });
 }
 
-/* ── Hero counters ──────────────────────────────────────────── */
 function _animCounters() {
     document.querySelectorAll('[data-count]').forEach(el => {
         const to = parseInt(el.dataset.count);
@@ -353,7 +343,6 @@ function _animCounters() {
     });
 }
 
-/* ── Typewriter ─────────────────────────────────────────────── */
 let _twTimer;
 function typeWriter(lang) {
     const el = document.getElementById('typewriter');
@@ -364,7 +353,6 @@ function typeWriter(lang) {
     (function t() { if (i < text.length) { el.textContent += text[i++]; _twTimer = setTimeout(t, 90); } })();
 }
 
-/* ── Language toggle ────────────────────────────────────────── */
 let _lang = 'EN';
 const TRANS = {
     EN: { hero_prefix:'Sensei, I fix', hero_desc:'Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.', status:'System Online', calc_title:'RESOURCE ESTIMATOR', contact_sub:'Sensei, you have a new message.' },
@@ -383,7 +371,6 @@ function toggleLanguage() {
     playClick(800, 0.06);
 }
 
-/* ── Profile picture ────────────────────────────────────────── */
 function _applyPfp(url) {
     const img = document.getElementById('avatar-img');
     const ph  = document.getElementById('avatar-ph');
@@ -415,7 +402,6 @@ window.resetPfp = function() {
     if (ph)  ph.classList.remove('hidden');
 };
 
-/* ── Discord copy ───────────────────────────────────────────── */
 function copyDiscord() {
     navigator.clipboard.writeText(SITE.discord).then(() => {
         const el = document.getElementById('discord-text');
@@ -424,7 +410,6 @@ function copyDiscord() {
     });
 }
 
-/* ── System override ────────────────────────────────────────── */
 let _override = false;
 function toggleOverride() {
     _override = !_override;
@@ -459,7 +444,6 @@ function toggleOverride() {
     }
 }
 
-/* ── Uptime counter ─────────────────────────────────────────── */
 function initUptime() {
     const el = document.getElementById('uptime');
     if (!el) return;
@@ -474,7 +458,6 @@ function initUptime() {
     tick(); setInterval(tick, 1000);
 }
 
-/* ── Visitor counter ────────────────────────────────────────── */
 function initVisitorCounter() {
     const el  = document.getElementById('visitor-count');
     const pfp = localStorage.getItem('schale_pfp');
@@ -501,7 +484,6 @@ function initVisitorCounter() {
         .catch(() => { if (!cached && el) el.textContent = '--'; });
 }
 
-/* ── Toast notifications ────────────────────────────────────── */
 let _toastN = 0;
 function showToast(msg, color) {
     if (_toastN >= 3) return;
@@ -534,7 +516,6 @@ function startToasts() {
     }, 4500);
 }
 
-/* ── Tooltip ────────────────────────────────────────────────── */
 function initTooltips() {
     const tip = document.getElementById('tooltip');
     if (!tip) return;
@@ -549,7 +530,6 @@ function initTooltips() {
     _loop.add('tooltip', () => { if (vis) { tip.style.left = tx + 'px'; tip.style.top = ty + 'px'; } });
 }
 
-/* ── Ripple ─────────────────────────────────────────────────── */
 function initRipple() {
     document.querySelectorAll('[data-ripple]').forEach(btn => {
         btn.addEventListener('click', e => {
@@ -563,7 +543,6 @@ function initRipple() {
     });
 }
 
-/* ── Magnetic buttons ───────────────────────────────────────── */
 function initMagnetic() {
     document.querySelectorAll('[data-mag]').forEach(btn => {
         btn.addEventListener('mouseenter', () => { btn.style.transition = 'transform 0.1s'; }, { passive: true });
@@ -580,7 +559,6 @@ function initMagnetic() {
     });
 }
 
-/* ── Card spotlight ─────────────────────────────────────────── */
 function initCardSpotlight() {
     document.querySelectorAll('.card').forEach(c => {
         let pending = false, ex = 0, ey = 0;
@@ -598,7 +576,6 @@ function initCardSpotlight() {
     });
 }
 
-/* ── Cursor trail ───────────────────────────────────────────── */
 function initCursorTrail() {
     if (window.matchMedia('(pointer:coarse)').matches) return;
     const N = 10, trail = [];
@@ -624,12 +601,10 @@ function initCursorTrail() {
     });
 }
 
-/* ── Mobile menu ────────────────────────────────────────────── */
 function toggleMenu() {
     document.getElementById('mobile-menu')?.classList.toggle('open');
 }
 
-/* ── Projects ───────────────────────────────────────────────── */
 const COLOR_MAP = {
     blue:   { strip: 'strip-blue',   text: '#1AA8FF' },
     gold:   { strip: 'strip-gold',   text: '#FFB83A' },
@@ -663,8 +638,11 @@ function renderProjects() {
     const list = _projFilter === 'all' ? SITE.projects : SITE.projects.filter(p => p.category === _projFilter);
 
     grid.innerHTML = list.map(p => {
-        const s   = COLOR_MAP[p.color] || COLOR_MAP.blue;
-        const btn = p.link
+        const s       = COLOR_MAP[p.color] || COLOR_MAP.blue;
+        const visits  = p._visits  ? `<span class="mono" style="font-size:8px;color:var(--dim)">${RBLX.fmt(p._visits)} visits</span>`   : '';
+        const playing = p._playing ? `<span class="mono" style="font-size:8px;color:var(--green)">${RBLX.fmt(p._playing)} playing</span>` : '';
+        const liveRow = (visits || playing) ? `<div class="flex items-center gap-3 mt-2">${visits}${playing}</div>` : '';
+        const btn     = p.link
             ? `<a href="${p.link}" target="_blank" onclick="event.stopPropagation()" class="btn btn-outline mt-4 w-full justify-center" style="padding:8px;border-radius:8px;font-size:10px;letter-spacing:.1em"><i data-lucide="gamepad-2" style="width:13px;height:13px"></i> PLAY GAME</a>`
             : '';
         return `
@@ -679,7 +657,7 @@ function renderProjects() {
                     <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:2px 7px;border-radius:4px;white-space:nowrap;margin-left:8px">${p.category}</span>
                 </div>
                 <p style="color:var(--dim);font-size:12px;line-height:1.5">${p.desc}</p>
-                ${btn}
+                ${liveRow}${btn}
             </div>
         </div>`;
     }).join('');
@@ -687,7 +665,6 @@ function renderProjects() {
     initCardSpotlight();
 }
 
-/* ── Skills ─────────────────────────────────────────────────── */
 function renderSkills() {
     const main = document.getElementById('skills-main');
     const fun  = document.getElementById('skills-fun');
@@ -710,7 +687,6 @@ function renderSkills() {
     fun.innerHTML  = SITE.funSkills.map(s => renderCard(s, true)).join('');
 }
 
-/* ── Timeline ───────────────────────────────────────────────── */
 function renderTimeline() {
     const wrap = document.getElementById('timeline');
     if (!wrap) return;
@@ -729,7 +705,6 @@ function renderTimeline() {
     </div>`).join('');
 }
 
-/* ── Code vault ─────────────────────────────────────────────── */
 function buildTabs() {
     const tabs = document.getElementById('code-tabs');
     if (!tabs) return;
@@ -758,7 +733,6 @@ function copyCode() {
     });
 }
 
-/* ── Estimator ──────────────────────────────────────────────── */
 let _basePrice = 2500;
 
 function selectService(base, el) {
@@ -798,7 +772,6 @@ function calcBudget() {
     if (sp) sp.textContent = cur !== 'USD' ? `≈ $${Math.ceil(total*0.0035)} USD` : `≈ ${Math.ceil(total).toLocaleString()} R$`;
 }
 
-/* ── Reviews ────────────────────────────────────────────────── */
 const REVIEWS_KEY = 'schale_reviews_v4';
 let _starRating = 5;
 
@@ -895,7 +868,6 @@ function initReviewForm() {
 
 window.adminClearReviews = function() { localStorage.removeItem(REVIEWS_KEY); renderReviews(); };
 
-/* ── Achievements ────────────────────────────────────────────── */
 const ACHS = {
     first_visit:    { icon: '🔭', title: 'FIRST CONTACT',  desc: 'Opened the portfolio. Bold move.' },
     cli_power:      { icon: '💻', title: 'POWER USER',     desc: 'Used the terminal 5+ times.' },
@@ -1027,7 +999,6 @@ function initAchHooks() {
     }, 6000);
 }
 
-/* ── Random events ──────────────────────────────────────────── */
 const TRANSMISSIONS = [
     { from: 'ARONA',  pri: 'LOW',     msg: "Sensei, your coffee is getting cold again. This is a critical alert." },
     { from: 'PLANA',  pri: 'NORMAL',  msg: "System integrity at 94.2%. The remaining 5.8% is vibes." },
@@ -1108,7 +1079,6 @@ function initRandomEvents() {
     }, 20000 + Math.random() * 15000);
 }
 
-/* ── CLI Terminal ────────────────────────────────────────────── */
 function initCLI() {
     const inp = document.getElementById('cli-input');
     const out = document.getElementById('cli-output');
@@ -1174,7 +1144,6 @@ function initCLI() {
     });
 }
 
-/* ── Logo easter egg ────────────────────────────────────────── */
 function initLogoEgg() {
     const logo = document.querySelector('[data-logo-egg]');
     if (!logo) return;
@@ -1199,14 +1168,12 @@ function initLogoEgg() {
     });
 }
 
-/* ── Mobile menu links ──────────────────────────────────────── */
 function initMobileLinks() {
     document.querySelectorAll('#mobile-menu a').forEach(a => {
         a.addEventListener('click', () => { document.getElementById('mobile-menu')?.classList.remove('open'); });
     });
 }
 
-/* ── Console art ────────────────────────────────────────────── */
 (function() {
     setTimeout(() => console.log(
         '%c\n  SCHALE.DB — WATER PORTFOLIO v5\n  Hey, devtools lurker. Respect.\n  Bug count: 0 (official lie)\n  Try CLI: coffee · hack · neofetch\n',
@@ -1214,7 +1181,6 @@ function initMobileLinks() {
     ), 1200);
 })();
 
-/* ── Init ───────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     initVisitorCounter();
     injectPageNumbers();
@@ -1252,6 +1218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (firstSvc) firstSvc.click();
 
     setTimeout(() => showToast('Welcome, Sensei. Try the terminal.'), 3500);
+    setTimeout(() => RBLX.init(), 800);
 
     const firstFilter = document.querySelector('.filter-btn');
     if (firstFilter) firstFilter.classList.add('active');
