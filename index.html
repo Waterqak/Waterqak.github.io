@@ -270,7 +270,41 @@ tailwind.config = {
 
   <!-- 02 ABOUT / PERSONNEL FILE -->
   <div id="pg-about" class="page">
-    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+
+    <!-- ROBLOX PROFILE BANNER -->
+    <div style="padding-top:var(--nav-h)">
+      <div style="position:relative;width:100%;height:200px;overflow:hidden;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(5,9,26,0.95)">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,168,255,0.10) 0%,rgba(168,85,247,0.06) 60%,transparent 100%)"></div>
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(26,168,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(26,168,255,0.035) 1px,transparent 1px);background-size:48px 48px"></div>
+        <div style="position:absolute;right:0;top:0;bottom:0;width:320px;background:linear-gradient(to left,rgba(5,9,26,0.0),rgba(5,9,26,0.95))"></div>
+
+        <!-- full-body avatar (right side) -->
+        <img id="rblx-body"
+             style="position:absolute;right:60px;bottom:0;height:190px;object-fit:contain;object-position:bottom;opacity:0;transition:opacity 0.6s ease;filter:drop-shadow(0 0 32px rgba(26,168,255,0.2))"
+             alt="Roblox Avatar">
+
+        <!-- text overlay (left side) -->
+        <div class="max-w-7xl mx-auto px-6 h-full flex items-end pb-6 relative z-10">
+          <div>
+            <div class="mono mb-2" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">
+              <span class="live-dot" style="width:5px;height:5px;display:inline-block;vertical-align:middle;margin-right:5px"></span>ROBLOX · LIVE DATA
+            </div>
+            <div id="rblx-dname" class="display font-black text-white" style="font-size:clamp(1.6rem,4vw,2.8rem);line-height:1;letter-spacing:-0.01em">WATER</div>
+            <div class="flex flex-wrap items-center gap-4 mt-2">
+              <span id="rblx-uname" class="mono font-bold" style="font-size:11px;color:var(--accent)">@Water</span>
+              <span id="rblx-joined" class="mono" style="font-size:9px;color:var(--dim)">Joined --</span>
+              <span id="rblx-visits" class="mono" style="font-size:9px;color:var(--dim)">Loading stats…</span>
+            </div>
+            <p id="rblx-desc" class="mono mt-2" style="font-size:10px;color:var(--muted);max-width:480px;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></p>
+          </div>
+        </div>
+
+        <!-- corner accent -->
+        <div style="position:absolute;top:12px;right:16px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.14em;color:rgba(26,168,255,0.3)">SCHALE.DB // ROBLOX_SYNC</div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 py-12" style="padding-top:2.5rem">
       <div class="grid md:grid-cols-12 gap-12 items-start">
         <div class="md:col-span-5">
           <div class="card reveal" style="padding:26px">
@@ -341,6 +375,7 @@ tailwind.config = {
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 
@@ -623,6 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <script src="js/config.js"></script>
+<script src="js/roblox.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
