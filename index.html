@@ -27,6 +27,8 @@ tailwind.config = {
 };
 </script>
 <link rel="stylesheet" href="css/styles.css">
+<!-- Roblox hologram widget styles -->
+<link rel="stylesheet" href="css/rbx-hologram.css">
 </head>
 <body>
 
@@ -379,6 +381,138 @@ tailwind.config = {
           </div>
         </div>
       </div>
+
+      <!-- ══ ROBLOX LIVE FEED ════════════════════════════════ -->
+      <div class="mt-20" id="rbx-section">
+
+        <!-- Section header -->
+        <div class="flex items-center gap-4 mb-10 reveal">
+          <div class="s-tag" style="color:var(--green);background:rgba(46,232,154,0.07);border-color:rgba(46,232,154,0.2)">
+            <span style="display:inline-flex;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px rgba(46,232,154,0.6);animation:livePulse 2.2s ease-out infinite;flex-shrink:0;margin-right:4px"></span>
+            ROBLOX LIVE FEED
+          </div>
+          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(46,232,154,0.28),transparent)"></div>
+          <span class="mono" style="font-size:8px;color:var(--muted);letter-spacing:0.12em">AUTO-FETCHED</span>
+        </div>
+
+        <div class="grid md:grid-cols-12 gap-10 items-center">
+
+          <!-- ── Holographic Avatar ─────────────────────────── -->
+          <div class="md:col-span-5 flex justify-center reveal">
+            <!--
+              id="rbx-avatar-wrap"  → roblox.js removes class="hidden" and injects:
+                #rbx-fullbody (img src)
+                #rbx-displayname (text)
+              All CSS lives in css/rbx-hologram.css
+            -->
+            <div id="rbx-avatar-wrap" class="hidden rbx-holo-wrap">
+              <!-- Ambient glow -->
+              <div class="rbx-holo-bg"></div>
+
+              <!-- Avatar + rings share a relative parent so rings sit at avatar feet -->
+              <div style="position:relative">
+                <div class="rbx-avatar-container">
+                  <div class="rbx-scanline"></div>
+                  <div class="rbx-corner rbx-c-tl"></div>
+                  <div class="rbx-corner rbx-c-tr"></div>
+                  <div class="rbx-corner rbx-c-bl"></div>
+                  <div class="rbx-corner rbx-c-br"></div>
+                  <img id="rbx-fullbody" class="rbx-avatar-img" alt="Roblox Avatar">
+                </div>
+                <!-- Rings orbit around the avatar's feet -->
+                <div class="rbx-rings-persp">
+                  <div class="rbx-ring rbx-ring-1"></div>
+                  <div class="rbx-ring rbx-ring-2"></div>
+                  <div class="rbx-ring rbx-ring-3"></div>
+                </div>
+              </div>
+
+              <!-- Platform + beam projector -->
+              <div class="rbx-platform-wrap">
+                <div class="rbx-platform-bar"></div>
+                <div class="rbx-beam"></div>
+              </div>
+
+              <!-- Name tag -->
+              <div id="rbx-displayname" class="rbx-nametag">WATER</div>
+
+              <!-- Side data streams (purely decorative) -->
+              <div class="rbx-stream rbx-stream-l">
+                <div class="rbx-sline" style="animation-delay:0s"></div>
+                <div class="rbx-sline" style="animation-delay:0.6s"></div>
+                <div class="rbx-sline" style="animation-delay:1.2s"></div>
+              </div>
+              <div class="rbx-stream rbx-stream-r">
+                <div class="rbx-sline" style="animation-delay:0.3s"></div>
+                <div class="rbx-sline" style="animation-delay:0.9s"></div>
+                <div class="rbx-sline" style="animation-delay:1.5s"></div>
+              </div>
+            </div>
+
+            <!-- Skeleton shown while data loads -->
+            <div id="rbx-skeleton" class="flex flex-col items-center gap-4" style="width:220px">
+              <div style="width:196px;height:276px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);animation:glowPulse 2s ease-in-out infinite"></div>
+              <div style="width:120px;height:8px;border-radius:4px;background:rgba(255,255,255,0.04);animation:glowPulse 2s .3s ease-in-out infinite"></div>
+            </div>
+          </div>
+
+          <!-- ── Data Panel ─────────────────────────────────── -->
+          <div class="md:col-span-7 space-y-5">
+
+            <!-- Live stat counters — injected by roblox.js -->
+            <div id="rbx-live-stats" class="hidden grid grid-cols-3 gap-4 reveal"></div>
+
+            <!-- Skeleton stats (shown before data arrives) -->
+            <div id="rbx-stats-skeleton" class="grid grid-cols-3 gap-4">
+              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
+              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
+              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
+            </div>
+
+            <!-- Profile data card -->
+            <div class="card reveal" style="padding:0;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#5effc4,transparent);box-shadow:0 0 16px rgba(46,232,154,0.45)"></div>
+              <div style="padding:20px 22px;padding-top:26px">
+                <div class="mono mb-4 flex items-center gap-2" style="font-size:8px;font-weight:700;letter-spacing:0.16em;color:var(--green)">
+                  <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(46,232,154,0.7);animation:livePulse 2.2s ease-out infinite;flex-shrink:0"></span>
+                  OPERATIVE_PROFILE // ROBLOX.COM
+                </div>
+                <div class="mono" style="font-size:11px">
+                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                    <span style="color:var(--dim)">JOIN_DATE</span>
+                    <span id="rbx-join" class="font-bold text-white"></span>
+                  </div>
+                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="border-bottom:1px solid rgba(255,255,255,0.04);animation-delay:.08s">
+                    <span style="color:var(--dim)">FOLLOWERS</span>
+                    <span id="rbx-followers" class="font-bold" style="color:var(--green)"></span>
+                  </div>
+                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="animation-delay:.16s">
+                    <span style="color:var(--dim)">FRIENDS</span>
+                    <span id="rbx-friends" class="font-bold text-white"></span>
+                  </div>
+                </div>
+
+                <!-- Bio description (shown if profile has one) -->
+                <div id="rbx-desc-wrap" class="hidden mt-5 p-4 rounded-xl" style="background:rgba(46,232,154,0.03);border:1px solid rgba(46,232,154,0.1)">
+                  <div class="mono mb-2" style="font-size:8px;letter-spacing:0.12em;color:var(--green);font-weight:700">BIO_EXTRACT</div>
+                  <p id="rbx-desc" style="font-size:12px;color:var(--dim);line-height:1.65;font-family:'JetBrains Mono',monospace"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="reveal">
+              <a href="https://www.roblox.com/users/2878666652/profile" target="_blank"
+                 onclick="playClick()" class="btn btn-outline" style="font-size:11px;letter-spacing:0.08em;display:inline-flex">
+                <i data-lucide="external-link" style="width:13px;height:13px"></i>
+                VIEW ROBLOX PROFILE
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ══ END ROBLOX LIVE FEED ══════════════════════════════ -->
+
     </div>
   </div>
 
@@ -680,6 +814,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
 <script src="js/config.js"></script>
+<script src="js/roblox.js"></script>
 <script src="js/main.js"></script>
+
+<!-- Hide skeleton once Roblox data loads -->
+<script>
+(function patchRobloxSkeletons() {
+    // Watch for the avatar wrap to become visible; hide skeletons when it does
+    const avatarWrap  = document.getElementById('rbx-avatar-wrap');
+    const liveStats   = document.getElementById('rbx-live-stats');
+    const skeletonAvt = document.getElementById('rbx-skeleton');
+    const skeletonSt  = document.getElementById('rbx-stats-skeleton');
+
+    if (!avatarWrap) return;
+
+    const obs = new MutationObserver(() => {
+        const avatarReady = !avatarWrap.classList.contains('hidden');
+        const statsReady  = liveStats && !liveStats.classList.contains('hidden');
+
+        if (avatarReady && skeletonAvt) skeletonAvt.style.display = 'none';
+        if (statsReady  && skeletonSt)  skeletonSt.style.display  = 'none';
+
+        if (avatarReady && statsReady) obs.disconnect();
+    });
+
+    obs.observe(avatarWrap, { attributes: true, attributeFilter: ['class'] });
+    if (liveStats) obs.observe(liveStats, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+
 </body>
 </html>
