@@ -1,29 +1,22 @@
-/* config.js — Edit this file to update the site */
-
 const SITE = {
 
-    // Personal
     name:    "Water",
     age:     15,
     discord: "hokpy",
     roblox:  "https://www.roblox.com/users/2878666652/profile",
 
-    // Music
-    bgm:    "https://lambda.vgmtreasurechest.com/soundtracks/blue-archive-original-soundtrack-vol7%EF%BD%9Eharmonizing-for-the-hearts-of-each%EF%BD%9E-2025/atwfeoodlk/2-14.%20Miracle.mp3",
+    bgm:    "assets/music/theme.mp3",
     volume: 0.5,
 
-    // PINs
     profilePin: "water2025",
     adminPin:   "water2025",
 
-    // Hero stats
     stats: [
-        { value: "5",  label: "Commissions" },
+        { value: "20+",   label: "Commissions" },
         { value: "4 yrs", label: "Experience"  },
-        { value: "40%",  label: "Avg Lag Fix"  },
+        { value: "40%",   label: "Avg Lag Fix"  },
     ],
 
-    // Skills section
     skills: [
         { name: "Luau",        pct: 98, desc: "OOP · Metatables · Parallel Luau",   color: "blue"   },
         { name: "DataStores",  pct: 95, desc: "ProfileService · Session Locking",    color: "blue"   },
@@ -32,18 +25,17 @@ const SITE = {
     ],
 
     funSkills: [
-        { name: "Sleep Schedule",    pct: 2,  desc: "caffeine-dependent",      color: "red"   },
-        { name: "Touching Grass",    pct: 5,  desc: "rare event, treat gently", color: "green" },
-        { name: "Googling Errors",   pct: 99, desc: "Stack Overflow MVP",       color: "gold"  },
-        { name: "Charging Fair Rates", pct: 75, desc: "use the estimator ↓",   color: "blue"  },
+        { name: "Sleep Schedule",      pct: 2,  desc: "caffeine-dependent",       color: "red"   },
+        { name: "Touching Grass",      pct: 5,  desc: "rare event, treat gently", color: "green" },
+        { name: "Googling Errors",     pct: 99, desc: "Stack Overflow MVP",        color: "gold"  },
+        { name: "Charging Fair Rates", pct: 75, desc: "use the estimator ↓",      color: "blue"  },
     ],
 
-    // Career timeline
     timeline: [
         {
             title:  "Freelance Systems Engineer",
             period: "2022 – Present",
-            desc:   "Backend systems for high-traffic Roblox games. 50+ commissions shipped. Zero reported memory leaks (that I know of).",
+            desc:   "Backend systems for high-traffic Roblox games. muuch commissions shipped. Zero reported memory leaks (that I know of).",
             tags:   ["DataStore2", "ProfileService", "Anti-Exploit", "Optimization"],
             accent: true,
         },
@@ -64,7 +56,6 @@ const SITE = {
         },
     ],
 
-    // Code vault — add/remove snippets here
     snippets: [
         {
             name: "RetentionEngine.lua",
@@ -176,9 +167,6 @@ return NS`,
         },
     ],
 
-    // Projects — add/remove here
-    // mediaType: "image" | "youtube" | "none"
-    // color: "blue" | "gold" | "purple" | "gray"
     projects: [
         {
             title:    "Chillin Place",
@@ -272,7 +260,6 @@ return NS`,
         },
     ],
 
-    // Estimator pricing
     pricing: {
         services: [
             { label: "Quick Task", base: 500   },
@@ -288,17 +275,14 @@ return NS`,
         },
     },
 
-    // Seed reviews (always shown, verified badge)
     seedReviews: [
         { id: "s1", name: "Kurokami_Dev",  stars: 5, text: "Fixed a DataStore corruption bug in under an hour that had been killing our game for weeks. 10/10 would hire again.", date: "2025-02-14", verified: true },
         { id: "s2", name: "StellarForge",  stars: 5, text: "Built our entire quest engine from scratch. Clean code, great communication, delivered ahead of schedule.",            date: "2025-03-02", verified: true },
         { id: "s3", name: "NexusRBX",      stars: 5, text: "Reduced server lag by 40% on our farm sim. Rewrote the backend the right way. Professional level work.",              date: "2025-04-20", verified: true },
     ],
 
-    // Konami code
     konami: ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"],
 
-    // Nav sections (id must match .page element ids)
     sections: [
         { id: "home",      label: "Home"      },
         { id: "about",     label: "Profile"   },
