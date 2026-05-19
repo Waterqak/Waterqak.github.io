@@ -4,13 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Water — Roblox Systems Engineer. Backend specialist. Bug exterminator.">
-<title>Water.Logs | Schale Database</title>
+<title>Water.SYS | Database System</title>
 <link rel="icon" type="image/png" href="favicon.png">
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<!-- Libs -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 <link  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
@@ -22,28 +20,26 @@ tailwind.config = {
   darkMode:'class',
   theme:{ extend:{
     fontFamily:{ sans:['Nunito','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Rajdhani','sans-serif'] },
-    colors:{ accent:'var(--accent)', gold:'var(--gold)', momo:'#FFA8C5' }
+    colors:{ accent:'var(--accent)', gold:'var(--gold)', momo:'#C8D4EC' }
   }}
 };
 </script>
 <link rel="stylesheet" href="css/styles.css">
-<!-- Roblox hologram widget styles -->
 <link rel="stylesheet" href="css/rbx-hologram.css">
 </head>
 <body>
 
-<!-- ══ BOOT SCREEN ════════════════════════════════════════════ -->
+<!-- ══ BOOT SCREEN ══════════════════════════════════════════════ -->
 <div id="boot">
   <div class="relative z-10 flex flex-col items-center">
-    <!-- Logo mark -->
     <div class="w-16 h-16 rounded-2xl flex items-center justify-center border mb-7 animate-pulse"
-         style="background:rgba(26,168,255,0.05);border-color:rgba(26,168,255,0.2);box-shadow:0 0 32px rgba(26,168,255,0.1)">
+         style="background:rgba(200,25,42,0.05);border-color:rgba(200,25,42,0.25);box-shadow:0 0 32px rgba(200,25,42,0.12)">
       <i data-lucide="database" style="width:32px;height:32px;color:var(--accent)"></i>
     </div>
     <h1 class="display font-black text-white mb-1" style="font-size:2.2rem;letter-spacing:0.08em">
-      SCHALE<span style="color:var(--accent)">.DB</span>
+      WATER<span style="color:var(--accent)">.SYS</span>
     </h1>
-    <p class="mono mb-7" style="font-size:9px;letter-spacing:0.22em;color:var(--muted)">v5.0 // KIVOTOS RESEARCH INSTITUTE</p>
+    <p class="mono mb-7" style="font-size:9px;letter-spacing:0.22em;color:var(--muted)">v1.0 // SPEARHEAD SQUADRON // CLASSIFIED</p>
 
     <div id="boot-log" class="flex flex-col gap-0.5" style="min-height:160px"></div>
 
@@ -54,11 +50,11 @@ tailwind.config = {
     </button>
   </div>
   <div class="absolute bottom-8 mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">
-    SCHALE RESEARCH INSTITUTE // KIVOTOS // <span class="blink" style="color:var(--accent)">■</span>
+    WATER DATABASE SYSTEM // SPEARHEAD // <span class="blink" style="color:var(--accent)">■</span>
   </div>
 </div>
 
-<!-- ══ GLOBAL UI ══════════════════════════════════════════════ -->
+<!-- ══ GLOBAL UI ════════════════════════════════════════════════ -->
 <audio id="bgm" loop></audio>
 <div id="scroll-bar"></div>
 <div id="section-bar" style="width:0%"></div>
@@ -67,17 +63,15 @@ tailwind.config = {
 <div class="bg-mesh"></div>
 <canvas id="particles-canvas"></canvas>
 
-<!-- Music pill -->
-<div class="music-pill" onclick="toggleMute()" data-tip="Toggle SCHALE RADIO">
+<div class="music-pill" onclick="toggleMute()" data-tip="Toggle music">
   <div class="live-dot"></div>
   <div class="flex flex-col leading-tight">
     <span class="mono" style="font-size:7px;letter-spacing:0.15em;color:var(--muted)">NOW PLAYING</span>
-    <span class="mono font-bold" style="font-size:9px;color:#fff">SCHALE RADIO</span>
+    <span class="mono font-bold" style="font-size:9px;color:#fff">SPEARHEAD RADIO</span>
   </div>
   <i id="mute-icon" data-lucide="volume-2" style="width:13px;height:13px;color:var(--dim)"></i>
 </div>
 
-<!-- Achievement button + panel -->
 <div id="ach-btn">
   <span style="font-size:17px">🏆</span>
   <span id="ach-badge" class="mono" style="font-size:7px;color:var(--gold);font-weight:700">0/12</span>
@@ -95,25 +89,22 @@ tailwind.config = {
   <div id="ach-list" style="overflow-y:auto;padding:8px;flex:1"></div>
 </div>
 
-<!-- Dot navigator -->
 <div id="nav-dots"></div>
 
-<!-- ══ NAVIGATION ═════════════════════════════════════════════ -->
+<!-- ══ NAVIGATION ═══════════════════════════════════════════════ -->
 <nav>
   <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
-    <!-- Logo -->
     <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
-         onclick="playClick(); navigateTo('home')" data-tip="SCHALE.DB — click me 7 times">
+         onclick="playClick(); navigateTo('home')" data-tip="WATER.SYS — click me 7 times">
       <div class="p-2 rounded-lg border transition-all duration-300 group-hover:bg-[color:var(--accent)]"
-           style="background:rgba(26,168,255,0.07);border-color:rgba(26,168,255,0.15)">
+           style="background:rgba(200,25,42,0.07);border-color:rgba(200,25,42,0.18)">
         <i data-lucide="database" style="width:15px;height:15px;color:var(--accent)"></i>
       </div>
       <span class="display font-black text-white" style="font-size:1.15rem;letter-spacing:0.06em">
-        SCHALE<span style="color:var(--accent)">.DB</span>
+        WATER<span style="color:var(--accent)">.SYS</span>
       </span>
     </div>
 
-    <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-7">
       <a class="nav-link" data-section="home"      onclick="navigateTo('home');playClick()">Home</a>
       <a class="nav-link" data-section="code"      onclick="navigateTo('code');playClick()">Code Vault</a>
@@ -123,21 +114,19 @@ tailwind.config = {
       <a class="nav-link" data-section="reviews"   onclick="navigateTo('reviews');playClick()">Reviews</a>
     </div>
 
-    <!-- Desktop right -->
     <div class="hidden md:flex items-center gap-3">
       <button onclick="toggleLanguage()" class="mono font-bold"
-              style="font-size:10px;letter-spacing:0.12em;color:var(--accent);border:1px solid rgba(26,168,255,0.2);padding:6px 12px;border-radius:8px;background:transparent;cursor:pointer;transition:all .2s"
-              onmouseover="this.style.background='rgba(26,168,255,0.08)'" onmouseout="this.style.background='transparent'"
+              style="font-size:10px;letter-spacing:0.12em;color:var(--accent);border:1px solid rgba(200,25,42,0.2);padding:6px 12px;border-radius:8px;background:transparent;cursor:pointer;transition:all .2s"
+              onmouseover="this.style.background='rgba(200,25,42,0.08)'" onmouseout="this.style.background='transparent'"
               data-tip="Switch language / ภาษา">
         <span id="lang-d">EN</span>
       </button>
       <button onclick="navigateTo('contact');playClick()" data-mag data-ripple class="btn btn-momo">
-        <i data-lucide="message-circle" style="width:13px;height:13px"></i>
-        MomoTalk
+        <i data-lucide="radio" style="width:13px;height:13px"></i>
+        TRANSMIT
       </button>
     </div>
 
-    <!-- Hamburger -->
     <button onclick="toggleMenu();playClick()" class="md:hidden p-2 rounded-lg border"
             style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer">
       <i data-lucide="menu" style="width:20px;height:20px;color:#fff"></i>
@@ -145,7 +134,6 @@ tailwind.config = {
   </div>
 </nav>
 
-<!-- Mobile menu -->
 <div id="mobile-menu">
   <button onclick="toggleMenu();playClick()" class="absolute top-5 right-6" style="background:none;border:none;cursor:pointer">
     <i data-lucide="x" style="width:26px;height:26px;color:var(--dim)"></i>
@@ -163,26 +151,22 @@ tailwind.config = {
   <button onclick="toggleLanguage();playClick()" style="background:none;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:900;color:var(--dim)">
     LANGUAGE: <span id="lang-dm" style="color:#fff">EN</span>
   </button>
-  <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">SCHALE.DB v5.0 // KIVOTOS</div>
+  <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">WATER.SYS v1.0 // SPEARHEAD</div>
 </div>
 
-<!-- ══ PAGES CONTAINER ════════════════════════════════════════ -->
+<!-- ══ PAGES ════════════════════════════════════════════════════ -->
 <div id="app">
 
   <!-- ══ 01 HOME ══════════════════════════════════════════════ -->
   <div id="pg-home" class="page active">
     <div style="padding-top:var(--nav-h);min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
-      <!-- Ambient orbs -->
-      <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(26,168,255,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
-      <div style="position:absolute;bottom:6%;right:-4%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,0.04) 0%,transparent 70%);filter:blur(42px);animation:float2 28s ease-in-out infinite;pointer-events:none"></div>
+      <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(200,25,42,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
+      <div style="position:absolute;bottom:6%;right:-4%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(80,130,200,0.04) 0%,transparent 70%);filter:blur(42px);animation:float2 28s ease-in-out infinite;pointer-events:none"></div>
 
-      <!-- Section number watermark -->
-      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(26,168,255,0.05);pointer-events:none;user-select:none;line-height:1">01</div>
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(200,25,42,0.06);pointer-events:none;user-select:none;line-height:1">01</div>
 
       <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full py-16 z-10">
-        <!-- Left -->
         <div>
-          <!-- Status badge -->
           <div class="reveal mb-8">
             <button onclick="toggleOverride()" class="hero-badge" data-tip="Click to toggle system status">
               <span style="position:relative;display:flex;width:8px;height:8px">
@@ -193,29 +177,25 @@ tailwind.config = {
             </button>
           </div>
 
-          <!-- Headline -->
           <h1 class="display font-black reveal mb-6" style="font-size:clamp(2.4rem,6vw,4.8rem);line-height:0.95;letter-spacing:-0.02em">
-            <span class="block text-white" style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px" data-lang="hero_prefix">Sensei, I fix</span>
+            <span class="block text-white" style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px" data-lang="hero_prefix">I fix</span>
             <span id="typewriter" class="gradient-text block"></span>
           </h1>
 
-          <!-- Bio blurb -->
           <p class="reveal mb-10 pl-4" data-lang="hero_desc"
-             style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(26,168,255,0.3)">
+             style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(200,25,42,0.3)">
             Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.
           </p>
 
-          <!-- CTA buttons -->
           <div class="flex flex-wrap gap-4 mb-10 reveal">
             <button onclick="navigateTo('projects');playClick()" data-mag data-ripple class="btn btn-primary" style="font-size:12px;letter-spacing:0.1em">
               VIEW DATABASE <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
             </button>
             <button onclick="navigateTo('contact');playClick()" data-mag class="btn btn-outline" style="font-size:11px;letter-spacing:0.1em">
-              <i data-lucide="message-circle" style="width:14px;height:14px"></i> HIRE ME
+              <i data-lucide="radio" style="width:14px;height:14px"></i> HIRE ME
             </button>
           </div>
 
-          <!-- Stats -->
           <div class="grid grid-cols-3 gap-3 max-w-xs reveal">
             <div class="stat-card" data-tip="50+ satisfied clients">
               <div class="stat-val" data-count="50" data-suffix="+">50+</div>
@@ -232,23 +212,20 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Right: Terminal -->
         <div class="relative hidden md:block reveal">
           <div class="terminal">
             <div class="scanline"></div>
-            <!-- Terminal top bar -->
             <div style="background:rgba(5,7,16,0.98);padding:9px 15px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="terminal" style="width:12px;height:12px;color:var(--accent)"></i>
-                <span class="mono" style="font-size:9px;letter-spacing:0.1em;color:var(--muted)">INTERACTIVE_TERMINAL</span>
+                <span class="mono" style="font-size:9px;letter-spacing:0.1em;color:var(--muted)">SPEARHEAD_TERMINAL</span>
               </div>
               <div class="flex gap-1.5">
-                <div class="code-dot" style="background:#ef4444;opacity:0.7" data-tip="Does nothing. Aesthetic only."></div>
+                <div class="code-dot" style="background:#ef4444;opacity:0.7" data-tip="Aesthetic only."></div>
                 <div class="code-dot" style="background:#eab308;opacity:0.7"></div>
                 <div class="code-dot" style="background:#22c55e;opacity:0.7"></div>
               </div>
             </div>
-            <!-- System meters -->
             <div style="padding:12px 16px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px">
               <div class="flex justify-between items-center mb-2">
                 <span style="color:var(--muted)">CORE_LOAD</span>
@@ -269,28 +246,26 @@ tailwind.config = {
                 </div>
               </div>
               <div class="flex justify-between items-center mb-1">
-                <span style="color:var(--muted)">BUGS_IN_PROD</span>
+                <span style="color:var(--muted)">LEGION_THREAT</span>
                 <span style="color:#00ff88;font-weight:700;font-size:8px" data-tip="Definitely accurate">0 ✓</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0"></div>
             </div>
-            <!-- CLI -->
             <div style="padding:0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:9.5px" onclick="document.getElementById('cli-input').focus()">
               <div id="cli-output" style="height:145px;overflow-y:auto;margin-bottom:9px;color:var(--muted);line-height:1.9">
-                <span style="color:var(--accent)">visitor@schale:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
+                <span style="color:var(--accent)">guest@spearhead:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
                 <span style="color:var(--muted);font-size:8.5px">· · · try: coffee · hack · uwu · neofetch · · ·</span><br>
               </div>
               <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:9px">
-                <span style="color:var(--accent)">visitor@schale:~$</span>
+                <span style="color:var(--accent)">guest@spearhead:~$</span>
                 <input id="cli-input" type="text" autocomplete="off" spellcheck="false"
                        style="flex:1;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px">
                 <span class="blink" style="width:6px;height:12px;background:var(--accent);display:block;border-radius:1px"></span>
               </div>
             </div>
           </div>
-          <!-- Decorative corners -->
-          <div style="position:absolute;z-index:-1;top:-20px;right:-20px;width:80px;height:80px;border-top:2px solid rgba(26,168,255,0.12);border-right:2px solid rgba(26,168,255,0.12);border-radius:0 12px 0 0;pointer-events:none"></div>
-          <div style="position:absolute;z-index:-1;bottom:-20px;left:-20px;width:80px;height:80px;border-bottom:2px solid rgba(26,168,255,0.12);border-left:2px solid rgba(26,168,255,0.12);border-radius:0 0 0 12px;pointer-events:none"></div>
+          <div style="position:absolute;z-index:-1;top:-20px;right:-20px;width:80px;height:80px;border-top:2px solid rgba(200,25,42,0.12);border-right:2px solid rgba(200,25,42,0.12);border-radius:0 12px 0 0;pointer-events:none"></div>
+          <div style="position:absolute;z-index:-1;bottom:-20px;left:-20px;width:80px;height:80px;border-bottom:2px solid rgba(200,25,42,0.12);border-left:2px solid rgba(200,25,42,0.12);border-radius:0 0 0 12px;pointer-events:none"></div>
         </div>
       </div>
     </div>
@@ -299,17 +274,15 @@ tailwind.config = {
   <!-- ══ 02 ABOUT / PERSONNEL FILE ════════════════════════════ -->
   <div id="pg-about" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
-      <div style="position:absolute;right:32px;top:90px" class="display" style="font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(26,168,255,0.05);pointer-events:none;user-select:none">02</div>
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(200,25,42,0.05);pointer-events:none;user-select:none">02</div>
 
       <div class="grid md:grid-cols-12 gap-12 items-start">
-        <!-- Profile card -->
         <div class="md:col-span-5">
           <div class="card reveal" style="padding:26px">
             <div class="strip strip-blue"></div>
             <div class="flex items-center justify-between mb-6" style="padding-top:8px">
-              <!-- Avatar -->
               <div id="pfp-wrap" class="cursor-pointer" onclick="updatePfp()" data-tip="Click to update photo (PIN required)"
-                   style="width:86px;height:86px;border-radius:14px;background:rgba(26,168,255,0.05);border:1px solid rgba(26,168,255,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+                   style="width:86px;height:86px;border-radius:14px;background:rgba(200,25,42,0.05);border:1px solid rgba(200,25,42,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
                 <img id="avatar-img" class="hidden" style="width:100%;height:100%;object-fit:cover">
                 <i id="avatar-ph" data-lucide="user" style="width:34px;height:34px;color:var(--accent)"></i>
                 <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:14px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
@@ -319,15 +292,14 @@ tailwind.config = {
               </div>
               <div class="text-right">
                 <div class="mono" style="font-size:8px;color:var(--muted);margin-bottom:3px;letter-spacing:0.1em">CLEARANCE</div>
-                <div class="display font-black text-white" style="font-size:1.3rem">PRODIGY <span style="color:var(--accent)">01</span></div>
+                <div class="display font-black text-white" style="font-size:1.3rem">SPEARHEAD <span style="color:var(--accent)">01</span></div>
                 <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">⬛⬛⬛⬛⬜ CLASSIFIED</div>
               </div>
             </div>
-            <!-- Stats table -->
             <div class="mono" style="font-size:11px">
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AGE</span><span class="font-bold text-white">15 <span style="color:var(--muted)">(yes, really)</span></span></div>
-              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AFFILIATION</span><span class="font-bold" style="color:var(--accent)">SCHALE (INDIE)</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AFFILIATION</span><span class="font-bold" style="color:var(--accent)">SPEARHEAD (INDIE)</span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">BACKEND / SYSTEMS</span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS</span></div>
               <div class="flex justify-between py-2">
@@ -341,10 +313,9 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Bio -->
         <div class="md:col-span-7">
           <div class="s-tag mb-4 reveal"><i data-lucide="file-text" style="width:11px;height:11px"></i> Personnel File</div>
-          <h2 class="section-title mb-6 reveal">PERSONNEL FILE <span style="color:var(--accent)">#8080</span></h2>
+          <h2 class="section-title mb-6 reveal">PERSONNEL FILE <span style="color:var(--accent)">#8086</span></h2>
 
           <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
             Hey, I'm Water. I'm a 15-year-old self-taught Roblox Systems Engineer. I got tired of playing games that crashed every five minutes, so I learned how to fix them myself. Turns out, people will pay you to exorcise demons from their codebases.
@@ -353,13 +324,12 @@ tailwind.config = {
             A lot of scripters write code that <em class="text-white not-italic">"just works"</em>, right up until a player breathes on it wrong. I build systems designed to survive 10,000 concurrent players and that one exploiter who makes it their life's mission to dupe items.
           </p>
 
-          <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(26,168,255,0.04);border-left:3px solid var(--accent)">
+          <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(200,25,42,0.04);border-left:3px solid var(--accent)">
             <p class="text-white font-semibold italic" style="font-size:13px">
               "Clean Code → Fewer Bugs → Players Don't Riot → Happy Client → I can afford snacks."
             </p>
           </div>
 
-          <!-- Tech tags -->
           <div class="flex flex-wrap gap-2 mb-8 reveal">
             <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
               <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;box-shadow:0 0 4px #60a5fa;margin-right:6px"></span>LuaU Expert
@@ -372,8 +342,7 @@ tailwind.config = {
             </span>
           </div>
 
-          <!-- Quick contact -->
-          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(26,168,255,0.03);border:1px solid rgba(26,168,255,0.1);font-size:11px">
+          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(200,25,42,0.03);border:1px solid rgba(200,25,42,0.12);font-size:11px">
             <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
             <span style="color:var(--dim)">Fastest way to reach me → Discord:</span>
             <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">hokpy</span>
@@ -384,8 +353,6 @@ tailwind.config = {
 
       <!-- ══ ROBLOX LIVE FEED ════════════════════════════════ -->
       <div class="mt-20" id="rbx-section">
-
-        <!-- Section header -->
         <div class="flex items-center gap-4 mb-10 reveal">
           <div class="s-tag" style="color:var(--green);background:rgba(46,232,154,0.07);border-color:rgba(46,232,154,0.2)">
             <span style="display:inline-flex;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px rgba(46,232,154,0.6);animation:livePulse 2.2s ease-out infinite;flex-shrink:0;margin-right:4px"></span>
@@ -396,20 +363,9 @@ tailwind.config = {
         </div>
 
         <div class="grid md:grid-cols-12 gap-10 items-center">
-
-          <!-- ── Holographic Avatar ─────────────────────────── -->
           <div class="md:col-span-5 flex justify-center reveal">
-            <!--
-              id="rbx-avatar-wrap"  → roblox.js removes class="hidden" and injects:
-                #rbx-fullbody (img src)
-                #rbx-displayname (text)
-              All CSS lives in css/rbx-hologram.css
-            -->
             <div id="rbx-avatar-wrap" class="hidden rbx-holo-wrap">
-              <!-- Ambient glow -->
               <div class="rbx-holo-bg"></div>
-
-              <!-- Avatar + rings share a relative parent so rings sit at avatar feet -->
               <div style="position:relative">
                 <div class="rbx-avatar-container">
                   <div class="rbx-scanline"></div>
@@ -419,24 +375,17 @@ tailwind.config = {
                   <div class="rbx-corner rbx-c-br"></div>
                   <img id="rbx-fullbody" class="rbx-avatar-img" alt="Roblox Avatar">
                 </div>
-                <!-- Rings orbit around the avatar's feet -->
                 <div class="rbx-rings-persp">
                   <div class="rbx-ring rbx-ring-1"></div>
                   <div class="rbx-ring rbx-ring-2"></div>
                   <div class="rbx-ring rbx-ring-3"></div>
                 </div>
               </div>
-
-              <!-- Platform + beam projector -->
               <div class="rbx-platform-wrap">
                 <div class="rbx-platform-bar"></div>
                 <div class="rbx-beam"></div>
               </div>
-
-              <!-- Name tag -->
               <div id="rbx-displayname" class="rbx-nametag">WATER</div>
-
-              <!-- Side data streams (purely decorative) -->
               <div class="rbx-stream rbx-stream-l">
                 <div class="rbx-sline" style="animation-delay:0s"></div>
                 <div class="rbx-sline" style="animation-delay:0.6s"></div>
@@ -449,27 +398,21 @@ tailwind.config = {
               </div>
             </div>
 
-            <!-- Skeleton shown while data loads -->
             <div id="rbx-skeleton" class="flex flex-col items-center gap-4" style="width:220px">
               <div style="width:196px;height:276px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);animation:glowPulse 2s ease-in-out infinite"></div>
               <div style="width:120px;height:8px;border-radius:4px;background:rgba(255,255,255,0.04);animation:glowPulse 2s .3s ease-in-out infinite"></div>
             </div>
           </div>
 
-          <!-- ── Data Panel ─────────────────────────────────── -->
           <div class="md:col-span-7 space-y-5">
-
-            <!-- Live stat counters — injected by roblox.js -->
             <div id="rbx-live-stats" class="hidden grid grid-cols-3 gap-4 reveal"></div>
 
-            <!-- Skeleton stats (shown before data arrives) -->
             <div id="rbx-stats-skeleton" class="grid grid-cols-3 gap-4">
               <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
               <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
               <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
             </div>
 
-            <!-- Profile data card -->
             <div class="card reveal" style="padding:0;overflow:hidden">
               <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#5effc4,transparent);box-shadow:0 0 16px rgba(46,232,154,0.45)"></div>
               <div style="padding:20px 22px;padding-top:26px">
@@ -492,7 +435,6 @@ tailwind.config = {
                   </div>
                 </div>
 
-                <!-- Bio description (shown if profile has one) -->
                 <div id="rbx-desc-wrap" class="hidden mt-5 p-4 rounded-xl" style="background:rgba(46,232,154,0.03);border:1px solid rgba(46,232,154,0.1)">
                   <div class="mono mb-2" style="font-size:8px;letter-spacing:0.12em;color:var(--green);font-weight:700">BIO_EXTRACT</div>
                   <p id="rbx-desc" style="font-size:12px;color:var(--dim);line-height:1.65;font-family:'JetBrains Mono',monospace"></p>
@@ -500,7 +442,6 @@ tailwind.config = {
               </div>
             </div>
 
-            <!-- CTA -->
             <div class="reveal">
               <a href="https://www.roblox.com/users/2878666652/profile" target="_blank"
                  onclick="playClick()" class="btn btn-outline" style="font-size:11px;letter-spacing:0.08em;display:inline-flex">
@@ -511,8 +452,6 @@ tailwind.config = {
           </div>
         </div>
       </div>
-      <!-- ══ END ROBLOX LIVE FEED ══════════════════════════════ -->
-
     </div>
   </div>
 
@@ -522,7 +461,6 @@ tailwind.config = {
       <div class="s-tag mb-3 reveal"><i data-lucide="cpu" style="width:11px;height:11px"></i> Specifications</div>
       <h2 class="section-title mb-2 reveal">SYSTEM SPECS</h2>
       <p class="mono mb-12 reveal" style="font-size:11px;color:var(--muted)">— hover the percentage. you won't. —</p>
-
       <div id="skills-main" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5"></div>
       <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
     </div>
@@ -555,7 +493,6 @@ tailwind.config = {
           <span class="flex items-center gap-1"><i data-lucide="check" style="width:11px;height:11px;color:var(--green)"></i> DOCUMENTED</span>
         </div>
       </div>
-
       <div class="code-win reveal">
         <div class="code-hdr">
           <div class="flex gap-1.5 mr-3 flex-shrink-0">
@@ -601,22 +538,16 @@ tailwind.config = {
   <div id="pg-estimator" class="page">
     <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="s-tag mb-4 reveal"><i data-lucide="calculator" style="width:11px;height:11px"></i> Pricing</div>
-
       <div class="grid md:grid-cols-12 gap-10 items-start">
-        <!-- Controls -->
         <div class="md:col-span-7 space-y-7">
           <div>
             <h2 class="section-title mb-1 reveal" data-lang="calc_title">RESOURCE ESTIMATOR</h2>
             <p class="reveal" style="color:var(--dim);font-size:13px">No surprises. Calculate before you commit.</p>
           </div>
-
-          <!-- Service select -->
           <div class="reveal">
             <div class="mono mb-3" style="font-size:9px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">OPERATION TYPE</div>
             <div class="grid grid-cols-2 gap-3" id="svc-grid"></div>
           </div>
-
-          <!-- Sliders -->
           <div class="reveal p-6 rounded-xl space-y-6" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05)">
             <div>
               <div class="flex justify-between mb-2">
@@ -635,9 +566,8 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- Invoice card -->
         <div class="md:col-span-5 card reveal" style="padding:24px">
-          <div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 0;background:radial-gradient(circle,rgba(26,168,255,0.06),transparent 70%);pointer-events:none"></div>
+          <div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 0;background:radial-gradient(circle,rgba(200,25,42,0.06),transparent 70%);pointer-events:none"></div>
           <div class="flex justify-between items-center mb-6">
             <span class="mono" style="font-size:8px;font-weight:700;letter-spacing:0.14em;color:var(--muted)">INVOICE PREVIEW</span>
             <select id="currency" onchange="calcBudget()" class="mono text-white"
@@ -645,20 +575,18 @@ tailwind.config = {
               <option>R$</option><option>USD</option><option>THB</option><option>VND</option>
             </select>
           </div>
-          <!-- Line items -->
           <div class="mono space-y-3 mb-6 pb-6" style="font-size:12px;border-bottom:1px solid rgba(255,255,255,0.05)">
             <div class="flex justify-between" style="color:var(--dim)"><span>Base Cost</span><span class="text-white" id="r-base">--</span></div>
             <div class="flex justify-between" style="color:var(--dim)"><span>Complexity ×</span><span style="color:var(--accent)" id="r-comp">×1.0</span></div>
             <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee ×</span><span style="color:var(--red)" id="r-rush">×1.0</span></div>
           </div>
-          <!-- Total -->
           <div class="text-right mb-6">
             <span class="mono block mb-1" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">Total Estimated</span>
             <div id="total-price" class="display font-black text-white" style="font-size:2.6rem;letter-spacing:-0.01em">--</div>
             <div id="sub-price"   class="mono mt-1" style="font-size:10px;color:var(--muted)"></div>
           </div>
           <button onclick="navigateTo('contact');playClick()" data-ripple class="btn btn-accent w-full justify-center" style="font-size:12px;letter-spacing:0.08em">
-            <i data-lucide="message-square" style="width:14px;height:14px"></i> DISCUSS QUOTE
+            <i data-lucide="radio" style="width:14px;height:14px"></i> TRANSMIT QUOTE
           </button>
         </div>
       </div>
@@ -689,15 +617,14 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 09 CONTACT / MOMOTALK ════════════════════════════════ -->
+  <!-- ══ 09 CONTACT ═══════════════════════════════════════════ -->
   <div id="pg-contact" class="page">
     <div class="max-w-2xl mx-auto px-6 text-center py-24" style="padding-top:calc(var(--nav-h) + 5rem)">
-      <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">MomoTalk</div>
-      <h2 class="section-title reveal mb-2">MomoTalk</h2>
-      <p class="reveal mb-2" style="color:var(--dim);font-size:14px" data-lang="contact_sub">Sensei, you have a new message.</p>
+      <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">Transmission</div>
+      <h2 class="section-title reveal mb-2">OPEN COMMS</h2>
+      <p class="reveal mb-2" style="color:var(--dim);font-size:14px" data-lang="contact_sub">Send a transmission.</p>
       <p class="mono mb-10 reveal" style="font-size:9px;color:var(--muted)">response time: fast (unless I'm asleep, which is often)</p>
 
-      <!-- Status strip -->
       <div class="inline-flex items-center gap-5 px-6 py-3 rounded-full border mb-10 reveal"
            style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05);backdrop-filter:blur(8px)">
         <div class="flex items-center gap-2">
@@ -710,14 +637,12 @@ tailwind.config = {
         <div class="mono" style="font-size:9px;color:var(--dim)">VISITS: <span id="visitor-count" class="text-white font-bold">---</span></div>
       </div>
 
-      <!-- MomoTalk widget -->
       <div class="momo-wrap reveal">
         <div class="momo-head">
-          <i data-lucide="message-circle" style="width:18px;height:18px"></i>
-          MomoTalk
-          <span class="ml-auto mono font-bold" style="font-size:9px;background:rgba(255,255,255,0.25);padding:2px 8px;border-radius:999px">2 unread</span>
+          <i data-lucide="radio" style="width:18px;height:18px"></i>
+          SPEARHEAD COMMS
+          <span class="ml-auto mono font-bold" style="font-size:9px;background:rgba(200,25,42,0.25);padding:2px 8px;border-radius:999px">2 unread</span>
         </div>
-        <!-- Discord -->
         <div class="momo-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord">
           <div class="momo-avatar" style="background:#eaecff">
             <i data-lucide="message-square" style="width:18px;height:18px;color:#6366f1"></i>
@@ -731,7 +656,6 @@ tailwind.config = {
           </div>
           <div class="momo-badge">1</div>
         </div>
-        <!-- Roblox -->
         <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momo-item group" onclick="playClick()" style="display:flex;text-decoration:none">
           <div class="momo-avatar" style="background:#f3f4f6">
             <i data-lucide="gamepad-2" style="width:18px;height:18px;color:#4b5563"></i>
@@ -747,17 +671,16 @@ tailwind.config = {
         </a>
       </div>
 
-      <!-- Footer -->
       <div class="mt-14 space-y-2 reveal">
-        <div class="mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted);opacity:0.4">SCHALE DATABASE V5.0 // AUTH: HOKPY // KIVOTOS ADMIN</div>
+        <div class="mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted);opacity:0.4">WATER DATABASE SYSTEM v1.0 // AUTH: HOKPY // SPEARHEAD</div>
         <div class="mono" style="font-size:8px;color:var(--muted);opacity:0.25">built at 2am · powered by redbull · no bugs (allegedly)</div>
       </div>
     </div>
   </div>
 
-</div><!-- /app -->
+</div>
 
-<!-- ══ REVIEW MODAL ═══════════════════════════════════════════ -->
+<!-- ══ REVIEW MODAL ═════════════════════════════════════════════ -->
 <div id="review-modal" onclick="if(event.target===this)closeReviewModal()">
   <div style="width:100%;max-width:480px;border-radius:16px;overflow:hidden;background:#080b14;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7)">
     <div style="background:rgba(255,184,58,0.05);border-bottom:1px solid rgba(255,184,58,0.1);padding:14px 22px;display:flex;align-items:center;justify-content:space-between">
@@ -782,7 +705,7 @@ tailwind.config = {
       </div>
       <div>
         <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--muted);display:block;margin-bottom:8px">FIELD NOTES</label>
-        <textarea id="review-text" placeholder="Was it good? Terrible? Did he fix it? Tell us." maxlength="280" required
+        <textarea id="review-text" placeholder="Was it good? Did he fix it? Tell us." maxlength="280" required
                   style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:11px 14px;color:#fff;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;resize:none;height:100px;transition:border-color .2s"
                   onfocus="this.style.borderColor='rgba(255,184,58,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"></textarea>
         <div class="flex justify-end mt-1"><span id="char-count" class="mono" style="font-size:8.5px;color:var(--muted)">0/280</span></div>
@@ -794,9 +717,7 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- ══ ESTIMATOR SERVICE BUTTONS (injected by JS) ════════════ -->
 <script>
-// Build service buttons after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('svc-grid');
   if (!grid) return;
@@ -812,32 +733,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- ══ SCRIPTS ════════════════════════════════════════════════ -->
 <script src="js/config.js"></script>
 <script src="js/roblox.js"></script>
 <script src="js/main.js"></script>
 
-<!-- Hide skeleton once Roblox data loads -->
 <script>
 (function patchRobloxSkeletons() {
-    // Watch for the avatar wrap to become visible; hide skeletons when it does
     const avatarWrap  = document.getElementById('rbx-avatar-wrap');
     const liveStats   = document.getElementById('rbx-live-stats');
     const skeletonAvt = document.getElementById('rbx-skeleton');
     const skeletonSt  = document.getElementById('rbx-stats-skeleton');
-
     if (!avatarWrap) return;
-
     const obs = new MutationObserver(() => {
         const avatarReady = !avatarWrap.classList.contains('hidden');
         const statsReady  = liveStats && !liveStats.classList.contains('hidden');
-
         if (avatarReady && skeletonAvt) skeletonAvt.style.display = 'none';
         if (statsReady  && skeletonSt)  skeletonSt.style.display  = 'none';
-
         if (avatarReady && statsReady) obs.disconnect();
     });
-
     obs.observe(avatarWrap, { attributes: true, attributeFilter: ['class'] });
     if (liveStats) obs.observe(liveStats, { attributes: true, attributeFilter: ['class'] });
 })();
