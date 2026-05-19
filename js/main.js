@@ -8,7 +8,6 @@ const _loop = (() => {
     };
 })();
 
-/* ── Audio ───────────────────────────────────────────────────── */
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let muted = false;
 
@@ -33,7 +32,6 @@ function toggleMute() {
     lucide.createIcons();
 }
 
-/* ── SPA Navigation ──────────────────────────────────────────── */
 let _active = 0;
 let _busy   = false;
 const DUR   = 520;
@@ -119,7 +117,6 @@ function _updateSectionBar(idx) {
     if (bar) bar.style.width = pct + '%';
 }
 
-/* ── Nav dots ────────────────────────────────────────────────── */
 function initDots() {
     const wrap = document.getElementById('nav-dots');
     if (!wrap) return;
@@ -132,7 +129,6 @@ function initDots() {
     });
 }
 
-/* ── Keyboard / wheel / swipe nav ───────────────────────────── */
 function initKeyboardNav() {
     document.addEventListener('keydown', e => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -179,7 +175,6 @@ function initSwipeNav() {
     }, { passive: true });
 }
 
-/* ── Scroll progress bar ─────────────────────────────────────── */
 function initScrollProgress() {
     SITE.sections.forEach(s => {
         const pg = document.getElementById('pg-' + s.id);
@@ -194,20 +189,19 @@ function initScrollProgress() {
     });
 }
 
-/* ── Boot ────────────────────────────────────────────────────── */
 function runBoot() {
     const cont = document.getElementById('boot-log');
     if (!cont) return;
     const lines = [
-        { txt: 'BIOS_CHECK',               cls: 'ok',   val: 'OK'   },
-        { txt: 'MEMORY_INTEGRITY',         cls: 'ok',   val: 'OK'   },
-        { txt: 'CHECKING_IF_SENSEI_AWAKE', cls: 'info', val: 'YES'  },
-        { txt: 'COUNTING_BUGS',            cls: 'ok',   val: '0 ✓'  },
-        { txt: 'LOADING_COPE_RESERVES',    cls: 'warn', val: 'FULL' },
-        { txt: 'NETWORK_UPLINK',           cls: 'ok',   val: 'OK'   },
-        { txt: 'VIRUS_DETECTED',           cls: 'err',  val: '...'  },
-        { txt: 'just_kidding_lol',         cls: 'info', val: 'haha' },
-        { txt: 'SCHALE_DB_MOUNT',          cls: 'ok',   val: 'OK'   },
+        { txt: 'BIOS_CHECK',              cls: 'ok',   val: 'OK'      },
+        { txt: 'MEMORY_INTEGRITY',        cls: 'ok',   val: 'OK'      },
+        { txt: 'LEGION_SIGNAL_DETECTED',  cls: 'err',  val: 'WARNING' },
+        { txt: 'COUNTERMEASURES_ACTIVE',  cls: 'ok',   val: 'ARMED'   },
+        { txt: 'BUGS_IN_PROD',            cls: 'ok',   val: '0 ✓'     },
+        { txt: 'NETWORK_UPLINK',          cls: 'ok',   val: 'OK'      },
+        { txt: 'SPEARHEAD_SQ_PING',       cls: 'warn', val: '...'     },
+        { txt: 'NO_RESPONSE_EXPECTED',    cls: 'info', val: 'NOMINAL' },
+        { txt: 'WDS_MOUNT',               cls: 'ok',   val: 'OK'      },
     ];
     let i = 0;
     function next() {
@@ -247,7 +241,6 @@ function startExperience() {
     }, 470);
 }
 
-/* ── Particles ───────────────────────────────────────────────── */
 function initParticles() {
     const cv = document.getElementById('particles-canvas');
     if (!cv) return;
@@ -284,12 +277,12 @@ function initParticles() {
     let resizeT;
     window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(spawn, 150); }, { passive: true });
 
-    ctx.strokeStyle = 'rgba(26,168,255,1)';
+    ctx.strokeStyle = 'rgba(200,25,42,1)';
     ctx.lineWidth   = 0.5;
 
     _loop.add('particles', () => {
         ctx.clearRect(0, 0, W, H);
-        ctx.fillStyle = 'rgba(26,168,255,0.9)';
+        ctx.fillStyle = 'rgba(200,25,42,0.9)';
 
         for (let i = 0; i < N; i++) {
             px[i] += pvx[i];
@@ -330,14 +323,12 @@ function initParticles() {
     });
 }
 
-/* ── Skill bars ──────────────────────────────────────────────── */
 function _animBars() {
     document.querySelectorAll('.bar-fill').forEach((b, i) => {
         setTimeout(() => { b.style.width = b.dataset.w || '0%'; b.classList.add('done'); }, (i % 4) * 80);
     });
 }
 
-/* ── Hero counters ───────────────────────────────────────────── */
 function _animCounters() {
     document.querySelectorAll('[data-count]').forEach(el => {
         const to = parseInt(el.dataset.count);
@@ -351,7 +342,6 @@ function _animCounters() {
     });
 }
 
-/* ── Typewriter ──────────────────────────────────────────────── */
 let _twTimer;
 function typeWriter(lang) {
     const el = document.getElementById('typewriter');
@@ -362,11 +352,10 @@ function typeWriter(lang) {
     (function t() { if (i < text.length) { el.textContent += text[i++]; _twTimer = setTimeout(t, 90); } })();
 }
 
-/* ── Language toggle ─────────────────────────────────────────── */
 let _lang = 'EN';
 const TRANS = {
-    EN: { hero_prefix: 'Sensei, I fix', hero_desc: 'Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.', status: 'System Online', calc_title: 'RESOURCE ESTIMATOR', contact_sub: 'Sensei, you have a new message.' },
-    TH: { hero_prefix: 'เซ็นเซย์ครับ ผมซ่อม', hero_desc: 'วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend เสถียรภาพของข้อมูล และระบบเกมซับซ้อน', status: 'สถานะ: ออนไลน์', calc_title: 'ประเมินงบประมาณ', contact_sub: 'เซ็นเซย์ มีข้อความใหม่ครับ' },
+    EN: { hero_prefix: 'I fix', hero_desc: 'Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.', status: 'System Online', calc_title: 'RESOURCE ESTIMATOR', contact_sub: 'Send a transmission.' },
+    TH: { hero_prefix: 'ผมซ่อม', hero_desc: 'วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend เสถียรภาพของข้อมูล และระบบเกมซับซ้อน', status: 'สถานะ: ออนไลน์', calc_title: 'ประเมินงบประมาณ', contact_sub: 'ส่งข้อความมาได้เลย' },
 };
 
 function toggleLanguage() {
@@ -381,7 +370,6 @@ function toggleLanguage() {
     playClick(800, 0.06);
 }
 
-/* ── Profile picture ─────────────────────────────────────────── */
 function _applyPfp(url) {
     const img = document.getElementById('avatar-img');
     const ph  = document.getElementById('avatar-ph');
@@ -392,41 +380,39 @@ function _applyPfp(url) {
     img.onerror = () => {
         img.classList.add('hidden');
         ph.classList.remove('hidden');
-        localStorage.removeItem('schale_pfp');
+        localStorage.removeItem('wds_pfp');
     };
 }
 
 window.updatePfp = function () {
-    const pin = prompt('Admin PIN required to update avatar:');
+    const pin = prompt('Admin PIN required:');
     if (pin === null) return;
     if (pin.trim() !== SITE.profilePin) { showToast('Access denied.', 'var(--red)'); playClick(220, 0.4); return; }
-    const url = prompt('PIN accepted!\nPaste your profile picture URL:');
+    const url = prompt('PIN accepted. Paste image URL:');
     if (!url) return;
     if (!url.startsWith('http') && !url.startsWith('data:image')) { showToast('Invalid URL.', 'var(--gold)'); return; }
-    localStorage.setItem('schale_pfp', url);
+    localStorage.setItem('wds_pfp', url);
     _applyPfp(url);
-    showToast('Profile picture updated!', 'var(--green)');
+    showToast('Profile picture updated.', 'var(--green)');
     playClick(1000, 0.1);
 };
 
 window.resetPfp = function () {
-    localStorage.removeItem('schale_pfp');
+    localStorage.removeItem('wds_pfp');
     const img = document.getElementById('avatar-img');
     const ph  = document.getElementById('avatar-ph');
     if (img) { img.src = ''; img.classList.add('hidden'); }
     if (ph)  ph.classList.remove('hidden');
 };
 
-/* ── Discord copy ────────────────────────────────────────────── */
 function copyDiscord() {
     navigator.clipboard.writeText(SITE.discord).then(() => {
         const el = document.getElementById('discord-text');
         if (el) { const o = el.textContent; el.textContent = 'COPIED!'; setTimeout(() => { el.textContent = o; }, 2000); }
-        showToast("Discord copied! Don't be a stranger.");
+        showToast('Discord copied.');
     });
 }
 
-/* ── System override ─────────────────────────────────────────── */
 let _override = false;
 function toggleOverride() {
     _override = !_override;
@@ -437,31 +423,30 @@ function toggleOverride() {
     const badge = document.querySelector('.hero-badge');
 
     if (_override) {
-        root.style.setProperty('--accent',  '#FF4455');
-        root.style.setProperty('--accent2', '#FF6677');
-        root.style.setProperty('--glow',    'rgba(255,68,85,0.28)');
+        root.style.setProperty('--accent',  '#5090D0');
+        root.style.setProperty('--accent2', '#70AAEE');
+        root.style.setProperty('--glow',    'rgba(80,144,208,0.28)');
         document.body.style.animation = 'shake 0.45s ease both';
         setTimeout(() => { document.body.style.animation = ''; }, 460);
-        if (st)    st.textContent = 'SYSTEM CRITICAL';
-        if (dot)   dot.classList.replace('bg-green-500', 'bg-red-500');
-        if (ping)  ping.classList.replace('bg-green-500', 'bg-red-500');
+        if (st)    st.textContent = 'REPUBLIC OVERRIDE';
+        if (dot)   dot.classList.replace('bg-green-500', 'bg-blue-500');
+        if (ping)  ping.classList.replace('bg-green-500', 'bg-blue-500');
         if (badge) badge.classList.add('critical');
         playClick(140, 0.5);
-        showToast('SYSTEM CRITICAL — sensei please help', 'var(--red)');
+        showToast('REPUBLIC OVERRIDE — Handler One is watching.', '#5090D0');
         unlockAch('chaos_agent');
     } else {
-        root.style.setProperty('--accent',  '#1AA8FF');
-        root.style.setProperty('--accent2', '#5CCFFF');
-        root.style.setProperty('--glow',    'rgba(26,168,255,0.28)');
+        root.style.setProperty('--accent',  '#C8192A');
+        root.style.setProperty('--accent2', '#E8364A');
+        root.style.setProperty('--glow',    'rgba(200,25,42,0.30)');
         if (st)    st.textContent = 'System Online';
-        if (dot)   dot.classList.replace('bg-red-500', 'bg-green-500');
-        if (ping)  ping.classList.replace('bg-red-500', 'bg-green-500');
+        if (dot)   dot.classList.replace('bg-blue-500', 'bg-green-500');
+        if (ping)  ping.classList.replace('bg-blue-500', 'bg-green-500');
         if (badge) badge.classList.remove('critical');
         playClick(1200, 0.25);
     }
 }
 
-/* ── Uptime counter ──────────────────────────────────────────── */
 function initUptime() {
     const el = document.getElementById('uptime');
     if (!el) return;
@@ -476,16 +461,15 @@ function initUptime() {
     tick(); setInterval(tick, 1000);
 }
 
-/* ── Visitor counter ─────────────────────────────────────────── */
 function initVisitorCounter() {
     const el  = document.getElementById('visitor-count');
-    const pfp = localStorage.getItem('schale_pfp');
+    const pfp = localStorage.getItem('wds_pfp');
     if (pfp) _applyPfp(pfp);
 
-    const cached = localStorage.getItem('schale_count');
+    const cached = localStorage.getItem('wds_count');
     if (cached && el) el.textContent = parseInt(cached).toLocaleString();
 
-    const key = 'schale_hit_' + new Date().toISOString().slice(0, 10);
+    const key = 'wds_hit_' + new Date().toISOString().slice(0, 10);
     const hit = sessionStorage.getItem(key);
     const url = hit
         ? 'https://api.counterapi.dev/v1/waterqaks-team/schale-visits'
@@ -496,22 +480,21 @@ function initVisitorCounter() {
         .then(d => {
             if (d?.value) {
                 if (el) el.textContent = parseInt(d.value).toLocaleString();
-                localStorage.setItem('schale_count', d.value);
+                localStorage.setItem('wds_count', d.value);
                 if (!hit) sessionStorage.setItem(key, '1');
             }
         })
         .catch(() => { if (!cached && el) el.textContent = '--'; });
 }
 
-/* ── Toast notifications ─────────────────────────────────────── */
 let _toastN = 0;
 function showToast(msg, color) {
     if (_toastN >= 3) return;
     _toastN++;
     const t = document.createElement('div');
     const c = color || 'var(--accent)';
-    t.style.cssText = `position:fixed;bottom:${84 + (_toastN - 1) * 76}px;right:22px;z-index:9998;background:rgba(5,9,26,0.97);border:1px solid rgba(255,255,255,0.07);border-left:3px solid ${c};color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;padding:11px 16px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7);max-width:300px;line-height:1.5;transform:translate3d(16px,0,0) scale(0.97);opacity:0;pointer-events:none;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.4s ease;will-change:transform,opacity;`;
-    t.innerHTML = `<div style="font-size:8px;color:${c};letter-spacing:.12em;margin-bottom:3px;opacity:.7;">SCHALE.DB</div><div>${msg}</div>`;
+    t.style.cssText = `position:fixed;bottom:${84 + (_toastN - 1) * 76}px;right:22px;z-index:9998;background:rgba(4,6,15,0.97);border:1px solid rgba(255,255,255,0.07);border-left:3px solid ${c};color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;padding:11px 16px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7);max-width:300px;line-height:1.5;transform:translate3d(16px,0,0) scale(0.97);opacity:0;pointer-events:none;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.4s ease;will-change:transform,opacity;`;
+    t.innerHTML = `<div style="font-size:8px;color:${c};letter-spacing:.12em;margin-bottom:3px;opacity:.7;">WATER.SYS</div><div>${msg}</div>`;
     document.body.appendChild(t);
     requestAnimationFrame(() => requestAnimationFrame(() => { t.style.transform = 'translate3d(0,0,0) scale(1)'; t.style.opacity = '1'; }));
     setTimeout(() => {
@@ -524,7 +507,7 @@ const FUNNY_TOASTS = [
     'Fixed a memory leak. Probably.', 'Bug squashed. It had a family.',
     'Null check added. Just in case.', 'DataStore saved. Pinky promise.',
     'Server TPS: 60. Briefly.', 'Deployed to prod. No tests. YOLO.',
-    'TODO written. Will never fix.', "Sensei, you've been here a while.",
+    'TODO written. Will never fix.', 'You have been here a while.',
     'Coffee consumed. Productivity +20%.', 'Anti-exploit updated. Take that.',
 ];
 function startToasts() {
@@ -536,7 +519,6 @@ function startToasts() {
     }, 4500);
 }
 
-/* ── Tooltip ─────────────────────────────────────────────────── */
 function initTooltips() {
     const tip = document.getElementById('tooltip');
     if (!tip) return;
@@ -556,7 +538,6 @@ function initTooltips() {
     }
 }
 
-/* ── Ripple ──────────────────────────────────────────────────── */
 function initRipple() {
     document.querySelectorAll('[data-ripple]').forEach(btn => {
         if (btn._rippleInit) return;
@@ -572,7 +553,6 @@ function initRipple() {
     });
 }
 
-/* ── Magnetic buttons ────────────────────────────────────────── */
 function initMagnetic() {
     document.querySelectorAll('[data-mag]').forEach(btn => {
         btn.addEventListener('mouseenter', () => { btn.style.transition = 'transform 0.1s'; }, { passive: true });
@@ -589,7 +569,6 @@ function initMagnetic() {
     });
 }
 
-/* ── Card spotlight ──────────────────────────────────────────── */
 function initCardSpotlight() {
     document.querySelectorAll('.card').forEach(c => {
         if (c._spotInit) return;
@@ -609,7 +588,6 @@ function initCardSpotlight() {
     });
 }
 
-/* ── Cursor trail ────────────────────────────────────────────── */
 function initCursorTrail() {
     if (window.matchMedia('(pointer:coarse)').matches) return;
     const N     = 10;
@@ -619,7 +597,7 @@ function initCursorTrail() {
         const sz = Math.max(1.5, 5 - i * 0.35);
         const al = Math.max(0, 0.4 - i * 0.04);
         const el = document.createElement('div');
-        el.style.cssText = `position:fixed;pointer-events:none;z-index:9999;border-radius:50%;will-change:transform;width:${sz}px;height:${sz}px;background:rgba(26,168,255,${al});top:0;left:0;`;
+        el.style.cssText = `position:fixed;pointer-events:none;z-index:9999;border-radius:50%;will-change:transform;width:${sz}px;height:${sz}px;background:rgba(200,25,42,${al});top:0;left:0;`;
         document.body.appendChild(el);
         trail.push({ el, x: -500, y: -500, half: sz * 0.5 });
     }
@@ -639,14 +617,12 @@ function initCursorTrail() {
     });
 }
 
-/* ── Mobile menu ─────────────────────────────────────────────── */
 function toggleMenu() {
     document.getElementById('mobile-menu')?.classList.toggle('open');
 }
 
-/* ── Projects ────────────────────────────────────────────────── */
 const COLOR_MAP = {
-    blue:   { strip: 'strip-blue',   text: '#1AA8FF' },
+    blue:   { strip: 'strip-blue',   text: '#C8192A' },
     gold:   { strip: 'strip-gold',   text: '#FFB83A' },
     purple: { strip: 'strip-purple', text: '#a855f7' },
     gray:   { strip: 'strip-gray',   text: '#8898bb' },
@@ -687,7 +663,7 @@ function renderProjects() {
             : '';
 
         const visitsBadge = p.rbxVisits != null
-            ? `<span style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.82);border:1px solid rgba(26,168,255,0.25);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--accent);display:flex;align-items:center;gap:4px">
+            ? `<span style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.82);border:1px solid rgba(200,25,42,0.25);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--accent);display:flex;align-items:center;gap:4px">
                  <svg style="width:9px;height:9px;opacity:.7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                  ${window.fmtRbxNum ? window.fmtRbxNum(p.rbxVisits) : p.rbxVisits.toLocaleString()}
                </span>`
@@ -733,7 +709,6 @@ function renderProjects() {
     initTooltips();
 }
 
-/* ── Skills rendering ────────────────────────────────────────── */
 function renderSkills() {
     const main = document.getElementById('skills-main');
     const fun  = document.getElementById('skills-fun');
@@ -756,7 +731,6 @@ function renderSkills() {
     fun.innerHTML  = SITE.funSkills.map(s => renderCard(s, true)).join('');
 }
 
-/* ── Timeline rendering ──────────────────────────────────────── */
 function renderTimeline() {
     const wrap = document.getElementById('timeline');
     if (!wrap) return;
@@ -767,7 +741,7 @@ function renderTimeline() {
             ${t.accent ? '<div class="strip strip-blue"></div>' : ''}
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-2 pt-1 gap-1">
                 <h3 class="display font-black text-white" style="font-size:1.25rem">${t.title}</h3>
-                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${t.accent ? 'var(--accent)' : 'var(--dim)'};${t.accent ? 'background:rgba(26,168,255,0.08);border:1px solid rgba(26,168,255,0.2);' : ''}padding:3px 10px;border-radius:4px;white-space:nowrap">${t.period}</span>
+                <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${t.accent ? 'var(--accent)' : 'var(--dim)'};${t.accent ? 'background:rgba(200,25,42,0.08);border:1px solid rgba(200,25,42,0.2);' : ''}padding:3px 10px;border-radius:4px;white-space:nowrap">${t.period}</span>
             </div>
             <p style="color:var(--dim);font-size:13px;line-height:1.6;margin-bottom:${t.tags?.length ? '12px' : '0'}">${t.desc}</p>
             ${t.tags?.length ? `<div class="flex flex-wrap gap-2">${t.tags.map(tag => `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:3px 9px;border-radius:4px">${tag}</span>`).join('')}</div>` : ''}
@@ -775,7 +749,6 @@ function renderTimeline() {
     </div>`).join('');
 }
 
-/* ── Code vault ──────────────────────────────────────────────── */
 function buildTabs() {
     const tabs = document.getElementById('code-tabs');
     if (!tabs) return;
@@ -798,13 +771,12 @@ function copyCode() {
     const code = document.getElementById('code-body');
     if (!code) return;
     navigator.clipboard.writeText(code.textContent).then(() => {
-        showToast('Code copied to clipboard!', 'var(--green)');
+        showToast('Code copied to clipboard.', 'var(--green)');
         const w = document.querySelector('.code-win');
-        if (w) { w.style.borderColor = '#00ff88'; setTimeout(() => { w.style.borderColor = ''; }, 300); }
+        if (w) { w.style.borderColor = 'var(--accent)'; setTimeout(() => { w.style.borderColor = ''; }, 300); }
     });
 }
 
-/* ── Estimator ───────────────────────────────────────────────── */
 let _basePrice = 2500;
 
 function selectService(base, el) {
@@ -844,8 +816,7 @@ function calcBudget() {
     if (sp) sp.textContent = cur !== 'USD' ? `≈ $${Math.ceil(total * 0.0035)} USD` : `≈ ${Math.ceil(total).toLocaleString()} R$`;
 }
 
-/* ── Reviews ─────────────────────────────────────────────────── */
-const REVIEWS_KEY = 'schale_reviews_v4';
+const REVIEWS_KEY = 'wds_reviews_v1';
 let _starRating = 5;
 
 function _getReviews() { try { return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]'); } catch { return []; } }
@@ -874,7 +845,7 @@ function renderReviews() {
         <div style="padding:20px;padding-top:24px">
             <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="flex items-center gap-3">
-                    <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,168,0,0.1);border:1px solid rgba(255,168,0,0.3);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:900;font-size:16px;color:var(--gold);flex-shrink:0">${r.name.charAt(0).toUpperCase()}</div>
+                    <div style="width:38px;height:38px;border-radius:50%;background:rgba(200,25,42,0.1);border:1px solid rgba(200,25,42,0.3);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:900;font-size:16px;color:var(--accent);flex-shrink:0">${r.name.charAt(0).toUpperCase()}</div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <span style="font-weight:700;font-size:13px;color:#fff">${r.name}</span>
@@ -933,7 +904,7 @@ function initReviewForm() {
         localStorage.setItem(REVIEWS_KEY, JSON.stringify(stored));
         renderReviews();
         closeReviewModal();
-        showToast('📝 Field report submitted! Thanks, operative.', 'var(--gold)');
+        showToast('Field report submitted. Thanks.', 'var(--gold)');
         unlockAch('reviewer');
         playClick(1200, 0.3);
     });
@@ -944,34 +915,33 @@ window.adminClearReviews = function () {
     renderReviews();
 };
 
-/* ── Achievements ────────────────────────────────────────────── */
 const ACHS = {
-    first_visit:    { icon: '🔭', title: 'FIRST CONTACT',  desc: 'Opened the portfolio. Bold move.' },
+    first_visit:    { icon: '🔭', title: 'FIRST CONTACT',  desc: 'Opened the portfolio.' },
     cli_power:      { icon: '💻', title: 'POWER USER',     desc: 'Used the terminal 5+ times.' },
     coffee_enjoyer: { icon: '☕', title: 'COFFEE ENJOYER', desc: 'Typed coffee in the terminal.' },
-    no_life:        { icon: '🏆', title: 'NO LIFE',        desc: 'Clicked the logo exactly 7 times.' },
-    linguist:       { icon: '🌐', title: 'LINGUIST',       desc: 'Switched the site language.' },
+    no_life:        { icon: '🏆', title: 'NO LIFE',        desc: 'Clicked the logo 7 times.' },
+    linguist:       { icon: '🌐', title: 'LINGUIST',       desc: 'Switched site language.' },
     night_owl:      { icon: '🌙', title: 'NIGHT OWL',      desc: 'Visiting between midnight and 5am.' },
     reviewer:       { icon: '📝', title: 'OPERATIVE',      desc: 'Submitted a field report.' },
-    chaos_agent:    { icon: '🚨', title: 'CHAOS AGENT',    desc: 'Triggered the system override.' },
+    chaos_agent:    { icon: '🚨', title: 'REPUBLIC SPY',   desc: 'Triggered the Republic override.' },
     konami:         { icon: '🎮', title: 'GAMER',          desc: 'Entered the Konami code.' },
     hacker:         { icon: '🖤', title: 'HACKER',         desc: 'Typed "hack" in the terminal.' },
     overdrive:      { icon: '🔥', title: 'OVERDRIVE',      desc: 'Mouse speed exceeded limit.' },
-    idle_sensei:    { icon: '😴', title: 'IDLE SENSEI',    desc: 'Went AFK for over a minute.' },
+    idle_sensei:    { icon: '😴', title: 'IDLE',           desc: 'Went AFK for over a minute.' },
 };
 
-let _unlocked = JSON.parse(localStorage.getItem('schale_ach') || '{}');
+let _unlocked = JSON.parse(localStorage.getItem('wds_ach') || '{}');
 
 function unlockAch(id) {
     if (_unlocked[id] || !ACHS[id]) return;
     _unlocked[id] = Date.now();
-    localStorage.setItem('schale_ach', JSON.stringify(_unlocked));
+    localStorage.setItem('wds_ach', JSON.stringify(_unlocked));
     _refreshAchPanel();
 
     const a  = ACHS[id];
     const n  = Object.keys(_unlocked).length;
     const card = document.createElement('div');
-    card.style.cssText = `position:fixed;bottom:${88 + (n % 3) * 88}px;left:22px;z-index:9997;width:280px;background:rgba(5,9,26,.98);border:1px solid rgba(255,184,58,.35);border-left:3px solid var(--gold);padding:11px 15px;border-radius:10px;box-shadow:0 8px 36px rgba(0,0,0,.7);transform:translateX(-320px);opacity:0;pointer-events:none;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
+    card.style.cssText = `position:fixed;bottom:${88 + (n % 3) * 88}px;left:22px;z-index:9997;width:280px;background:rgba(4,6,15,.98);border:1px solid rgba(255,184,58,.35);border-left:3px solid var(--gold);padding:11px 15px;border-radius:10px;box-shadow:0 8px 36px rgba(0,0,0,.7);transform:translateX(-320px);opacity:0;pointer-events:none;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
     card.innerHTML = `<div style="font-size:7.5px;letter-spacing:.14em;color:var(--gold);margin-bottom:5px">★ ACHIEVEMENT UNLOCKED</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:24px">${a.icon}</span><div><div style="color:#fff;font-weight:900;font-size:10.5px;letter-spacing:.06em">${a.title}</div><div style="color:var(--dim);font-size:8.5px;margin-top:2px">${a.desc}</div></div></div>`;
     document.body.appendChild(card);
     requestAnimationFrame(() => requestAnimationFrame(() => { card.style.transform = 'translateX(0)'; card.style.opacity = '1'; }));
@@ -1052,7 +1022,7 @@ function initAchHooks() {
     let ki = 0;
     const kc = SITE.konami.map(k => k.toLowerCase());
     document.addEventListener('keydown', e => {
-        if (e.key.toLowerCase() === kc[ki]) { ki++; if (ki === kc.length) { ki = 0; unlockAch('konami'); showToast('KONAMI CODE — chaos mode unlocked', 'var(--red)'); toggleOverride(); } }
+        if (e.key.toLowerCase() === kc[ki]) { ki++; if (ki === kc.length) { ki = 0; unlockAch('konami'); showToast('KONAMI CODE — Republic override activated.', 'var(--red)'); toggleOverride(); } }
         else ki = 0;
     });
 
@@ -1071,21 +1041,20 @@ function initAchHooks() {
     ['mousemove', 'keydown', 'click'].forEach(ev => window.addEventListener(ev, resetIdle, { passive: true }));
     setInterval(() => {
         const idle = Date.now() - idleT;
-        if (idle > 30000 && !warned30) { warned30 = true; showToast('👀 Sensei… still there?', 'var(--dim)'); }
+        if (idle > 30000 && !warned30) { warned30 = true; showToast('Still there?', 'var(--dim)'); }
         if (idle > 60000 && !warned60) { warned60 = true; unlockAch('idle_sensei'); }
     }, 6000);
 }
 
-/* ── Random events ───────────────────────────────────────────── */
 const TRANSMISSIONS = [
-    { from: 'ARONA',  pri: 'LOW',     msg: "Sensei, your coffee is getting cold again. This is a critical alert." },
-    { from: 'PLANA',  pri: 'NORMAL',  msg: "System integrity at 94.2%. The remaining 5.8% is vibes." },
-    { from: 'ARONA',  pri: 'HIGH',    msg: "Someone has been on this portfolio for several minutes. Are they hiring?" },
-    { from: 'SCHALE', pri: 'NORMAL',  msg: "Deployment status: optimal. Anomalies: 0 (officially)." },
-    { from: 'PLANA',  pri: 'WARNING', msg: "Memory leak detected. Logged. Promptly ignored. Moving on." },
-    { from: 'ARONA',  pri: 'LOW',     msg: "Water's commissions are still open. Tell a friend." },
-    { from: 'PLANA',  pri: 'NORMAL',  msg: "Null pointer exception suppressed. Bug renamed 'feature'. Filed: resolved." },
-    { from: 'ARONA',  pri: 'LOW',     msg: "It is late, Sensei. You should sleep. You won't. I know you." },
+    { from: 'SHIN',      pri: 'LOW',     msg: "...you're still here." },
+    { from: 'LENA',      pri: 'NORMAL',  msg: "Spearhead Squadron, this is Handler One. System integrity confirmed." },
+    { from: 'FREDERICA', pri: 'HIGH',    msg: "Don't you dare die, Nouzen. — Someone has been on this portfolio a while." },
+    { from: 'RAIDEN',    pri: 'NORMAL',  msg: "Memory leak: logged, ignored. Moving on." },
+    { from: 'LENA',      pri: 'WARNING', msg: "Legion signal detected on the perimeter. It's probably just a bug." },
+    { from: 'SHIN',      pri: 'LOW',     msg: "Water's commissions are open. Tell someone." },
+    { from: 'ANJU',      pri: 'NORMAL',  msg: "Null pointer exception suppressed. Renamed 'feature'. Filed: resolved." },
+    { from: 'KURENA',    pri: 'LOW',     msg: "It's late. You should sleep. You won't." },
 ];
 const PRI_COL = { LOW: 'var(--dim)', NORMAL: 'var(--accent)', HIGH: 'var(--gold)', WARNING: 'var(--red)' };
 
@@ -1095,8 +1064,8 @@ function triggerTransmission() {
     const id   = 'tx_' + Date.now();
     const card = document.createElement('div');
     card.id = id;
-    card.style.cssText = `position:fixed;bottom:84px;right:24px;z-index:9992;width:300px;background:rgba(5,9,26,.98);border:1px solid rgba(255,255,255,.07);border-top:2px solid ${c};border-radius:12px;overflow:hidden;box-shadow:0 16px 56px rgba(0,0,0,.8);transform:translateX(330px);opacity:0;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
-    card.innerHTML = `<div style="padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(26,168,255,.02);display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Rajdhani',sans-serif;font-weight:900;font-size:11px;letter-spacing:.1em;color:#fff">📡 TRANSMISSION</span><div style="display:flex;align-items:center;gap:5px"><span style="font-size:7px;padding:2px 6px;border-radius:3px;border:1px solid ${c};color:${c}">${t.pri}</span><button onclick="document.getElementById('${id}').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;transition:color .15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">×</button></div></div><div style="padding:13px"><div style="font-size:7.5px;letter-spacing:.1em;color:${c};margin-bottom:8px">FROM: ${t.from} // SCHALE.DB</div><p style="font-size:11px;color:var(--text);line-height:1.65;font-family:'Nunito',sans-serif;margin-bottom:10px">"${t.msg}"</p><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:7.5px;color:var(--muted)">${new Date().toLocaleTimeString()}</span><button onclick="document.getElementById('${id}').remove()" style="font-size:8.5px;font-weight:700;padding:4px 12px;border-radius:5px;cursor:pointer;background:${c};color:#000;border:none;font-family:'JetBrains Mono',monospace">ACK</button></div></div>`;
+    card.style.cssText = `position:fixed;bottom:84px;right:24px;z-index:9992;width:300px;background:rgba(4,6,15,.98);border:1px solid rgba(255,255,255,.07);border-top:2px solid ${c};border-radius:12px;overflow:hidden;box-shadow:0 16px 56px rgba(0,0,0,.8);transform:translateX(330px);opacity:0;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
+    card.innerHTML = `<div style="padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(200,25,42,.02);display:flex;align-items:center;justify-content:space-between"><span style="font-family:'Rajdhani',sans-serif;font-weight:900;font-size:11px;letter-spacing:.1em;color:#fff">📡 TRANSMISSION</span><div style="display:flex;align-items:center;gap:5px"><span style="font-size:7px;padding:2px 6px;border-radius:3px;border:1px solid ${c};color:${c}">${t.pri}</span><button onclick="document.getElementById('${id}').remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 2px;transition:color .15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">×</button></div></div><div style="padding:13px"><div style="font-size:7.5px;letter-spacing:.1em;color:${c};margin-bottom:8px">FROM: ${t.from} // SPEARHEAD</div><p style="font-size:11px;color:var(--text);line-height:1.65;font-family:'Nunito',sans-serif;margin-bottom:10px">"${t.msg}"</p><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:7.5px;color:var(--muted)">${new Date().toLocaleTimeString()}</span><button onclick="document.getElementById('${id}').remove()" style="font-size:8.5px;font-weight:700;padding:4px 12px;border-radius:5px;cursor:pointer;background:${c};color:#fff;border:none;font-family:'JetBrains Mono',monospace">ACK</button></div></div>`;
     document.body.appendChild(card);
     requestAnimationFrame(() => requestAnimationFrame(() => { card.style.transform = 'translateX(0)'; card.style.opacity = '1'; }));
     setTimeout(() => { card.style.transform = 'translateX(330px)'; card.style.opacity = '0'; setTimeout(() => { document.getElementById(id)?.remove(); }, 440); }, 9000);
@@ -1109,20 +1078,20 @@ function triggerAnomaly() {
     document.body.style.filter = 'hue-rotate(90deg) saturate(2)';
     setTimeout(() => { document.body.style.filter = ''; }, 80);
     const flash = document.createElement('div');
-    flash.style.cssText = 'position:fixed;inset:0;z-index:99990;pointer-events:none;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 50%,rgba(255,68,85,.1) 100%);opacity:1;transition:opacity .6s';
+    flash.style.cssText = 'position:fixed;inset:0;z-index:99990;pointer-events:none;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 50%,rgba(200,25,42,.1) 100%);opacity:1;transition:opacity .6s';
     document.body.appendChild(flash);
     requestAnimationFrame(() => requestAnimationFrame(() => { flash.style.opacity = '0'; setTimeout(() => flash.remove(), 700); }));
-    showToast('⚠ ANOMALY DETECTED — source: unknown', 'var(--red)');
+    showToast('⚠ LEGION SIGNAL DETECTED', 'var(--red)');
     playClick(80, 0.45);
 }
 
-const OPERATIVES = ['CryptoSage_88', 'Yuki_Phantom', 'NullPtr_Dev', 'ByteWitch_42', 'GhostScripter', 'DataVoid_7', 'NekoBytes_99', 'w4ter_fan_lol'];
+const OPERATIVES = ['Undertaker', 'Handler_One', 'Laughing_Fox', 'Snow_Witch', 'Gunslinger', 'Wehrwolf', 'Reaper_86', 'w4ter_fan'];
 function triggerOperative() { showToast(`👤 <b>${OPERATIVES[Math.floor(Math.random() * OPERATIVES.length)]}</b> connected.`, 'var(--green)'); playClick(880, 0.06); }
 
 function triggerSyslog() {
     const out = document.getElementById('cli-output');
     if (!out) return;
-    const msgs = ['Routine integrity check: <span style="color:#00ff88">PASSED</span>', 'Garbage collection: <span style="color:var(--accent)">847ms</span>', 'Coffee.reserve: <span style="color:var(--gold)">CRITICAL LOW</span>', 'DataStore heartbeat: <span style="color:#00ff88">NOMINAL</span>', 'Sleep.schedule: <span style="color:var(--red)">UNDEFINED</span>'];
+    const msgs = ['Integrity check: <span style="color:#00ff88">PASSED</span>', 'Garbage collection: <span style="color:var(--accent)">847ms</span>', 'Coffee.reserve: <span style="color:var(--gold)">CRITICAL LOW</span>', 'Juggernaut heartbeat: <span style="color:#00ff88">NOMINAL</span>', 'Sleep.schedule: <span style="color:var(--red)">UNDEFINED</span>'];
     const d = document.createElement('div');
     d.style.cssText = 'margin-bottom:3px;font-size:9px;';
     d.innerHTML = `<span style="color:var(--muted)">[SYS]</span> <span style="color:#2e3d5a">${msgs[Math.floor(Math.random() * msgs.length)]}</span>`;
@@ -1157,7 +1126,6 @@ function initRandomEvents() {
     }, 20000 + Math.random() * 15000);
 }
 
-/* ── CLI Terminal ────────────────────────────────────────────── */
 function initCLI() {
     const inp = document.getElementById('cli-input');
     const out = document.getElementById('cli-output');
@@ -1171,39 +1139,39 @@ function initCLI() {
 
     const cmds = {
         help:      () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about skills projects code estimator reviews contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
-        about:     () => go('home',      'Navigating to home...'),
-        skills:    () => go('skills',    'Loading system specs...'),
+        about:     () => go('home',      'Navigating...'),
+        skills:    () => go('skills',    'Loading specs...'),
         projects:  () => go('projects',  'Accessing mission reports...'),
         code:      () => go('code',      'Opening code vault...'),
         estimator: () => go('estimator', 'Loading estimator...'),
         reviews:   () => go('reviews',   'Loading field reports...'),
-        contact:   () => go('contact',   'Opening MomoTalk...'),
+        contact:   () => go('contact',   'Opening comms...'),
         date:      () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
-        whoami:    () => `<span style="${D}">Guest · Level 1 · Node: Kivotos-Alpha · IP: 127.0.0.1</span>`,
-        status:    () => _override ? `<span style="${R}">CRITICAL — Override active.</span>` : `<span style="${GN}">✓ NOMINAL — All nodes green.</span>`,
-        neofetch:  () => [`<span style="${B}">WATER</span>@<span style="${B}">kivotos</span>`, '  OS: KivotOS x64 · Host: SCHALE.DB v5', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
+        whoami:    () => `<span style="${D}">Guest · Level 1 · Node: Spearhead-Alpha · IP: 127.0.0.1</span>`,
+        status:    () => _override ? `<span style="${B}">REPUBLIC OVERRIDE active.</span>` : `<span style="${GN}">✓ NOMINAL — All nodes green.</span>`,
+        neofetch:  () => [`<span style="${B}">WATER</span>@<span style="${B}">spearhead</span>`, '  OS: EightyOS x64 · Host: WATER.SYS v1', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', '  Legion: <span style="color:var(--red)">ACTIVE</span>', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
         coffee:    () => [`<span style="${G}">Brewing...</span>`, `<span style="${D}">Caffeine: 9000mg. Bugs fixed: still 0.</span>`].join('<br>'),
         uwu:       () => [`<span style="${P}">UwU what's this?? a stwange tewminal??</span>`, `<span style="${M}">[ this was a mistake. deeply sorry. ]</span>`].join('<br>'),
-        sudo:      () => `<span style="${R}">Permission denied. Incident reported. (it wasn't)</span>`,
-        hack:      () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing mainframe... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
+        sudo:      () => `<span style="${R}">Permission denied. Reported to Handler One.</span>`,
+        hack:      () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing Legion core... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
         clear:     () => { out.innerHTML = ''; return null; },
-        ls:        () => `<span style="${D}">home/ about/ skills/ history/ code/ projects/ estimator/ reviews/ contact/ secret_bugs/ TODO_never_fix/</span>`,
-        ping:      () => `<span style="${GN}">PONG — 1ms (it's localhost, obviously)</span>`,
-        'git blame':   () => `<span style="${D}">git blame: Water (100% of commits, 100% of bugs)</span>`,
-        'git push':    () => `<span style="${R}">remote: Permission denied (this isn't your repo)</span>`,
-        'touch grass': () => `<span style="${GN}">✓ Grass touched. Achievement unlocked. Rare event.</span>`,
-        vim:           () => `<span style="${D}">I know how to exit vim. I choose not to.</span>`,
-        exit:          () => `<span style="${D}">lol no</span>`,
-        'npm install': () => `<span style="${D}">added 2,847 packages. 3 vulnerabilities. node_modules: 850MB.</span>`,
-        'cat readme.md': () => `<span style="${D}">README: "portfolio built at 2am. please hire."</span>`,
+        ls:        () => `<span style="${D}">home/ about/ skills/ history/ code/ projects/ estimator/ reviews/ contact/ classified/ TODO_never_fix/</span>`,
+        ping:      () => `<span style="${GN}">PONG — 1ms (localhost, obviously)</span>`,
+        'git blame':     () => `<span style="${D}">git blame: Water (100% of commits, 100% of bugs)</span>`,
+        'git push':      () => `<span style="${R}">remote: Permission denied.</span>`,
+        'touch grass':   () => `<span style="${GN}">✓ Grass touched. Rare event.</span>`,
+        vim:             () => `<span style="${D}">I know how to exit vim. I choose not to.</span>`,
+        exit:            () => `<span style="${D}">lol no</span>`,
+        'npm install':   () => `<span style="${D}">added 2,847 packages. 3 vulnerabilities. node_modules: 850MB.</span>`,
+        'cat readme.md': () => `<span style="${D}">README: "built at 2am. please hire."</span>`,
         'reviews clear': () => { const p = prompt('Admin PIN:'); if (p !== SITE.adminPin) return `<span style="${R}">Access denied.</span>`; adminClearReviews(); return `<span style="${GN}">✓ User reviews cleared.</span>`; },
         'pfp reset':     () => { const p = prompt('Admin PIN:'); if (p !== SITE.adminPin) return `<span style="${R}">Access denied.</span>`; resetPfp(); return `<span style="${GN}">✓ Profile picture reset.</span>`; },
     };
 
     const SASSY = [
         c => `Command not found: "${c}". Type "help".`,
-        c => `bash: ${c}: not found. skill issue detected.`,
-        c => `"${c}" — never heard of it. have you tried turning it off and on again?`,
+        c => `bash: ${c}: not found. skill issue.`,
+        c => `"${c}" — never heard of it.`,
     ];
 
     const allKeys = Object.keys(cmds);
@@ -1216,7 +1184,7 @@ function initCLI() {
         const raw = inp.value.trim(), cmd = raw.toLowerCase();
         if (!cmd) return;
         playClick(1200, 0.04);
-        out.innerHTML += `<div style="margin-bottom:2px"><span style="${B}">visitor@schale:~$</span> <span style="color:#7080a0">${raw}</span></div>`;
+        out.innerHTML += `<div style="margin-bottom:2px"><span style="${B}">guest@spearhead:~$</span> <span style="color:#7080a0">${raw}</span></div>`;
         const h = cmds[cmd];
         if (h !== undefined) { const res = typeof h === 'function' ? h() : h; if (res) out.innerHTML += `<div style="margin-bottom:5px">${res}</div>`; }
         else { const fn = SASSY[Math.floor(Math.random() * SASSY.length)]; out.innerHTML += `<div style="color:var(--red);margin-bottom:5px">${fn(cmd)}</div>`; }
@@ -1224,7 +1192,6 @@ function initCLI() {
     });
 }
 
-/* ── Logo easter egg ─────────────────────────────────────────── */
 function initLogoEgg() {
     const logo = document.querySelector('[data-logo-egg]');
     if (!logo) return;
@@ -1233,38 +1200,35 @@ function initLogoEgg() {
         n++; clearTimeout(t);
         t = setTimeout(() => { n = 0; }, 2200);
         if (n >= 7) {
-            n = 0; showToast('Logo clicked 7× — Achievement: "No Life"'); playClick(440, 0.5);
-            const cols = ['#FF4455', '#FFB83A', '#2EE89A', '#1AA8FF', '#a855f7'];
+            n = 0; showToast('Logo clicked 7× — Achievement unlocked.'); playClick(440, 0.5);
+            const cols = ['#C8192A', '#FFB83A', '#2EE89A', '#5090D0', '#a855f7'];
             let ci = 0;
             const iv = setInterval(() => {
                 document.documentElement.style.setProperty('--accent', cols[ci++ % cols.length]);
                 if (ci > 14) {
                     clearInterval(iv);
-                    document.documentElement.style.setProperty('--accent',  '#1AA8FF');
-                    document.documentElement.style.setProperty('--accent2', '#5CCFFF');
-                    document.documentElement.style.setProperty('--glow',    'rgba(26,168,255,0.28)');
+                    document.documentElement.style.setProperty('--accent',  '#C8192A');
+                    document.documentElement.style.setProperty('--accent2', '#E8364A');
+                    document.documentElement.style.setProperty('--glow',    'rgba(200,25,42,0.30)');
                 }
             }, 100);
         }
     });
 }
 
-/* ── Mobile menu links ───────────────────────────────────────── */
 function initMobileLinks() {
     document.querySelectorAll('#mobile-menu a').forEach(a => {
         a.addEventListener('click', () => { document.getElementById('mobile-menu')?.classList.remove('open'); });
     });
 }
 
-/* ── Console art ─────────────────────────────────────────────── */
 (function () {
     setTimeout(() => console.log(
-        '%c\n  SCHALE.DB — WATER PORTFOLIO v5\n  Hey, devtools lurker. Respect.\n  Bug count: 0 (official lie)\n  Try CLI: coffee · hack · neofetch\n',
-        'color:#1AA8FF;font-family:monospace;font-size:11px;'
+        '%c\n  WATER DATABASE SYSTEM v1\n  SPEARHEAD SQUADRON — CLASSIFIED\n  Bug count: 0 (official lie)\n  Try CLI: coffee · hack · neofetch\n',
+        'color:#C8192A;font-family:monospace;font-size:11px;'
     ), 1200);
 })();
 
-/* ── Init ────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
     initVisitorCounter();
     runBoot();
@@ -1303,7 +1267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const firstFilter = document.querySelector('.filter-btn');
     if (firstFilter) firstFilter.classList.add('active');
 
-    setTimeout(() => showToast('Welcome, Sensei. Try the terminal.'), 3500);
+    setTimeout(() => showToast('Welcome. Try the terminal.'), 3500);
 
     ROBLOX.init();
 });
