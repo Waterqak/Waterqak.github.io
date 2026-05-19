@@ -6,7 +6,7 @@ const SITE = {
     roblox:  "https://www.roblox.com/users/2878666652/profile",
 
     bgm:    "assets/music/theme.mp3",
-    volume: 0.5,
+    volume: 1.5,
 
     profilePin: "water2025",
     adminPin:   "water2025",
