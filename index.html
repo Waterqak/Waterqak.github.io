@@ -63,25 +63,6 @@ tailwind.config = {
 <div class="bg-mesh"></div>
 <canvas id="particles-canvas"></canvas>
 
-<div id="maintenance-notice" class="fixed bottom-6 right-6 z-[100] p-4 rounded-xl border max-w-sm shadow-2xl transition-all duration-300"
-     style="background:rgba(15, 5, 5, 0.9); border-color:rgba(200, 25, 42, 0.4); backdrop-filter:blur(8px);">
-  <div class="flex items-start gap-3">
-    <i data-lucide="alert-triangle" style="width:20px;height:20px;color:var(--accent);flex-shrink:0;margin-top:2px;"></i>
-    <div>
-      <h3 class="display font-bold text-white mb-1" style="font-size:14px;letter-spacing:0.05em;">
-        SYSTEM <span style="color:var(--accent)">REWORK</span> IN PROGRESS
-      </h3>
-      <p class="mono" style="font-size:10.5px;color:var(--dim);line-height:1.6;">
-        Right now the portfolio code is being reworked. Please only read the details about me and my past work. Most of the stuff right now isn't working correctly.
-      </p>
-    </div>
-    <button onclick="document.getElementById('maintenance-notice').style.opacity='0'; setTimeout(() => document.getElementById('maintenance-notice').remove(), 300);" 
-            style="background:none;border:none;cursor:pointer;padding:0;color:var(--muted);">
-      <i data-lucide="x" style="width:14px;height:14px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'"></i>
-    </button>
-  </div>
-</div>
-
 <div class="music-pill" onclick="toggleMute()" data-tip="Toggle music">
   <div class="live-dot"></div>
   <div class="flex flex-col leading-tight">
@@ -109,6 +90,25 @@ tailwind.config = {
 </div>
 
 <div id="nav-dots"></div>
+
+ <div id="maintenance-notice" class="fixed bottom-6 right-6 z-[100] p-4 rounded-xl border max-w-sm shadow-2xl transition-all duration-300"
+     style="background:rgba(15, 5, 5, 0.9); border-color:rgba(200, 25, 42, 0.4); backdrop-filter:blur(8px);">
+  <div class="flex items-start gap-3">
+    <i data-lucide="alert-triangle" style="width:20px;height:20px;color:var(--accent);flex-shrink:0;margin-top:2px;"></i>
+    <div>
+      <h3 class="display font-bold text-white mb-1" style="font-size:14px;letter-spacing:0.05em;">
+        SYSTEM <span style="color:var(--accent)">REWORK</span> IN PROGRESS
+      </h3>
+      <p class="mono" style="font-size:10.5px;color:var(--dim);line-height:1.6;">
+        Right now the portfolio code is being reworked. Please only read the details about me and my past work. Most of the stuff right now isn't working correctly.
+      </p>
+    </div>
+    <button onclick="document.getElementById('maintenance-notice').style.opacity='0'; setTimeout(() => document.getElementById('maintenance-notice').remove(), 300);" 
+            style="background:none;border:none;cursor:pointer;padding:0;color:var(--muted);">
+      <i data-lucide="x" style="width:14px;height:14px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'"></i>
+    </button>
+  </div>
+</div> 
 
 <!-- ══ NAVIGATION ═══════════════════════════════════════════════ -->
 <nav>
