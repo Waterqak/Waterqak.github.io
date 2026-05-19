@@ -236,7 +236,7 @@ function startExperience() {
         document.body.style.transition = 'opacity 0.6s ease';
         requestAnimationFrame(() => { document.body.style.opacity = '1'; });
         const bgm = document.getElementById('bgm');
-        if (bgm && SITE.bgm) { bgm.src = SITE.bgm; bgm.volume = SITE.volume || 0.15; bgm.play().catch(() => {}); }
+        if (bgm && SITE.bgm) { bgm.src = SITE.bgm; bgm.volume = SITE.volume || 1.5; bgm.play().catch(() => {}); }
         setTimeout(() => _onEnter('home'), 400);
     }, 470);
 }
