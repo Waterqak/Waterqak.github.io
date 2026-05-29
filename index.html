@@ -46,7 +46,7 @@ tailwind.config = {
     <button id="boot-btn" onclick="startExperience()" data-ripple
             class="btn btn-primary mt-8 mono"
             style="opacity:0;transform:translateY(14px);transition:all 0.6s ease;font-size:11px;letter-spacing:0.15em;padding:12px 40px">
-      INITIATE_TACTICAL_UPLINK
+      INITIATE
     </button>
   </div>
   <div class="absolute bottom-8 mono" style="font-size:8px;letter-spacing:0.2em;color:var(--dim)">
@@ -350,6 +350,12 @@ tailwind.config = {
         </div>
       </div>
 
+      <!-- Borderless Background Floating Shin Nouzen Hologram -->
+      <div class="absolute bottom-0 right-4 w-[400px] h-[680px] pointer-events-none opacity-25 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#04060F] via-transparent to-transparent z-10" style="height: 35%; bottom: 0; position: absolute; left: 0; right: 0;"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#04060F] via-transparent to-transparent z-10" style="width: 25%; left: 0; position: absolute; top: 0; bottom: 0;"></div>
+        <img src="assets/images/Shin.png" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_30px_rgba(200,25,42,0.2)]" style="animation: floatHolo 9s ease-in-out infinite;">
+      </div>
 
       <!-- ══ ROBLOX LIVE FEED ════════════════════════════════ -->
       <div class="mt-20" id="rbx-section">
@@ -465,6 +471,13 @@ tailwind.config = {
       <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
     </div>
     
+    <!-- Floating Lena Decorative Background/Side Graphic -->
+    <div class="absolute bottom-0 right-0 w-[380px] h-[640px] pointer-events-none opacity-15 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#04060F] via-transparent to-transparent z-10" style="height: 35%; bottom: 0; position: absolute; left: 0; right: 0;"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#04060F] via-transparent to-transparent z-10" style="width: 25%; left: 0; position: absolute; top: 0; bottom: 0;"></div>
+      <img src="assets/images/Lena.jpg" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_20px_rgba(200,25,42,0.15)]" style="animation: floatHolo 8s ease-in-out infinite;">
+    </div>
+  </div>
 
   <!-- ══ 04 HISTORY ═══════════════════════════════════════════ -->
   <div id="pg-history" class="page">
