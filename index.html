@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Water — Roblox Systems Engineer. Backend specialist. Bug exterminator.">
+<title>Water.SYS | Database System</title>
+<link rel="icon" type="image/png" href="favicon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+
+<script>
+tailwind.config = {
+  darkMode:'class',
+  theme:{ extend:{
+    fontFamily:{ sans:['Nunito','sans-serif'], mono:['JetBrains Mono','monospace'], display:['Rajdhani','sans-serif'] },
+    colors:{ accent:'var(--accent)', gold:'var(--gold)', momo:'#C8D4EC' }
+  }}
+};
+</script>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/rbx-hologram.css">
+</head>
+<body>
+
+<!-- ══ BOOT SCREEN ══════════════════════════════════════════════ -->
+<div id="boot">
+  <div class="relative z-10 flex flex-col items-center">
+    <div class="w-16 h-16 rounded-lg flex items-center justify-center border mb-7 animate-pulse"
+         style="background:rgba(200,25,42,0.05);border-color:rgba(200,25,42,0.25);box-shadow:0 0 16px rgba(200,25,42,0.12)">
+      <i data-lucide="database" style="width:32px;height:32px;color:var(--accent)"></i>
+    </div>
+    <h1 class="display font-black text-white mb-1" style="font-size:2.2rem;letter-spacing:0.08em">
+      WATER<span style="color:var(--accent)">.SYS</span>
+    </h1>
+    <p class="mono mb-7" style="font-size:9px;letter-spacing:0.22em;color:var(--dim)">v1.0 // SPEARHEAD SQUADRON // EYES ONLY</p>
+
+    <div id="boot-log" class="flex flex-col gap-0.5" style="min-height:160px"></div>
+
+    <button id="boot-btn" onclick="startExperience()" data-ripple
+            class="btn btn-primary mt-8 mono"
+            style="opacity:0;transform:translateY(14px);transition:all 0.6s ease;font-size:11px;letter-spacing:0.15em;padding:12px 40px">
+      INITIATE_TACTICAL_UPLINK
+    </button>
+  </div>
+  <div class="absolute bottom-8 mono" style="font-size:8px;letter-spacing:0.2em;color:var(--dim)">
+    WATER SECURE DATABASE SYSTEM // SPEARHEAD SQUADRON // <span class="blink" style="color:var(--accent)">■</span>
+  </div>
+</div>
+
+<!-- ══ GLOBAL UI ════════════════════════════════════════════════ -->
+<audio id="bgm" loop></audio>
+<div id="scroll-bar"></div>
+<div id="section-bar" style="width:0%"></div>
+<div id="tooltip"></div>
+<div class="bg-noise"></div>
+<div class="bg-mesh"></div>
+<canvas id="particles-canvas"></canvas>
+
+
+<div class="music-pill" onclick="toggleMute()" data-tip="Toggle music">
+  <div class="live-dot"></div>
+  <div class="flex flex-col leading-tight">
+    <span class="mono" style="font-size:7px;letter-spacing:0.15em;color:var(--muted)">NOW PLAYING</span>
+    <span class="mono font-bold" style="font-size:9px;color:#fff">SPEARHEAD RADIO</span>
+  </div>
+  <i id="mute-icon" data-lucide="volume-2" style="width:13px;height:13px;color:var(--dim)"></i>
+</div>
+
+<div id="ach-btn">
+  <span style="font-size:17px">🏆</span>
+  <span id="ach-badge" class="mono" style="font-size:7px;color:var(--gold);font-weight:700">0/12</span>
+</div>
+<div id="ach-panel">
+  <div style="padding:12px 14px;border-bottom:1px solid rgba(255,184,58,0.1);background:rgba(255,184,58,0.04);flex-shrink:0">
+    <div class="flex justify-between items-center mb-2">
+      <span class="display font-black text-white" style="font-size:12px;letter-spacing:0.1em">ACHIEVEMENTS</span>
+      <span id="ach-pct" class="mono" style="font-size:8px;color:var(--gold)">0/12 · 0%</span>
+    </div>
+    <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+      <div id="ach-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffcc44);border-radius:99px;transition:width 0.5s ease;box-shadow:0 0 6px rgba(255,184,58,0.4)"></div>
+    </div>
+  </div>
+  <div id="ach-list" style="overflow-y:auto;padding:8px;flex:1"></div>
+</div>
+
+<div id="nav-dots"></div>
+
+<!-- ══ NAVIGATION ═══════════════════════════════════════════════ -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
+    <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
+         onclick="playClick(); navigateTo('home')" data-tip="WATER.SYS — click me 7 times">
+      <div class="p-2 rounded border transition-all duration-300 group-hover:bg-[color:var(--accent)]"
+           style="background:rgba(200,25,42,0.07);border-color:rgba(200,25,42,0.18)">
+        <i data-lucide="database" style="width:15px;height:15px;color:var(--accent)"></i>
+      </div>
+      <span class="display font-black text-white" style="font-size:1.15rem;letter-spacing:0.06em">
+        WATER<span style="color:var(--accent)">.SYS</span>
+      </span>
+    </div>
+
+    <div class="hidden md:flex items-center gap-7">
+      <a class="nav-link" data-section="home"      onclick="navigateTo('home');playClick()">Home</a>
+      <a class="nav-link" data-section="history"   onclick="navigateTo('history');playClick()">History</a>
+      <a class="nav-link" data-section="projects"  onclick="navigateTo('projects');playClick()">Projects</a>
+      <a class="nav-link" data-section="estimator" onclick="navigateTo('estimator');playClick()">Estimator</a>
+      <a class="nav-link" data-section="reviews"   onclick="navigateTo('reviews');playClick()">Reviews</a>
+    </div>
+
+    <div class="hidden md:flex items-center gap-3">
+      <button onclick="toggleLanguage()" class="mono font-bold"
+              style="font-size:10px;letter-spacing:0.12em;color:var(--accent);border:1px solid rgba(200,25,42,0.2);padding:6px 12px;border-radius:4px;background:transparent;cursor:pointer;transition:all .2s"
+              onmouseover="this.style.background='rgba(200,25,42,0.08)'" onmouseout="this.style.background='transparent'"
+              data-tip="Switch language / ภาษา">
+        <span id="lang-d">EN</span>
+      </button>
+      <button onclick="navigateTo('contact');playClick()" data-mag data-ripple class="btn btn-momo">
+        <i data-lucide="radio" style="width:13px;height:13px"></i>
+        TRANSMIT_SECURE
+      </button>
+    </div>
+
+    <button onclick="toggleMenu();playClick()" class="md:hidden p-2 rounded-lg border"
+            style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer">
+      <i data-lucide="menu" style="width:20px;height:20px;color:#fff"></i>
+    </button>
+  </div>
+</nav>
+
+<div id="mobile-menu">
+  <button onclick="toggleMenu();playClick()" class="absolute top-5 right-6" style="background:none;border:none;cursor:pointer">
+    <i data-lucide="x" style="width:26px;height:26px;color:var(--dim)"></i>
+  </button>
+  <div class="flex flex-col gap-5 mt-2">
+    <a data-section="home"      onclick="navigateTo('home');playClick()">HOME</a>
+    <a data-section="history"   onclick="navigateTo('history');playClick()">HISTORY</a>
+    <a data-section="projects"  onclick="navigateTo('projects');playClick()">PROJECTS</a>
+    <a data-section="estimator" onclick="navigateTo('estimator');playClick()">ESTIMATOR</a>
+    <a data-section="reviews"   onclick="navigateTo('reviews');playClick()">REVIEWS</a>
+    <a data-section="contact"   onclick="navigateTo('contact');playClick()">CONTACT</a>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:24px 0"></div>
+  <button onclick="toggleLanguage();playClick()" style="background:none;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:900;color:var(--dim)">
+    LANGUAGE: <span id="lang-dm" style="color:#fff">EN</span>
+  </button>
+  <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">WATER.SYS v1.0 // SPEARHEAD</div>
+</div>
+
+<!-- ══ PAGES ════════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- ══ 01 HOME ══════════════════════════════════════════════ -->
+  <div id="pg-home" class="page active">
+    <div style="padding-top:var(--nav-h);min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
+      <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(200,25,42,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
+      <div style="position:absolute;bottom:6%;right:-4%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(80,130,200,0.04) 0%,transparent 70%);filter:blur(42px);animation:float2 28s ease-in-out infinite;pointer-events:none"></div>
+
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(200,25,42,0.06);pointer-events:none;user-select:none;line-height:1">01</div>
+
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full py-16 z-10">
+        <div>
+          <div class="reveal mb-8">
+            <button onclick="toggleOverride()" class="hero-badge" data-tip="Click to toggle system status">
+              <span style="position:relative;display:flex;width:8px;height:8px">
+                <span id="status-ping" style="position:absolute;display:inline-flex;width:100%;height:100%;border-radius:50%;background:#22c55e;opacity:0.75;animation:livePulse 2s ease-out infinite"></span>
+                <span id="status-dot"  style="position:relative;display:inline-flex;width:8px;height:8px;border-radius:50%;background:#22c55e"></span>
+              </span>
+              <span id="status-txt" class="mono" data-lang="status" style="letter-spacing:0.14em">System Online</span>
+            </button>
+          </div>
+
+          <h1 class="display font-black reveal mb-6" style="font-size:clamp(2.4rem,6vw,4.8rem);line-height:0.95;letter-spacing:-0.02em">
+            <span class="block text-white" style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px" data-lang="hero_prefix">I fix</span>
+            <span id="typewriter" class="gradient-text block"></span>
+          </h1>
+
+          <p class="reveal mb-10 pl-4" data-lang="hero_desc"
+             style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(200,25,42,0.3)">
+            Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.
+          </p>
+
+          <div class="flex flex-wrap gap-4 mb-10 reveal">
+            <button onclick="navigateTo('projects');playClick()" data-mag data-ripple class="btn btn-primary" style="font-size:12px;letter-spacing:0.1em">
+              VIEW DATABASE <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
+            </button>
+            <button onclick="navigateTo('contact');playClick()" data-mag class="btn btn-outline" style="font-size:11px;letter-spacing:0.1em">
+              <i data-lucide="radio" style="width:14px;height:14px"></i> HIRE ME
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 max-w-xs reveal">
+            <div class="stat-card" data-tip="50+ satisfied clients">
+              <div class="stat-val" data-count="50" data-suffix="+">50+</div>
+              <div class="stat-lbl">Commissions</div>
+            </div>
+            <div class="stat-card" data-tip="Started scripting at age 11">
+              <div class="stat-val" data-count="4" data-suffix="yrs">4yrs</div>
+              <div class="stat-lbl">Experience</div>
+            </div>
+            <div class="stat-card" data-tip="Average server lag reduction">
+              <div class="stat-val" data-count="40" data-suffix="%">40%</div>
+              <div class="stat-lbl">Avg Lag Fix</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative hidden md:block reveal">
+          <div class="terminal">
+            <div class="scanline"></div>
+            <div style="background:rgba(5,7,16,0.98);padding:9px 15px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="terminal" style="width:12px;height:12px;color:var(--accent)"></i>
+                <span class="mono" style="font-size:9px;letter-spacing:0.1em;color:var(--muted)">SPEARHEAD_TERMINAL</span>
+              </div>
+              <div class="flex gap-1.5">
+                <div class="code-dot" style="background:#ef4444;opacity:0.7" data-tip="Aesthetic only."></div>
+                <div class="code-dot" style="background:#eab308;opacity:0.7"></div>
+                <div class="code-dot" style="background:#22c55e;opacity:0.7"></div>
+              </div>
+            </div>
+            <div style="padding:12px 16px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px">
+              <div class="flex justify-between items-center mb-2">
+                <span style="color:var(--muted)">CORE_LOAD</span>
+                <div class="flex items-center gap-2">
+                  <div style="width:72px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden">
+                    <div style="width:40%;height:100%;background:#00ff88;box-shadow:0 0 5px #00ff88;animation:pulse 2s ease-in-out infinite"></div>
+                  </div>
+                  <span style="color:#00ff88;font-weight:700;font-size:8px">40%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span style="color:var(--muted)">NET_UPLINK</span>
+                <div class="flex items-center gap-2">
+                  <div style="width:72px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden">
+                    <div style="width:72%;height:100%;background:var(--accent);box-shadow:0 0 5px var(--accent);animation:pulse 2.5s ease-in-out infinite"></div>
+                  </div>
+                  <span style="color:var(--accent);font-weight:700;font-size:8px">72%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mb-1">
+                <span style="color:var(--muted)">LEGION_THREAT</span>
+                <span style="color:#00ff88;font-weight:700;font-size:8px" data-tip="Definitely accurate">0 ✓</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0"></div>
+            </div>
+            <div style="padding:0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:9.5px" onclick="document.getElementById('cli-input').focus()">
+              <div id="cli-output" style="height:145px;overflow-y:auto;margin-bottom:9px;color:var(--muted);line-height:1.9">
+                <span style="color:var(--accent)">guest@spearhead:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
+                <span style="color:var(--muted);font-size:8.5px">· · · try: coffee · hack · uwu · neofetch · · ·</span><br>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:9px">
+                <span style="color:var(--accent)">guest@spearhead:~$</span>
+                <input id="cli-input" type="text" autocomplete="off" spellcheck="false"
+                       style="flex:1;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px">
+                <span class="blink" style="width:6px;height:12px;background:var(--accent);display:block;border-radius:1px"></span>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;z-index:-1;top:-20px;right:-20px;width:80px;height:80px;border-top:2px solid rgba(200,25,42,0.12);border-right:2px solid rgba(200,25,42,0.12);border-radius:0 12px 0 0;pointer-events:none"></div>
+          <div style="position:absolute;z-index:-1;bottom:-20px;left:-20px;width:80px;height:80px;border-bottom:2px solid rgba(200,25,42,0.12);border-left:2px solid rgba(200,25,42,0.12);border-radius:0 0 0 12px;pointer-events:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 02 ABOUT / PERSONNEL FILE ════════════════════════════ -->
+  <div id="pg-about" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(200,25,42,0.05);pointer-events:none;user-select:none">02</div>
+
+      <div class="grid md:grid-cols-12 gap-10 items-start">
+        <div class="md:col-span-4">
+          <div class="card reveal" style="padding:26px">
+            <div class="strip strip-blue"></div>
+            <div class="flex items-center justify-between mb-6" style="padding-top:8px">
+              <div id="pfp-wrap" class="cursor-pointer" onclick="updatePfp()" data-tip="Click to update photo (PIN required)"
+                   style="width:86px;height:86px;border-radius:4px;background:rgba(200,25,42,0.05);border:1px solid rgba(200,25,42,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+                <img id="avatar-img" class="hidden" style="width:100%;height:100%;object-fit:cover">
+                <i id="avatar-ph" data-lucide="user" style="width:34px;height:34px;color:var(--accent)"></i>
+                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:4px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                  <i data-lucide="lock" style="width:14px;height:14px;color:#fff"></i>
+                  <span class="mono" style="font-size:7.5px;color:#fff;margin-top:3px">PIN LOCK</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-bottom:3px;letter-spacing:0.1em">CLEARANCE</div>
+                <div class="display font-black text-white" style="font-size:1.3rem">SPEARHEAD <span style="color:var(--accent)">01</span></div>
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">⬛⬛⬛⬛⬜ CLASSIFIED</div>
+              </div>
+            </div>
+            <div class="mono" style="font-size:11px">
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AGE</span><span class="font-bold text-white">15 <span style="color:var(--muted)">(yes, really)</span></span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AFFILIATION</span><span class="font-bold" style="color:var(--accent)">SPEARHEAD (INDIE)</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">BACKEND / SYSTEMS</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS</span></div>
+              <div class="flex justify-between py-2">
+                <span style="color:var(--dim)">STATUS</span>
+                <span class="font-bold flex items-center gap-1.5" style="color:var(--green)">
+                  <span class="live-dot" style="width:6px;height:6px"></span> AVAILABLE
+                </span>
+              </div>
+            </div>
+            <div class="mono text-center mt-4" style="font-size:8px;color:var(--muted)">🔒 admin PIN required to update avatar</div>
+          </div>
+        </div>
+
+        <div class="md:col-span-8">
+          <div class="s-tag mb-4 reveal"><i data-lucide="file-text" style="width:11px;height:11px"></i> DOSSIER // PERSONNEL RECORD</div>
+          <h2 class="section-title mb-6 reveal">PERSONNEL FILE // <span style="color:var(--accent)">DOSSIER-8086</span></h2>
+
+          <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
+            Hey, I'm Water. I'm a 15-year-old self-taught Roblox Systems Engineer. I got tired of playing games that crashed every five minutes, so I learned how to fix them myself. Turns out, people will pay you to exorcise demons from their codebases.
+          </p>
+          <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
+            A lot of scripters write code that <em class="text-white not-italic">"just works"</em>, right up until a player breathes on it wrong. I build systems designed to survive 10,000 concurrent players and that one exploiter who makes it their life's mission to dupe items.
+          </p>
+
+          <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(200,25,42,0.04);border-left:3px solid var(--accent)">
+            <p class="text-white font-semibold italic" style="font-size:13px">
+              "Clean Code → Fewer Bugs → Players Don't Riot → Happy Client → I can afford snacks."
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-8 reveal">
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;box-shadow:0 0 4px #60a5fa;margin-right:6px"></span>LuaU Expert
+            </span>
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c084fc;box-shadow:0 0 4px #c084fc;margin-right:6px"></span>Rojo Workflow
+            </span>
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green);margin-right:6px"></span>Open to Commissions
+            </span>
+          </div>
+
+          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(200,25,42,0.03);border:1px solid rgba(200,25,42,0.12);font-size:11px">
+            <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
+            <span style="color:var(--dim)">Fastest way to reach me → Discord:</span>
+            <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">hokpy</span>
+            <span style="color:var(--muted)">(click)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Borderless Background Floating Shin Nouzen Hologram -->
+      <div class="absolute bottom-0 right-4 w-[400px] h-[680px] pointer-events-none opacity-25 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#04060F] via-transparent to-transparent z-10" style="height: 35%; bottom: 0; position: absolute; left: 0; right: 0;"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#04060F] via-transparent to-transparent z-10" style="width: 25%; left: 0; position: absolute; top: 0; bottom: 0;"></div>
+        <img src="assets/images/Shin.png" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_30px_rgba(200,25,42,0.2)]" style="animation: floatHolo 9s ease-in-out infinite;">
+      </div>
+
+      <!-- ══ ROBLOX LIVE FEED ════════════════════════════════ -->
+      <div class="mt-20" id="rbx-section">
+        <div class="flex items-center gap-4 mb-10 reveal">
+          <div class="s-tag" style="color:var(--green);background:rgba(52,168,83,0.07);border-color:rgba(52,168,83,0.2)">
+            <span style="display:inline-flex;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px rgba(52,168,83,0.6);animation:livePulse 2.2s ease-out infinite;flex-shrink:0;margin-right:4px"></span>
+            [ROBLOX COMMS FEED]
+          </div>
+          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(46,232,154,0.28),transparent)"></div>
+          <span class="mono" style="font-size:8px;color:var(--muted);letter-spacing:0.12em">AUTO-FETCHED</span>
+        </div>
+
+        <div class="grid md:grid-cols-12 gap-10 items-center">
+          <div class="md:col-span-5 flex justify-center reveal">
+            <div id="rbx-avatar-wrap" class="hidden rbx-holo-wrap">
+              <div class="rbx-holo-bg"></div>
+              <div style="position:relative">
+                <div class="rbx-avatar-container">
+                  <div class="rbx-scanline"></div>
+                  <div class="rbx-corner rbx-c-tl"></div>
+                  <div class="rbx-corner rbx-c-tr"></div>
+                  <div class="rbx-corner rbx-c-bl"></div>
+                  <div class="rbx-corner rbx-c-br"></div>
+                  <img id="rbx-fullbody" class="rbx-avatar-img" alt="Roblox Avatar">
+                </div>
+                <div class="rbx-rings-persp">
+                  <div class="rbx-ring rbx-ring-1"></div>
+                  <div class="rbx-ring rbx-ring-2"></div>
+                  <div class="rbx-ring rbx-ring-3"></div>
+                </div>
+              </div>
+              <div class="rbx-platform-wrap">
+                <div class="rbx-platform-bar"></div>
+                <div class="rbx-beam"></div>
+              </div>
+              <div id="rbx-displayname" class="rbx-nametag">WATER</div>
+              <div class="rbx-stream rbx-stream-l">
+                <div class="rbx-sline" style="animation-delay:0s"></div>
+                <div class="rbx-sline" style="animation-delay:0.6s"></div>
+                <div class="rbx-sline" style="animation-delay:1.2s"></div>
+              </div>
+              <div class="rbx-stream rbx-stream-r">
+                <div class="rbx-sline" style="animation-delay:0.3s"></div>
+                <div class="rbx-sline" style="animation-delay:0.9s"></div>
+                <div class="rbx-sline" style="animation-delay:1.5s"></div>
+              </div>
+            </div>
+
+            <div id="rbx-skeleton" class="flex flex-col items-center gap-4" style="width:220px">
+              <div style="width:196px;height:276px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);animation:glowPulse 2s ease-in-out infinite"></div>
+              <div style="width:120px;height:8px;border-radius:4px;background:rgba(255,255,255,0.04);animation:glowPulse 2s .3s ease-in-out infinite"></div>
+            </div>
+          </div>
+
+          <div class="md:col-span-7 space-y-5">
+            <div id="rbx-live-stats" class="hidden grid grid-cols-3 gap-4 reveal"></div>
+
+            <div id="rbx-stats-skeleton" class="grid grid-cols-3 gap-4">
+              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
+              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
+              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
+            </div>
+
+            <div class="card reveal" style="padding:0;overflow:hidden">
+              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#5effc4,transparent);box-shadow:0 0 16px rgba(46,232,154,0.45)"></div>
+              <div style="padding:20px 22px;padding-top:26px">
+                <div class="mono mb-4 flex items-center gap-2" style="font-size:8px;font-weight:700;letter-spacing:0.16em;color:var(--green)">
+                  <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(46,232,154,0.7);animation:livePulse 2.2s ease-out infinite;flex-shrink:0"></span>
+                  OPERATIVE_PROFILE // ROBLOX.COM
+                </div>
+                <div class="mono" style="font-size:11px">
+                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="border-bottom:1px solid rgba(255,255,255,0.04)">
+                    <span style="color:var(--dim)">JOIN_DATE</span>
+                    <span id="rbx-join" class="font-bold text-white"></span>
+                  </div>
+                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="border-bottom:1px solid rgba(255,255,255,0.04);animation-delay:.08s">
+                    <span style="color:var(--dim)">FOLLOWERS</span>
+                    <span id="rbx-followers" class="font-bold" style="color:var(--green)"></span>
+                  </div>
+                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="animation-delay:.16s">
+                    <span style="color:var(--dim)">FRIENDS</span>
+                    <span id="rbx-friends" class="font-bold text-white"></span>
+                  </div>
+                </div>
+
+                <div id="rbx-desc-wrap" class="hidden mt-5 p-4 rounded-xl" style="background:rgba(46,232,154,0.03);border:1px solid rgba(46,232,154,0.1)">
+                  <div class="mono mb-2" style="font-size:8px;letter-spacing:0.12em;color:var(--green);font-weight:700">BIO_EXTRACT</div>
+                  <p id="rbx-desc" style="font-size:12px;color:var(--dim);line-height:1.65;font-family:'JetBrains Mono',monospace"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="reveal">
+              <a href="https://www.roblox.com/users/2878666652/profile" target="_blank"
+                 onclick="playClick()" class="btn btn-outline" style="font-size:11px;letter-spacing:0.08em;display:inline-flex">
+                <i data-lucide="external-link" style="width:13px;height:13px"></i>
+                VIEW ROBLOX PROFILE
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 03 SKILLS ════════════════════════════════════════════ -->
+  <div id="pg-skills" class="page" style="position:relative;">
+    <div class="max-w-7xl mx-auto px-6 py-24 relative z-10" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="s-tag mb-3 reveal"><i data-lucide="cpu" style="width:11px;height:11px"></i> [SYSTEM SPECIFICATIONS]</div>
+      <h2 class="section-title mb-2 reveal">SYSTEM SPECS</h2>
+      <p class="mono mb-12 reveal" style="font-size:11px;color:var(--dim)">— hover the percentage. you won't. —</p>
+      <div id="skills-main" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5"></div>
+      <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+    </div>
+    
+    <!-- Floating Lena Decorative Background/Side Graphic -->
+    <div class="absolute bottom-0 right-0 w-[380px] h-[640px] pointer-events-none opacity-15 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#04060F] via-transparent to-transparent z-10" style="height: 35%; bottom: 0; position: absolute; left: 0; right: 0;"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#04060F] via-transparent to-transparent z-10" style="width: 25%; left: 0; position: absolute; top: 0; bottom: 0;"></div>
+      <img src="assets/images/Lena.jpg" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_20px_rgba(200,25,42,0.15)]" style="animation: floatHolo 8s ease-in-out infinite;">
+    </div>
+  </div>
+
+  <!-- ══ 04 HISTORY ═══════════════════════════════════════════ -->
+  <div id="pg-history" class="page">
+    <div class="max-w-3xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="text-center mb-14">
+        <div class="s-tag mb-3 reveal" style="margin:0 auto;width:fit-content">[SERVICE RECORD // MISSION LOG]</div>
+        <h2 class="section-title reveal">SERVICE RECORD</h2>
+        <p class="mono mt-2 reveal" style="font-size:11px;color:var(--dim)">the origin story nobody asked for</p>
+      </div>
+      <div id="timeline" class="relative"></div>
+    </div>
+  </div>
+
+
+
+  <!-- ══ 06 PROJECTS ══════════════════════════════════════════ -->
+  <div id="pg-projects" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
+        <div>
+          <div class="s-tag mb-3 reveal"><i data-lucide="folder-open" style="width:11px;height:11px"></i> [COMBAT DEBRIEFINGS // SERVICE FILES]</div>
+          <h2 class="section-title reveal">COMBAT DEBRIEFINGS</h2>
+          <p class="reveal mt-1" style="color:var(--dim);font-size:13px">Things I built. Some look cool. All of them work.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 reveal">
+          <button class="filter-btn active" onclick="filterProjects('all',this)">ALL</button>
+          <button class="filter-btn" onclick="filterProjects('GAMEPLAY',this)">SYSTEMS</button>
+          <button class="filter-btn" onclick="filterProjects('FULL GAME',this)">GAMES</button>
+          <button class="filter-btn" onclick="filterProjects('OPTIMIZATION',this)">FIXES</button>
+          <button class="filter-btn" onclick="filterProjects('RPG SYSTEM',this)">RPG</button>
+        </div>
+      </div>
+      <div id="proj-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
+    </div>
+  </div>
+
+  <!-- ══ 07 ESTIMATOR ═════════════════════════════════════════ -->
+  <div id="pg-estimator" class="page">
+    <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="s-tag mb-4 reveal"><i data-lucide="calculator" style="width:11px;height:11px"></i> [TACTICAL VALUATION // EXPENDITURES]</div>
+      <div class="grid md:grid-cols-12 gap-10 items-start">
+        <div class="md:col-span-7 space-y-7">
+          <div>
+            <h2 class="section-title mb-1 reveal" data-lang="calc_title">RESOURCE ALLOCATION</h2>
+            <p class="reveal" style="color:var(--dim);font-size:13px">No surprises. Calculate before you commit.</p>
+          </div>
+          <div class="reveal">
+            <div class="mono mb-3" style="font-size:9px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">OPERATION TYPE</div>
+            <div class="grid grid-cols-2 gap-3" id="svc-grid"></div>
+          </div>
+          <div class="reveal p-6 rounded-xl space-y-6" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05)">
+            <div>
+              <div class="flex justify-between mb-2">
+                <label class="mono font-bold" style="font-size:9.5px;letter-spacing:0.12em;color:var(--dim)">Complexity</label>
+                <span id="c-lbl" class="mono" style="font-size:9.5px;color:var(--dim)">Standard</span>
+              </div>
+              <input id="c-range" type="range" min="1" max="2" step="0.1" value="1" oninput="calcBudget()" data-tip="How complex is the work?">
+            </div>
+            <div>
+              <div class="flex justify-between mb-2">
+                <label class="mono font-bold" style="font-size:9.5px;letter-spacing:0.12em;color:var(--dim)">Urgency</label>
+                <span id="r-lbl" class="mono" style="font-size:9.5px;color:var(--dim)">Standard</span>
+              </div>
+              <input id="r-range" type="range" min="1" max="1.5" step="0.1" value="1" oninput="calcBudget()" data-tip="Rush fee applies">
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-5 card reveal" style="padding:24px">
+          <div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 0;background:radial-gradient(circle,rgba(200,25,42,0.06),transparent 70%);pointer-events:none"></div>
+          <div class="flex justify-between items-center mb-6">
+            <span class="mono" style="font-size:8px;font-weight:700;letter-spacing:0.14em;color:var(--muted)">INVOICE PREVIEW</span>
+            <select id="currency" onchange="calcBudget()" class="mono text-white"
+                    style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.4);outline:none;cursor:pointer">
+              <option>R$</option><option>USD</option><option>THB</option><option>VND</option>
+            </select>
+          </div>
+          <div class="mono space-y-3 mb-6 pb-6" style="font-size:12px;border-bottom:1px solid rgba(255,255,255,0.05)">
+            <div class="flex justify-between" style="color:var(--dim)"><span>Base Cost</span><span class="text-white" id="r-base">--</span></div>
+            <div class="flex justify-between" style="color:var(--dim)"><span>Complexity ×</span><span style="color:var(--accent)" id="r-comp">×1.0</span></div>
+            <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee ×</span><span style="color:var(--red)" id="r-rush">×1.0</span></div>
+          </div>
+          <div class="text-right mb-6">
+            <span class="mono block mb-1" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">Total Estimated</span>
+            <div id="total-price" class="display font-black text-white" style="font-size:2.6rem;letter-spacing:-0.01em">--</div>
+            <div id="sub-price"   class="mono mt-1" style="font-size:10px;color:var(--muted)"></div>
+          </div>
+          <button onclick="navigateTo('contact');playClick()" data-ripple class="btn btn-accent w-full justify-center" style="font-size:12px;letter-spacing:0.08em">
+            <i data-lucide="radio" style="width:14px;height:14px"></i> TRANSMIT QUOTE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 08 REVIEWS ═══════════════════════════════════════════ -->
+  <div id="pg-reviews" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
+        <div>
+          <div class="s-tag mb-3 reveal" style="color:var(--gold);background:rgba(217,119,6,0.07);border-color:rgba(217,119,6,0.2)">
+            <i data-lucide="star" style="width:11px;height:11px"></i> [OPERATIVE EVALUATIONS]
+          </div>
+          <h2 class="section-title reveal">FIELD EVALUATIONS</h2>
+          <div class="flex items-center gap-4 mt-2 reveal">
+            <span id="reviews-count" class="mono font-bold" style="font-size:1.2rem;color:var(--gold);background:rgba(217,119,6,0.07);border:1px solid rgba(217,119,6,0.2);padding:4px 12px;border-radius:4px">0</span>
+            <span id="reviews-avg" class="mono" style="font-size:12px;color:var(--dim)"></span>
+            <span style="color:var(--dim);font-size:13px">Real reviews. From real clients. Allegedly.</span>
+          </div>
+        </div>
+        <button onclick="openReviewModal()" data-ripple class="btn reveal"
+                style="background:rgba(217,119,6,0.07);border:1px solid rgba(217,119,6,0.25);color:var(--gold);padding:10px 22px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:900;font-size:12px;letter-spacing:0.08em">
+          <i data-lucide="edit-3" style="width:14px;height:14px"></i> SUBMIT FIELD REPORT
+        </button>
+      </div>
+      <div id="reviews-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </div>
+  </div>
+
+  <!-- ══ 09 CONTACT ═══════════════════════════════════════════ -->
+  <div id="pg-contact" class="page">
+    <div class="max-w-2xl mx-auto px-6 text-center py-24" style="padding-top:calc(var(--nav-h) + 5rem)">
+      <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">[ENCRYPTED UPLINK]</div>
+      <h2 class="section-title reveal mb-2">OPEN COMMS</h2>
+      <p class="reveal mb-2" style="color:var(--dim);font-size:14px" data-lang="contact_sub">Send an encrypted transmission.</p>
+      <p class="mono mb-10 reveal" style="font-size:9px;color:var(--dim)">response time: fast (unless I'm asleep, which is often)</p>
+
+      <div class="inline-flex items-center gap-5 px-6 py-3 rounded border mb-10 reveal"
+           style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.05);backdrop-filter:blur(8px)">
+        <div class="flex items-center gap-2">
+          <span class="live-dot" style="border-radius:2px;"></span>
+          <span class="mono font-bold" style="font-size:8.5px;letter-spacing:0.14em;color:var(--green)">STATUS: ONLINE</span>
+        </div>
+        <div style="width:1px;height:12px;background:rgba(255,255,255,0.07)"></div>
+        <div class="mono" style="font-size:9px;color:var(--dim)">UPTIME: <span id="uptime" class="uptime">00:00:00</span></div>
+        <div style="width:1px;height:12px;background:rgba(255,255,255,0.07)"></div>
+        <div class="mono" style="font-size:9px;color:var(--dim)">VISITS: <span id="visitor-count" class="text-white font-bold">---</span></div>
+      </div>
+
+      <div class="momo-wrap reveal" style="border-radius: 6px;">
+        <div class="momo-head">
+          <i data-lucide="radio" style="width:18px;height:18px"></i>
+          SPEARHEAD TACTICAL COMMS
+          <span class="ml-auto mono font-bold" style="font-size:9px;background:rgba(168,34,42,0.25);padding:2px 8px;border-radius:2px">2 unread</span>
+        </div>
+        <div class="momo-item group" onclick="copyDiscord();playClick()" data-tip="Click to copy Discord">
+          <div class="momo-avatar" style="background:#eaecff">
+            <i data-lucide="message-square" style="width:18px;height:18px;color:#6366f1"></i>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="flex justify-between items-center mb-0.5">
+              <span style="font-weight:700;font-size:13px;color:#1f2937">Discord</span>
+              <span style="font-size:10px;color:#9ca3af">now</span>
+            </div>
+            <div id="discord-text" style="font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">hokpy · click to copy</div>
+          </div>
+          <div class="momo-badge">1</div>
+        </div>
+        <a href="https://www.roblox.com/users/2878666652/profile" target="_blank" class="momo-item group" onclick="playClick()" style="display:flex;text-decoration:none">
+          <div class="momo-avatar" style="background:#f3f4f6">
+            <i data-lucide="gamepad-2" style="width:18px;height:18px;color:#4b5563"></i>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="flex justify-between items-center mb-0.5">
+              <span style="font-weight:700;font-size:13px;color:#1f2937">Roblox</span>
+              <span style="font-size:10px;color:#9ca3af">1m ago</span>
+            </div>
+            <div style="font-size:11px;color:#6b7280">View my profile — Water @ Roblox</div>
+          </div>
+          <div class="momo-badge">1</div>
+        </a>
+      </div>
+
+      <div class="mt-14 space-y-2 reveal">
+        <div class="mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted);opacity:0.4">WATER DATABASE SYSTEM v1.0 // AUTH: HOKPY // SPEARHEAD</div>
+        <div class="mono" style="font-size:8px;color:var(--muted);opacity:0.25">built at 2am · powered by redbull · no bugs (allegedly)</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ REVIEW MODAL ═════════════════════════════════════════════ -->
+<div id="review-modal" onclick="if(event.target===this)closeReviewModal()">
+  <div style="width:100%;max-width:480px;border-radius:6px;overflow:hidden;background:#080b14;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7)">
+    <div style="background:rgba(217,119,6,0.05);border-bottom:1px solid rgba(217,119,6,0.1);padding:14px 22px;display:flex;align-items:center;justify-content:space-between">
+      <div class="flex items-center gap-3">
+        <i data-lucide="file-text" style="width:14px;height:14px;color:var(--gold)"></i>
+        <span class="display font-black text-white" style="font-size:13px;letter-spacing:0.1em">SUBMIT FIELD REPORT</span>
+      </div>
+      <button onclick="closeReviewModal()" style="background:none;border:none;cursor:pointer;color:var(--dim);transition:color .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--dim)'">
+        <i data-lucide="x" style="width:18px;height:18px"></i>
+      </button>
+    </div>
+    <form id="review-form" style="padding:22px;display:flex;flex-direction:column;gap:18px">
+      <div>
+        <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--dim);display:block;margin-bottom:8px">OPERATIVE HANDLE</label>
+        <input id="review-name" type="text" placeholder="Your name or username" maxlength="40" required
+               style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:11px 14px;color:#fff;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .2s"
+               onfocus="this.style.borderColor='rgba(217,119,6,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'">
+      </div>
+      <div>
+        <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--dim);display:block;margin-bottom:10px">MISSION RATING</label>
+        <div id="star-sel" class="flex gap-1"></div>
+      </div>
+      <div>
+        <label class="mono" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--dim);display:block;margin-bottom:8px">FIELD NOTES</label>
+        <textarea id="review-text" placeholder="Was it good? Did he fix it? Tell us." maxlength="280" required
+                  style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.07);border-radius:4px;padding:11px 14px;color:#fff;font-size:13px;font-family:'JetBrains Mono',monospace;outline:none;resize:none;height:100px;transition:border-color .2s"
+                  onfocus="this.style.borderColor='rgba(217,119,6,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.07)'"></textarea>
+        <div class="flex justify-end mt-1"><span id="char-count" class="mono" style="font-size:8.5px;color:var(--dim)">0/280</span></div>
+      </div>
+      <button type="submit" data-ripple class="btn btn-accent w-full justify-center" style="font-size:12px;letter-spacing:0.08em">
+        <i data-lucide="send" style="width:13px;height:13px"></i> TRANSMIT REPORT
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('svc-grid');
+  if (!grid) return;
+  SITE.pricing.services.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'svc-btn' + (i === 1 ? ' selected' : '');
+    btn.dataset.ripple = '';
+    btn.innerHTML = `<div class="font-bold text-white" style="font-size:13px;margin-bottom:3px;font-family:'Rajdhani',sans-serif">${s.label}</div>
+                     <div class="mono" style="font-size:9px;color:var(--muted)">${s.base.toLocaleString()}+ R$</div>`;
+    btn.addEventListener('click', () => selectService(s.base, btn));
+    grid.appendChild(btn);
+  });
+});
+</script>
+
+<script src="js/config.js"></script>
+<script src="js/roblox.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+(function patchRobloxSkeletons() {
+    const avatarWrap  = document.getElementById('rbx-avatar-wrap');
+    const liveStats   = document.getElementById('rbx-live-stats');
+    const skeletonAvt = document.getElementById('rbx-skeleton');
+    const skeletonSt  = document.getElementById('rbx-stats-skeleton');
+    if (!avatarWrap) return;
+    const obs = new MutationObserver(() => {
+        const avatarReady = !avatarWrap.classList.contains('hidden');
+        const statsReady  = liveStats && !liveStats.classList.contains('hidden');
+        if (avatarReady && skeletonAvt) skeletonAvt.style.display = 'none';
+        if (statsReady  && skeletonSt)  skeletonSt.style.display  = 'none';
+        if (avatarReady && statsReady) obs.disconnect();
+    });
+    obs.observe(avatarWrap, { attributes: true, attributeFilter: ['class'] });
+    if (liveStats) obs.observe(liveStats, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+
+</body>
+</html>

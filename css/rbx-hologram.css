@@ -1,0 +1,277 @@
+/* ══════════════════════════════════════════════════════════════
+   ROBLOX HOLOGRAM WIDGET  —  rbx-hologram.css
+   Included by index.html AFTER styles.css
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ──────────────────────────────────────────────── */
+@keyframes rbxFloat0 {
+    0%,100% { transform: translateY(0)     rotate(-.4deg); }
+    50%     { transform: translateY(-13px) rotate( .4deg); }
+}
+
+@keyframes rbxScanLine {
+    0%   { top: -4px;  opacity: 0;  }
+    5%   { opacity: .7; }
+    90%  { opacity: .7; }
+    100% { top: 112%;  opacity: 0;  }
+}
+
+@keyframes rbxRingFwd {
+    from { transform: rotateX(74deg) rotateZ(  0deg); }
+    to   { transform: rotateX(74deg) rotateZ(360deg); }
+}
+
+@keyframes rbxRingRev {
+    from { transform: rotateX(74deg) rotateZ(   0deg); }
+    to   { transform: rotateX(74deg) rotateZ(-360deg); }
+}
+
+@keyframes rbxGlitch {
+    0%,87%,100% { filter: none; transform: translateX(0); }
+    88% {
+        filter: drop-shadow(-4px 0 1px rgba(255,68,85,.8))
+                drop-shadow( 4px 0 1px rgba(26,168,255,.8));
+        transform: translateX(-3px);
+    }
+    90% { transform: translateX(3px); filter: drop-shadow(3px 0 rgba(255,184,58,.55)); }
+    92% { filter: none; transform: translateX(0); }
+}
+
+@keyframes rbxNameGlow {
+    0%,100% { text-shadow: 0 0  8px rgba(46,232,154,.4); }
+    50%     { text-shadow: 0 0 18px rgba(46,232,154,1), 0 0 36px rgba(46,232,154,.25); }
+}
+
+@keyframes rbxPlatformPulse {
+    0%,100% { opacity: .4;  transform: scaleX(.88); }
+    50%     { opacity: 1;   transform: scaleX(1.06); }
+}
+
+@keyframes rbxStreamFl {
+    0%       { transform: translateY(-140%); opacity: 0; }
+    8%, 88%  { opacity: 1; }
+    100%     { transform: translateY(140%);  opacity: 0; }
+}
+
+@keyframes rbxCornerBlink {
+    0%,100% { opacity: .35; box-shadow: none; }
+    50%     { opacity: 1;   box-shadow: 0 0 5px rgba(46,232,154,.5); }
+}
+
+/* Reveal — clips open like a CRT powering on */
+@keyframes rbxHoloIn {
+    0%  {
+        opacity: 0;
+        clip-path: inset(50% 10% 50% 10%);
+        transform: scaleY(.06) translateY(60px);
+    }
+    45% {
+        opacity: .9;
+        clip-path: inset(0% 0% 0% 0%);
+        transform: scaleY(1.04) translateY(-4px);
+    }
+    100% {
+        opacity: 1;
+        clip-path: inset(0% 0% 0% 0%);
+        transform: scaleY(1) translateY(0);
+    }
+}
+
+@keyframes rbxBeamH {
+    0%,100% { height: 56px; opacity: .22; }
+    50%     { height: 76px; opacity: .44; }
+}
+
+@keyframes rbxRowIn {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes rbxStatIn {
+    from { opacity: 0; transform: translateY(10px) scale(.95); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ── Hologram wrapper ───────────────────────────────────────── */
+.rbx-holo-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 220px;
+    animation: rbxHoloIn .9s cubic-bezier(.175,.885,.32,1.275) both;
+}
+
+/* Ambient glow behind the whole widget */
+.rbx-holo-bg {
+    position: absolute;
+    inset: -50px;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 90% 70% at 50% 55%, rgba(46,232,154,.05)  0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 50% 92%, rgba(46,232,154,.025) 0%, transparent 60%);
+    z-index: 0;
+}
+
+/* ── Avatar ─────────────────────────────────────────────────── */
+.rbx-avatar-container {
+    position: relative;
+    width: 196px;
+    height: 276px;
+    overflow: hidden;
+    z-index: 3;
+    animation:
+        rbxFloat0  4.5s ease-in-out infinite,
+        rbxGlitch 13s   step-end    infinite;
+    filter:
+        drop-shadow(0 0 18px rgba(46,232,154,.32))
+        drop-shadow(0 8px 24px rgba(0,0,0,.5));
+}
+
+.rbx-avatar-img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    position: relative; z-index: 2;
+}
+
+/* Moving scanline */
+.rbx-scanline {
+    position: absolute; left: 0; right: 0; top: -4px;
+    height: 4px; z-index: 10; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(46,232,154,.55) 50%, transparent);
+    animation: rbxScanLine 3.8s linear infinite;
+}
+
+/* Targeting corners */
+.rbx-corner {
+    position: absolute;
+    width: 11px; height: 11px;
+    z-index: 12; pointer-events: none;
+    animation: rbxCornerBlink 2.2s ease-in-out infinite;
+}
+.rbx-c-tl { top:0;    left:0;  border-top:   1.5px solid var(--green); border-left:   1.5px solid var(--green); }
+.rbx-c-tr { top:0;    right:0; border-top:   1.5px solid var(--green); border-right:  1.5px solid var(--green); animation-delay: .5s; }
+.rbx-c-bl { bottom:0; left:0;  border-bottom:1.5px solid var(--green); border-left:   1.5px solid var(--green); animation-delay: 1s;  }
+.rbx-c-br { bottom:0; right:0; border-bottom:1.5px solid var(--green); border-right:  1.5px solid var(--green); animation-delay: 1.5s;}
+
+/* ── Orbiting rings (positioned relative to the avatar's feet) ── */
+.rbx-rings-persp {
+    position: absolute;
+    bottom: -9px; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    perspective: 270px;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.rbx-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    pointer-events: none;
+}
+
+.rbx-ring-1 {
+    width: 168px; height: 168px;
+    left: -84px;  top: -84px;
+    border-color: rgba(46,232,154,.6);
+    box-shadow: 0 0 8px rgba(46,232,154,.22);
+    animation: rbxRingFwd 4s linear infinite;
+}
+
+.rbx-ring-2 {
+    width: 210px; height: 210px;
+    left: -105px; top: -105px;
+    border-color: rgba(26,168,255,.3);
+    animation: rbxRingRev 7s linear infinite;
+}
+
+.rbx-ring-3 {
+    width: 252px; height: 252px;
+    left: -126px; top: -126px;
+    border-color: rgba(168,85,247,.18);
+    animation: rbxRingFwd 11s linear infinite reverse;
+}
+
+/* ── Platform base ──────────────────────────────────────────── */
+.rbx-platform-wrap {
+    position: relative;
+    width: 196px; z-index: 2;
+    margin-top: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rbx-platform-bar {
+    width: 180px; height: 4px; border-radius: 99px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(46,232,154,.72) 28%,
+        rgba(92,255,196,.45) 72%,
+        transparent
+    );
+    box-shadow: 0 0 14px rgba(46,232,154,.42);
+    animation: rbxPlatformPulse 2.4s ease-in-out infinite;
+}
+
+/* Upward hologram beam */
+.rbx-beam {
+    width: 90px; height: 56px;
+    align-self: center;
+    margin-top: -1px;
+    background: linear-gradient(
+        0deg,
+        rgba(46,232,154,.32)  0%,
+        rgba(46,232,154,.08) 50%,
+        transparent          100%
+    );
+    border-radius: 50% 50% 0 0;
+    animation: rbxBeamH 2.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ── Name tag below avatar ──────────────────────────────────── */
+.rbx-nametag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .22em; color: var(--green);
+    margin-top: 10px;
+    position: relative; z-index: 4;
+    animation: rbxNameGlow 2.5s ease-in-out infinite;
+}
+
+.rbx-nametag::before,
+.rbx-nametag::after {
+    content: ''; display: inline-block;
+    width: 16px; height: 1px;
+    vertical-align: middle; margin: 0 7px;
+    background: linear-gradient(90deg, transparent, rgba(46,232,154,.5));
+}
+.rbx-nametag::after {
+    background: linear-gradient(90deg, rgba(46,232,154,.5), transparent);
+}
+
+/* ── Side data streams ──────────────────────────────────────── */
+.rbx-stream {
+    position: absolute;
+    top: 15px; bottom: 58px;
+    width: 18px; overflow: hidden;
+    pointer-events: none; opacity: .28;
+    display: flex; flex-direction: column;
+    justify-content: flex-start; gap: 3px;
+}
+.rbx-stream-l { left: -11px; }
+.rbx-stream-r { right: -11px; }
+
+.rbx-sline {
+    width: 1px; height: 20px; align-self: center;
+    background: linear-gradient(180deg, transparent, rgba(26,168,255,.85), transparent);
+    animation: rbxStreamFl 2.5s linear infinite;
+}
+
+/* ── Data row reveal ────────────────────────────────────────── */
+[data-rbx-row]:not(.hidden) { animation: rbxRowIn .4s var(--spring) both; }
+#rbx-live-stats .stat-card  { animation: rbxStatIn .5s var(--spring) both; }
