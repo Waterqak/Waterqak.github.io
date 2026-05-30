@@ -63,7 +63,6 @@ tailwind.config = {
 <div class="bg-mesh"></div>
 <canvas id="particles-canvas"></canvas>
 
-
 <div class="music-pill" onclick="toggleMute()" data-tip="Toggle music">
   <div class="live-dot"></div>
   <div class="flex flex-col leading-tight">
@@ -350,7 +349,6 @@ tailwind.config = {
         </div>
       </div>
 
-      <!-- Borderless Background Floating Shin Nouzen Hologram -->
       <div class="absolute bottom-0 right-4 w-[400px] h-[680px] pointer-events-none opacity-25 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
         <img src="assets/images/Shin.png" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_30px_rgba(200,25,42,0.2)]" style="animation: floatHolo 9s ease-in-out infinite;">
       </div>
@@ -468,8 +466,6 @@ tailwind.config = {
       <div id="skills-main" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5"></div>
       <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
     </div>
-    
-    <!-- Floating Lena Decorative Background/Side Graphic -->
     <div class="absolute bottom-0 right-0 w-[380px] h-[640px] pointer-events-none opacity-15 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
       <img src="assets/images/Lena.jpg" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_20px_rgba(200,25,42,0.15)]" style="animation: floatHolo 8s ease-in-out infinite;">
     </div>
@@ -487,8 +483,6 @@ tailwind.config = {
     </div>
   </div>
 
-
-
   <!-- ══ 06 PROJECTS ══════════════════════════════════════════ -->
   <div id="pg-projects" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
@@ -504,6 +498,7 @@ tailwind.config = {
           <button class="filter-btn" onclick="filterProjects('FULL GAME',this)">GAMES</button>
           <button class="filter-btn" onclick="filterProjects('OPTIMIZATION',this)">FIXES</button>
           <button class="filter-btn" onclick="filterProjects('RPG SYSTEM',this)">RPG</button>
+          <button class="filter-btn" onclick="filterProjects('UI DESIGN',this)">UI</button>
         </div>
       </div>
       <div id="proj-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
