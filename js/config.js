@@ -151,16 +151,16 @@ const SITE = {
         // ── UI DESIGN ─────────────────────────────────────────────
         // Add your UI images here. Set src to your file in assets/images/.
         // Example:
-        // {
-        //     title:    "My UI Design",
-        //     category: "UI DESIGN",
-        //     desc:     "Figma UI design.",
-        //     tags:     ["Figma", "UI/UX"],
-        //     link:     "",
-        //     media:    "image",
-        //     src:      "assets/images/UI1.png",
-        //     color:    "purple",
-        // },
+         {
+             title:    "My First UI Design",
+             category: "UI DESIGN",
+             desc:     "Figma UI design.",
+             tags:     ["Figma", "UI/UX"],
+             link:     "",
+             media:    "image",
+             src:      "assets/images/UI1.png",
+             color:    "purple",
+        },
     ],
 
     pricing: {
