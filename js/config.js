@@ -88,7 +88,7 @@ const SITE = {
             color:    "blue",
         },
         {
-            title: "Yan - Chan Simulator",
+            title:    "Yan - Chan Simulator",
             category: "FULL GAME",
             desc:     "Yandere Simulator Ports into roblox!",
             tags:     ["Story", "Simulator"],
@@ -147,6 +147,20 @@ const SITE = {
             src:      "https://youtu.be/FjZHsIuzUlY",
             color:    "purple",
         },
+
+        // ── UI DESIGN ─────────────────────────────────────────────
+        // Add your UI images here. Set src to your file in assets/images/.
+        // Example:
+        // {
+        //     title:    "My UI Design",
+        //     category: "UI DESIGN",
+        //     desc:     "Figma UI design.",
+        //     tags:     ["Figma", "UI/UX"],
+        //     link:     "",
+        //     media:    "image",
+        //     src:      "assets/images/UI1.png",
+        //     color:    "purple",
+        // },
     ],
 
     pricing: {
