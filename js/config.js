@@ -161,6 +161,16 @@ const SITE = {
              src:      "assets/images/UI1.png",
              color:    "purple",
         },
+        {
+             title:    "My Second UI Design",
+             category: "UI DESIGN",
+             desc:     "Figma UI design.",
+             tags:     ["Figma", "UI/UX"],
+             link:     "",
+             media:    "image",
+             src:      "assets/images/UI2.png",
+             color:    "purple",
+        },
     ],
 
     pricing: {
