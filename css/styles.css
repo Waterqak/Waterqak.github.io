@@ -479,6 +479,12 @@ input[type=range]:hover::-webkit-slider-thumb { background: var(--accent2); }
 }
 #ach-panel.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
 
+#review-modal {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    align-items: center; justify-content: center; padding: 16px;
+    background: rgba(0,0,0,0.85);
+}
+#review-modal.open { display: flex; }
 
 #tooltip {
     position: fixed; z-index: 99999; pointer-events: none;
