@@ -109,9 +109,7 @@ tailwind.config = {
       <a class="nav-link" data-section="home"      onclick="navigateTo('home');playClick()">Home</a>
       <a class="nav-link" data-section="history"   onclick="navigateTo('history');playClick()">History</a>
       <a class="nav-link" data-section="projects"  onclick="navigateTo('projects');playClick()">Projects</a>
-      <a class="nav-link" data-section="estimator" onclick="navigateTo('estimator');playClick()">Estimator</a>
-      <a class="nav-link" data-section="reviews"   onclick="navigateTo('reviews');playClick()">Reviews</a>
-    </div>
+          </div>
 
     <div class="hidden md:flex items-center gap-3">
       <button onclick="toggleLanguage()" class="mono font-bold"
@@ -141,8 +139,6 @@ tailwind.config = {
     <a data-section="home"      onclick="navigateTo('home');playClick()">HOME</a>
     <a data-section="history"   onclick="navigateTo('history');playClick()">HISTORY</a>
     <a data-section="projects"  onclick="navigateTo('projects');playClick()">PROJECTS</a>
-    <a data-section="estimator" onclick="navigateTo('estimator');playClick()">ESTIMATOR</a>
-    <a data-section="reviews"   onclick="navigateTo('reviews');playClick()">REVIEWS</a>
     <a data-section="contact"   onclick="navigateTo('contact');playClick()">CONTACT</a>
   </div>
   <div style="height:1px;background:rgba(255,255,255,0.06);margin:24px 0"></div>
@@ -505,66 +501,6 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 07 ESTIMATOR ═════════════════════════════════════════ -->
-  <div id="pg-estimator" class="page">
-    <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
-      <div class="s-tag mb-4 reveal"><i data-lucide="calculator" style="width:11px;height:11px"></i> [ESTIMATE // EXPENDITURES]</div>
-      <div class="grid md:grid-cols-12 gap-10 items-start">
-        <div class="md:col-span-7 space-y-7">
-          <div>
-            <h2 class="section-title mb-1 reveal" data-lang="calc_title">RESOURCE ALLOCATION</h2>
-            <p class="reveal" style="color:var(--dim);font-size:13px">Estimate the scope before you commit.</p>
-          </div>
-          <div class="reveal">
-            <div class="mono mb-3" style="font-size:9px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">OPERATION TYPE</div>
-            <div class="grid grid-cols-2 gap-3" id="svc-grid"></div>
-          </div>
-          <div class="reveal p-6 rounded-xl space-y-6" style="background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05)">
-            <div>
-              <div class="flex justify-between mb-2">
-                <label class="mono font-bold" style="font-size:9.5px;letter-spacing:0.12em;color:var(--dim)">Complexity</label>
-                <span id="c-lbl" class="mono" style="font-size:9.5px;color:var(--dim)">Standard</span>
-              </div>
-              <input id="c-range" type="range" min="1" max="2" step="0.1" value="1" oninput="calcBudget()" data-tip="How complex is the work?">
-            </div>
-            <div>
-              <div class="flex justify-between mb-2">
-                <label class="mono font-bold" style="font-size:9.5px;letter-spacing:0.12em;color:var(--dim)">Urgency</label>
-                <span id="r-lbl" class="mono" style="font-size:9.5px;color:var(--dim)">Standard</span>
-              </div>
-              <input id="r-range" type="range" min="1" max="1.5" step="0.1" value="1" oninput="calcBudget()" data-tip="Rush fee applies">
-            </div>
-          </div>
-        </div>
-
-        <div class="md:col-span-5 card reveal" style="padding:24px">
-          <div style="position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 0;background:radial-gradient(circle,rgba(200,25,42,0.06),transparent 70%);pointer-events:none"></div>
-          <div class="flex justify-between items-center mb-6">
-            <span class="mono" style="font-size:8px;font-weight:700;letter-spacing:0.14em;color:var(--muted)">INVOICE PREVIEW</span>
-            <select id="currency" onchange="calcBudget()" class="mono text-white"
-                    style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:7px;border:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.4);outline:none;cursor:pointer">
-              <option>R$</option><option>USD</option><option>THB</option><option>VND</option>
-            </select>
-          </div>
-          <div class="mono space-y-3 mb-6 pb-6" style="font-size:12px;border-bottom:1px solid rgba(255,255,255,0.05)">
-            <div class="flex justify-between" style="color:var(--dim)"><span>Base Cost</span><span class="text-white" id="r-base">--</span></div>
-            <div class="flex justify-between" style="color:var(--dim)"><span>Complexity ×</span><span style="color:var(--accent)" id="r-comp">×1.0</span></div>
-            <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee ×</span><span style="color:var(--red)" id="r-rush">×1.0</span></div>
-          </div>
-          <div class="text-right mb-6">
-            <span class="mono block mb-1" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">Total Estimated</span>
-            <div id="total-price" class="display font-black text-white" style="font-size:2.6rem;letter-spacing:-0.01em">--</div>
-            <div id="sub-price"   class="mono mt-1" style="font-size:10px;color:var(--muted)"></div>
-          </div>
-          <button onclick="navigateTo('contact');playClick()" data-ripple class="btn btn-accent w-full justify-center" style="font-size:12px;letter-spacing:0.08em">
-            <i data-lucide="radio" style="width:14px;height:14px"></i> TRANSMIT QUOTE
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ 08 REVIEWS ═══════════════════════════════════════════ -->
   <div id="pg-reviews" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
@@ -588,7 +524,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 09 CONTACT ═══════════════════════════════════════════ -->
+  <!-- ══ 06 CONTACT ═══════════════════════════════════════════ -->
   <div id="pg-contact" class="page">
     <div class="max-w-2xl mx-auto px-6 text-center py-24" style="padding-top:calc(var(--nav-h) + 5rem)">
       <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">[CONTACT UPLINK]</div>
