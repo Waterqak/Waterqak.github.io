@@ -1,5 +1,4 @@
 const SITE = {
-
     name:    "Water",
     age:     16,
     discord: "hokpy",
@@ -18,15 +17,35 @@ const SITE = {
     ],
 
     skills: [
-        { name: "Luau",        pct: 98, desc: "OOP · Metatables · Parallel Luau",   color: "blue"   },
-        { name: "DataStores",  pct: 95, desc: "ProfileService · Session Locking",    color: "blue"   },
-        { name: "Interface",   pct: 85, desc: "Roact · Fusion · TweenService",       color: "purple" },
-        { name: "Systems",     pct: 92, desc: "Knit Framework · ECS Pattern",        color: "gold"   },
+        {
+            name: "Luau Engineering",
+            pct: 98,
+            desc: "OOP · Modules · Parallel Luau",
+            color: "blue",
+        },
+        {
+            name: "Backend Systems",
+            pct: 95,
+            desc: "DataStores · ProfileService · Networking",
+            color: "gold",
+        },
+        {
+            name: "UI / UX Design",
+            pct: 90,
+            desc: "Figma · Interface Design · User Flow",
+            color: "purple",
+        },
+        {
+            name: "Gameplay Systems",
+            pct: 92,
+            desc: "Quest Engines · Combat · Mechanics",
+            color: "blue",
+        },
     ],
 
     funSkills: [
-        { name: "Sleep Schedule",      pct: 2,  desc: "caffeine-dependent",       color: "red"   },
-        { name: "Touching Grass",      pct: 5,  desc: "rare event, treat gently", color: "green" },
+        { name: "Sleep Schedule",      pct: 2,  desc: "caffeine-dependent",        color: "red"   },
+        { name: "Touching Grass",      pct: 5,  desc: "rare event, treat gently",  color: "green" },
         { name: "Googling Errors",     pct: 99, desc: "Stack Overflow MVP",        color: "gold"  },
         { name: "Charging Fair Rates", pct: 75, desc: "use the estimator ↓",      color: "blue"  },
     ],
@@ -35,21 +54,21 @@ const SITE = {
         {
             title:  "Freelance Systems Engineer",
             period: "2022 – Present",
-            desc:   "Backend systems for high-traffic Roblox games. muuch commissions shipped. Zero reported memory leaks (that I know of).",
-            tags:   ["DataStore2", "ProfileService", "Anti-Exploit", "Optimization"],
+            desc:   "Built backend systems, gameplay mechanics, and user interfaces for Roblox games ranging from small commissions to full experiences.",
+            tags:   ["DataStore", "UI", "Gameplay", "Optimization"],
             accent: true,
         },
         {
             title:  "Junior Developer",
             period: "2021 – 2022",
-            desc:   "Started with Lua. Made terrible code. Googled a lot. Slowly became less wrong.",
+            desc:   "Started with Lua and learned through practice, mistakes, debugging, and a lot of trial and error.",
             tags:   [],
             accent: false,
         },
         {
             title:  "The Beginning",
             period: "~2020",
-            desc:   "Opened Studio for the first time. Moved a baseplate brick for 40 minutes. Thought I was a developer.",
+            desc:   "Opened Studio for the first time, moved a baseplate around, and thought that counted as development.",
             tags:   [],
             accent: false,
             dim:    true,
@@ -60,8 +79,8 @@ const SITE = {
         {
             title:    "Chillin Place",
             category: "FULL GAME",
-            desc:     "Complete hangout place with full DataStore persistence.",
-            tags:     ["Game Design", "DataStore"],
+            desc:     "Complete hangout place with DataStore persistence and polished presentation.",
+            tags:     ["Game Design", "DataStore", "UI"],
             link:     "https://www.roblox.com/games/17290214724/Chillin-Place",
             media:    "image",
             src:      "https://tr.rbxcdn.com/180DAY-c69740761a8556385075f48b5b71147a/768/432/Image/Png/noFilter",
@@ -70,8 +89,8 @@ const SITE = {
         {
             title:    "Escape Lava: Collect Brainrots",
             category: "FULL GAME",
-            desc:     "Casual escape game with DataStore progression.",
-            tags:     ["Game Design", "DataStore"],
+            desc:     "Casual escape game with progression, UI flow, and saved player data.",
+            tags:     ["Game Design", "DataStore", "UI"],
             link:     "https://www.roblox.com/games/85862915773488/Escape-Lava-to-collect-brainrots",
             media:    "image",
             src:      "https://tr.rbxcdn.com/180DAY-1f5e4f49f3ff9eddbf732387c8b19cd7/768/432/Image/Webp/noFilter",
@@ -80,8 +99,8 @@ const SITE = {
         {
             title:    "Operation: Azure Rift",
             category: "FULL GAME",
-            desc:     "Story-driven FPS based on Blue Archive.",
-            tags:     ["FPS", "Narrative"],
+            desc:     "Story-driven FPS with systems, UI, and narrative structure inspired by Blue Archive.",
+            tags:     ["FPS", "Narrative", "UI"],
             link:     "https://www.roblox.com/games/140471518514522/Operation-Azure-Rift",
             media:    "image",
             src:      "https://tr.rbxcdn.com/180DAY-1384a973e73995479b5db690aa51e902/768/432/Image/Png/noFilter",
@@ -90,8 +109,8 @@ const SITE = {
         {
             title:    "Yan - Chan Simulator",
             category: "FULL GAME",
-            desc:     "Yandere Simulator Ports into roblox!",
-            tags:     ["Story", "Simulator"],
+            desc:     "A Roblox adaptation focused on progression, presentation, and gameplay flow.",
+            tags:     ["Story", "Simulator", "UI"],
             link:     "https://www.roblox.com/games/90515983274647/Yan-Chan-Simulator",
             media:    "image",
             src:      "https://tr.rbxcdn.com/180DAY-cae9bb90f7a6e78c66ed1e18af2727e6/768/432/Image/Webp/noFilter",
@@ -100,7 +119,7 @@ const SITE = {
         {
             title:    "Blind Mode Logic",
             category: "GAMEPLAY",
-            desc:     "Vision restriction mechanic with dynamic spawn handling.",
+            desc:     "Vision restriction mechanic with dynamic spawn handling and clean game-state control.",
             tags:     ["Lighting", "Camera"],
             link:     "",
             media:    "youtube",
@@ -110,7 +129,7 @@ const SITE = {
         {
             title:    "Quest Engine",
             category: "RPG SYSTEM",
-            desc:     "Visual Novel–style branching dialogue system.",
+            desc:     "Branching dialogue system with quest progression and smooth UI transitions.",
             tags:     ["ModuleScript", "UI Tweening"],
             link:     "",
             media:    "youtube",
@@ -120,7 +139,7 @@ const SITE = {
         {
             title:    "Dialogue System",
             category: "RPG SYSTEM",
-            desc:     "Simple FPS Dialogue system.",
+            desc:     "Simple FPS dialogue system built for readability, pacing, and clean interaction flow.",
             tags:     ["ModuleScript", "UI Tweening"],
             link:     "",
             media:    "youtube",
@@ -130,7 +149,7 @@ const SITE = {
         {
             title:    "Farm Optimization",
             category: "OPTIMIZATION",
-            desc:     "Full backend refactor — 40% server lag reduction.",
+            desc:     "Backend refactor that reduced server lag by 40% and improved overall stability.",
             tags:     ["Optimization", "Memory"],
             link:     "",
             media:    "youtube",
@@ -140,7 +159,7 @@ const SITE = {
         {
             title:    "Door Kicking Engine",
             category: "GAMEPLAY",
-            desc:     "Physics-based door interaction system via CFrame.",
+            desc:     "Physics-based door interaction system using CFrame and responsive player control.",
             tags:     ["ModuleScript", "CFrame"],
             link:     "",
             media:    "youtube",
@@ -150,26 +169,25 @@ const SITE = {
 
         // ── UI DESIGN ─────────────────────────────────────────────
         // Add your UI images here. Set src to your file in assets/images/.
-        // Example:
-         {
-             title:    "My First UI Design",
-             category: "UI DESIGN",
-             desc:     "Figma UI design.",
-             tags:     ["Figma", "UI/UX"],
-             link:     "",
-             media:    "image",
-             src:      "assets/images/UI1.png",
-             color:    "purple",
+        {
+            title:    "My First UI Design",
+            category: "UI DESIGN",
+            desc:     "Figma UI design.",
+            tags:     ["Figma", "UI/UX"],
+            link:     "",
+            media:    "image",
+            src:      "assets/images/UI1.png",
+            color:    "purple",
         },
         {
-             title:    "My Second UI Design",
-             category: "UI DESIGN",
-             desc:     "Figma UI design.",
-             tags:     ["Figma", "UI/UX"],
-             link:     "",
-             media:    "image",
-             src:      "assets/images/UI2.png",
-             color:    "purple",
+            title:    "My Second UI Design",
+            category: "UI DESIGN",
+            desc:     "Figma UI design.",
+            tags:     ["Figma", "UI/UX"],
+            link:     "",
+            media:    "image",
+            src:      "assets/images/UI2.png",
+            color:    "purple",
         },
     ],
 
@@ -183,15 +201,15 @@ const SITE = {
         currencies: {
             "R$":  { rate: 1,      prefix: false, sym: " R$" },
             "USD": { rate: 0.0035, prefix: true,  sym: "$"   },
-            "THB": { rate: 0.12,   prefix: true,  sym: "฿"  },
-            "VND": { rate: 90,     prefix: false, sym: "₫"  },
+            "THB": { rate: 0.12,   prefix: true,  sym: "฿"   },
+            "VND": { rate: 90,     prefix: false, sym: "₫"   },
         },
     },
 
     seedReviews: [
-        { id: "s1", name: "Kurokami_Dev",  stars: 5, text: "Fixed a DataStore corruption bug in under an hour that had been killing our game for weeks. 10/10 would hire again.", date: "2025-02-14", verified: true },
-        { id: "s2", name: "StellarForge",  stars: 5, text: "Built our entire quest engine from scratch. Clean code, great communication, delivered ahead of schedule.",            date: "2025-03-02", verified: true },
-        { id: "s3", name: "NexusRBX",      stars: 5, text: "Reduced server lag by 40% on our farm sim. Rewrote the backend the right way. Professional level work.",              date: "2025-04-20", verified: true },
+        { id: "s1", name: "Kurokami_Dev", stars: 5, text: "Fixed a DataStore corruption bug in under an hour that had been killing our game for weeks. 10/10 would hire again.", date: "2025-02-14", verified: true },
+        { id: "s2", name: "StellarForge", stars: 5, text: "Built our entire quest engine from scratch. Clean code, great communication, delivered ahead of schedule.", date: "2025-03-02", verified: true },
+        { id: "s3", name: "NexusRBX", stars: 5, text: "Reduced server lag by 40% on our farm sim. Rewrote the backend the right way. Professional level work.", date: "2025-04-20", verified: true },
     ],
 
     konami: ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"],
