@@ -634,8 +634,17 @@ function _toEmbed(url) {
 }
 
 function _media(p) {
-    if (p.media === 'youtube') return `<iframe class="w-full h-full" style="opacity:0.65;transition:opacity .4s" src="${_toEmbed(p.src)}" frameborder="0" allow="autoplay"></iframe>`;
-    if (p.media === 'image')   return `<img src="${p.src}" class="w-full h-full object-cover" style="opacity:0.65;transition:opacity .4s" loading="lazy">`;
+    if (p.media === 'youtube') {
+        return `<iframe class="w-full h-full" style="opacity:0.65;transition:opacity .4s" src="${_toEmbed(p.src)}" frameborder="0" allow="autoplay"></iframe>`;
+    }
+    if (p.media === 'image') {
+        const isUI = p.category === 'UI DESIGN';
+        return `<img src="${p.src}" class="w-full h-full" style="opacity:${isUI ? '0.92' : '0.65'};transition:opacity .4s;object-fit:${isUI ? 'contain' : 'cover'};object-position:center;background:#050508;" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:rgba(20,24,40,0.8);">
+                  <i data-lucide="image-off" style="width:32px;height:32px;color:var(--dim)"></i>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)">Image not found</span>
+                </div>`;
+    }
     return `<div class="w-full h-full flex items-center justify-center" style="background:rgba(20,24,40,0.8);"><i data-lucide="gamepad-2" style="width:40px;height:40px;color:var(--dim)"></i></div>`;
 }
 
@@ -654,7 +663,11 @@ function renderProjects() {
     const list = _projFilter === 'all' ? SITE.projects : SITE.projects.filter(p => p.category === _projFilter);
 
     grid.innerHTML = list.map(p => {
-        const s = COLOR_MAP[p.color] || COLOR_MAP.blue;
+        const s    = COLOR_MAP[p.color] || COLOR_MAP.blue;
+        const isUI = p.category === 'UI DESIGN';
+
+        const mediaH = isUI ? '480px' : '186px';
+        const colSpan = isUI ? 'grid-column:1/-1;' : '';
 
         const playBtn = p.link
             ? `<a href="${p.link}" target="_blank" onclick="event.stopPropagation()" class="btn btn-outline mt-4 w-full justify-center" style="padding:8px;border-radius:8px;font-size:10px;letter-spacing:.1em">
@@ -683,23 +696,32 @@ function renderProjects() {
                </span>`
             : '';
 
+        const uiLabel = isUI
+            ? `<div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.75);border:1px solid rgba(168,85,247,0.3);padding:4px 12px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:8px;color:#c084fc;white-space:nowrap;pointer-events:none;">
+                 <svg style="width:9px;height:9px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                 UI / FIGMA DESIGN
+               </div>`
+            : `<span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.78);border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#ccc">${p.tags[0] || ''}</span>`;
+
         return `
-        <div class="card group">
+        <div class="card group" style="${colSpan}">
             <div class="strip ${s.strip}"></div>
-            <div style="height:186px;overflow:hidden;background:rgba(0,0,0,0.5);border-bottom:1px solid rgba(255,255,255,0.05);position:relative">
+            <div style="height:${mediaH};overflow:hidden;background:rgba(0,0,0,0.5);border-bottom:1px solid rgba(255,255,255,0.05);position:relative;">
                 ${_media(p)}
                 ${visitsBadge}
                 ${playingBadge}
-                <span style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.78);border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#ccc">${p.tags[0] || ''}</span>
+                ${uiLabel}
             </div>
-            <div style="padding:20px">
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="display font-black text-white text-lg leading-none" style="transition:color .3s" onmouseover="this.style.color='${s.text}'" onmouseout="this.style.color='#fff'">${p.title}</h3>
-                    <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:2px 7px;border-radius:4px;white-space:nowrap;margin-left:8px">${p.category}</span>
+            <div style="padding:20px${isUI ? ';display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px' : ''}">
+                <div style="${isUI ? 'flex:1;min-width:0' : ''}">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="display font-black text-white text-lg leading-none" style="transition:color .3s" onmouseover="this.style.color='${s.text}'" onmouseout="this.style.color='#fff'">${p.title}</h3>
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:2px 7px;border-radius:4px;white-space:nowrap;margin-left:8px">${p.category}</span>
+                    </div>
+                    <p style="color:var(--dim);font-size:12px;line-height:1.5">${p.desc}</p>
+                    ${favBadge}
                 </div>
-                <p style="color:var(--dim);font-size:12px;line-height:1.5">${p.desc}</p>
-                ${favBadge}
-                ${playBtn}
+                ${isUI ? `<div class="flex flex-wrap gap-2">${p.tags.map(tag => `<span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);padding:3px 9px;border-radius:4px">${tag}</span>`).join('')}</div>` : playBtn}
             </div>
         </div>`;
     }).join('');
@@ -748,8 +770,6 @@ function renderTimeline() {
         </div>
     </div>`).join('');
 }
-
-
 
 let _basePrice = 2500;
 
@@ -1211,7 +1231,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initSwipeNav();
     initScrollProgress();
     initParticles();
-    // initCursorTrail(); // Removed the mouse follower particles as requested
     initMagnetic();
     initRipple();
     initTooltips();
