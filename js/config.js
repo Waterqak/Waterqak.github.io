@@ -166,9 +166,6 @@ const SITE = {
             src:      "https://youtu.be/FjZHsIuzUlY",
             color:    "purple",
         },
-
-        // ── UI DESIGN ─────────────────────────────────────────────
-        // Add your UI images here. Set src to your file in assets/images/.
         {
             title:    "My First UI Design",
             category: "UI DESIGN",
@@ -191,37 +188,14 @@ const SITE = {
         },
     ],
 
-    pricing: {
-        services: [
-            { label: "Quick Task", base: 500   },
-            { label: "Bug Fix",    base: 2500  },
-            { label: "System",     base: 10000 },
-            { label: "Full Game",  base: 30000 },
-        ],
-        currencies: {
-            "R$":  { rate: 1,      prefix: false, sym: " R$" },
-            "USD": { rate: 0.0035, prefix: true,  sym: "$"   },
-            "THB": { rate: 0.12,   prefix: true,  sym: "฿"   },
-            "VND": { rate: 90,     prefix: false, sym: "₫"   },
-        },
-    },
-
-    seedReviews: [
-        { id: "s1", name: "Kurokami_Dev", stars: 5, text: "Fixed a DataStore corruption bug in under an hour that had been killing our game for weeks. 10/10 would hire again.", date: "2025-02-14", verified: true },
-        { id: "s2", name: "StellarForge", stars: 5, text: "Built our entire quest engine from scratch. Clean code, great communication, delivered ahead of schedule.", date: "2025-03-02", verified: true },
-        { id: "s3", name: "NexusRBX", stars: 5, text: "Reduced server lag by 40% on our farm sim. Rewrote the backend the right way. Professional level work.", date: "2025-04-20", verified: true },
-    ],
-
     konami: ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"],
 
     sections: [
-        { id: "home",      label: "Home"      },
-        { id: "about",     label: "Profile"   },
-        { id: "skills",    label: "Skills"    },
-        { id: "history",   label: "History"   },
-        { id: "projects",  label: "Projects"  },
-        { id: "estimator", label: "Estimator" },
-        { id: "reviews",   label: "Reviews"   },
-        { id: "contact",   label: "Contact"   },
+        { id: "home",     label: "Home"    },
+        { id: "about",    label: "Profile" },
+        { id: "skills",   label: "Skills"  },
+        { id: "history",  label: "History" },
+        { id: "projects", label: "Projects"},
+        { id: "contact",  label: "Contact" },
     ],
 };
