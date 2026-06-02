@@ -29,7 +29,7 @@ tailwind.config = {
 </head>
 <body>
 
-<!-- ══ BOOT SCREEN ══════════════════════════════════════════════ -->
+<!-- BOOT SCREEN -->
 <div id="boot">
   <div class="relative z-10 flex flex-col items-center">
     <div class="w-16 h-16 rounded-lg flex items-center justify-center border mb-7 animate-pulse"
@@ -50,11 +50,11 @@ tailwind.config = {
     </button>
   </div>
   <div class="absolute bottom-8 mono" style="font-size:8px;letter-spacing:0.2em;color:var(--dim)">
-    WATER SECURE DEV SYSTEM // SPEARHEAD SQUADRON // <span class="blink" style="color:var(--accent)">■</span>
+    WATER SECURE DEV SYSTEM // SPEARHEAD SQUADRON // <span class="blink" style="color:var(--accent)">&#9632;</span>
   </div>
 </div>
 
-<!-- ══ GLOBAL UI DESIGN ════════════════════════════════════════════════ -->
+<!-- GLOBAL UI -->
 <audio id="bgm" loop></audio>
 <div id="scroll-bar"></div>
 <div id="section-bar" style="width:0%"></div>
@@ -73,14 +73,14 @@ tailwind.config = {
 </div>
 
 <div id="ach-btn">
-  <span style="font-size:17px">🏆</span>
+  <span style="font-size:17px">&#127942;</span>
   <span id="ach-badge" class="mono" style="font-size:7px;color:var(--gold);font-weight:700">0/12</span>
 </div>
 <div id="ach-panel">
   <div style="padding:12px 14px;border-bottom:1px solid rgba(255,184,58,0.1);background:rgba(255,184,58,0.04);flex-shrink:0">
     <div class="flex justify-between items-center mb-2">
       <span class="display font-black text-white" style="font-size:12px;letter-spacing:0.1em">ACHIEVEMENTS</span>
-      <span id="ach-pct" class="mono" style="font-size:8px;color:var(--gold)">0/12 · 0%</span>
+      <span id="ach-pct" class="mono" style="font-size:8px;color:var(--gold)">0/12 &middot; 0%</span>
     </div>
     <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
       <div id="ach-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#ffcc44);border-radius:99px;transition:width 0.5s ease;box-shadow:0 0 6px rgba(255,184,58,0.4)"></div>
@@ -91,7 +91,7 @@ tailwind.config = {
 
 <div id="nav-dots"></div>
 
-<!-- ══ NAVIGATION ═══════════════════════════════════════════════ -->
+<!-- NAVIGATION -->
 <nav>
   <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
     <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
@@ -152,10 +152,10 @@ tailwind.config = {
   <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">WATER.SYS v1.0 // SPEARHEAD</div>
 </div>
 
-<!-- ══ PAGES ════════════════════════════════════════════════════ -->
+<!-- PAGES -->
 <div id="app">
 
-  <!-- ══ 01 HOME ══════════════════════════════════════════════ -->
+  <!-- 01 HOME -->
   <div id="pg-home" class="page active">
     <div style="padding-top:var(--nav-h);min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
       <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(200,25,42,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
@@ -245,14 +245,14 @@ tailwind.config = {
               </div>
               <div class="flex justify-between items-center mb-1">
                 <span style="color:var(--muted)">LEGION_THREAT</span>
-                <span style="color:#00ff88;font-weight:700;font-size:8px" data-tip="Definitely accurate">0 ✓</span>
+                <span style="color:#00ff88;font-weight:700;font-size:8px" data-tip="Definitely accurate">0 &#10003;</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0"></div>
             </div>
             <div style="padding:0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:9.5px" onclick="document.getElementById('cli-input').focus()">
               <div id="cli-output" style="height:145px;overflow-y:auto;margin-bottom:9px;color:var(--muted);line-height:1.9">
                 <span style="color:var(--accent)">guest@spearhead:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
-                <span style="color:var(--muted);font-size:8.5px">· · · try: coffee · hack · uwu · neofetch · · ·</span><br>
+                <span style="color:var(--muted);font-size:8.5px">&middot; &middot; &middot; try: coffee &middot; hack &middot; uwu &middot; neofetch &middot; &middot; &middot;</span><br>
               </div>
               <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:9px">
                 <span style="color:var(--accent)">guest@spearhead:~$</span>
@@ -269,7 +269,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 02 ABOUT / PERSONNEL FILE ════════════════════════════ -->
+  <!-- 02 ABOUT -->
   <div id="pg-about" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(200,25,42,0.05);pointer-events:none;user-select:none">02</div>
@@ -278,27 +278,18 @@ tailwind.config = {
         <div class="md:col-span-4">
           <div class="card reveal" style="padding:26px">
             <div class="strip strip-blue"></div>
-            <div class="flex items-center justify-between mb-6" style="padding-top:8px">
-              <div id="pfp-wrap" class="cursor-pointer" onclick="updatePfp()" data-tip="Click to update photo (PIN required)"
-                   style="width:86px;height:86px;border-radius:4px;background:rgba(200,25,42,0.05);border:1px solid rgba(200,25,42,0.2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
-                <img id="avatar-img" class="hidden" style="width:100%;height:100%;object-fit:cover">
-                <i id="avatar-ph" data-lucide="user" style="width:34px;height:34px;color:var(--accent)"></i>
-                <div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:4px" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
-                  <i data-lucide="lock" style="width:14px;height:14px;color:#fff"></i>
-                  <span class="mono" style="font-size:7.5px;color:#fff;margin-top:3px">PIN LOCK</span>
-                </div>
-              </div>
+            <div class="flex items-center justify-end mb-6" style="padding-top:8px">
               <div class="text-right">
                 <div class="mono" style="font-size:8px;color:var(--muted);margin-bottom:3px;letter-spacing:0.1em">CLEARANCE</div>
                 <div class="display font-black text-white" style="font-size:1.3rem">SPEARHEAD <span style="color:var(--accent)">01</span></div>
-                <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">⬛⬛⬛⬛⬜ CLASSIFIED</div>
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">&#11035;&#11035;&#11035;&#11035;&#11036; CLASSIFIED</div>
               </div>
             </div>
             <div class="mono" style="font-size:11px">
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AGE</span><span class="font-bold text-white">16 <span style="color:var(--muted)">(yes, really)</span></span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AFFILIATION</span><span class="font-bold" style="color:var(--accent)">SPEARHEAD (INDIE)</span></div>
-              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">GAMEPLAY / UI DESIGN / GAMEPLAY</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">GAMEPLAY / UI DESIGN</span></div>
               <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS</span></div>
               <div class="flex justify-between py-2">
                 <span style="color:var(--dim)">STATUS</span>
@@ -307,7 +298,6 @@ tailwind.config = {
                 </span>
               </div>
             </div>
-            <div class="mono text-center mt-4" style="font-size:8px;color:var(--muted)">🔒 admin PIN required to update avatar</div>
           </div>
         </div>
 
@@ -324,7 +314,7 @@ tailwind.config = {
 
           <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(200,25,42,0.04);border-left:3px solid var(--accent)">
             <p class="text-white font-semibold italic" style="font-size:13px">
-              "Clean systems → smoother UI DESIGN → happier players → better games."
+              "Clean systems &rarr; smoother UI DESIGN &rarr; happier players &rarr; better games."
             </p>
           </div>
 
@@ -342,7 +332,7 @@ tailwind.config = {
 
           <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(200,25,42,0.03);border:1px solid rgba(200,25,42,0.12);font-size:11px">
             <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
-            <span style="color:var(--dim)">Fastest way to reach me → Discord:</span>
+            <span style="color:var(--dim)">Fastest way to reach me &rarr; Discord:</span>
             <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">hokpy</span>
             <span style="color:var(--muted)">(click)</span>
           </div>
@@ -352,117 +342,15 @@ tailwind.config = {
       <div class="absolute bottom-0 right-4 w-[400px] h-[680px] pointer-events-none opacity-25 hidden xl:block reveal z-0" style="transition: opacity 0.8s ease;">
         <img src="assets/images/Shin.png" class="w-full h-full object-contain object-bottom filter drop-shadow-[0_0_30px_rgba(200,25,42,0.2)]" style="animation: floatHolo 9s ease-in-out infinite;">
       </div>
-
-      <!-- ══ ROBLOX LIVE FEED ════════════════════════════════ -->
-      <div class="mt-20" id="rbx-section">
-        <div class="flex items-center gap-4 mb-10 reveal">
-          <div class="s-tag" style="color:var(--green);background:rgba(52,168,83,0.07);border-color:rgba(52,168,83,0.2)">
-            <span style="display:inline-flex;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px rgba(52,168,83,0.6);animation:livePulse 2.2s ease-out infinite;flex-shrink:0;margin-right:4px"></span>
-            [ROBLOX LIVE FEED]
-          </div>
-          <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(46,232,154,0.28),transparent)"></div>
-          <span class="mono" style="font-size:8px;color:var(--muted);letter-spacing:0.12em">AUTO-FETCHED</span>
-        </div>
-
-        <div class="grid md:grid-cols-12 gap-10 items-center">
-          <div class="md:col-span-5 flex justify-center reveal">
-            <div id="rbx-avatar-wrap" class="hidden rbx-holo-wrap">
-              <div class="rbx-holo-bg"></div>
-              <div style="position:relative">
-                <div class="rbx-avatar-container">
-                  <div class="rbx-scanline"></div>
-                  <div class="rbx-corner rbx-c-tl"></div>
-                  <div class="rbx-corner rbx-c-tr"></div>
-                  <div class="rbx-corner rbx-c-bl"></div>
-                  <div class="rbx-corner rbx-c-br"></div>
-                  <img id="rbx-fullbody" class="rbx-avatar-img" alt="Roblox Avatar">
-                </div>
-                <div class="rbx-rings-persp">
-                  <div class="rbx-ring rbx-ring-1"></div>
-                  <div class="rbx-ring rbx-ring-2"></div>
-                  <div class="rbx-ring rbx-ring-3"></div>
-                </div>
-              </div>
-              <div class="rbx-platform-wrap">
-                <div class="rbx-platform-bar"></div>
-                <div class="rbx-beam"></div>
-              </div>
-              <div id="rbx-displayname" class="rbx-nametag">WATER</div>
-              <div class="rbx-stream rbx-stream-l">
-                <div class="rbx-sline" style="animation-delay:0s"></div>
-                <div class="rbx-sline" style="animation-delay:0.6s"></div>
-                <div class="rbx-sline" style="animation-delay:1.2s"></div>
-              </div>
-              <div class="rbx-stream rbx-stream-r">
-                <div class="rbx-sline" style="animation-delay:0.3s"></div>
-                <div class="rbx-sline" style="animation-delay:0.9s"></div>
-                <div class="rbx-sline" style="animation-delay:1.5s"></div>
-              </div>
-            </div>
-
-            <div id="rbx-skeleton" class="flex flex-col items-center gap-4" style="width:220px">
-              <div style="width:196px;height:276px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);animation:glowPulse 2s ease-in-out infinite"></div>
-              <div style="width:120px;height:8px;border-radius:4px;background:rgba(255,255,255,0.04);animation:glowPulse 2s .3s ease-in-out infinite"></div>
-            </div>
-          </div>
-
-          <div class="md:col-span-7 space-y-5">
-            <div id="rbx-live-stats" class="hidden grid grid-cols-3 gap-4 reveal"></div>
-
-            <div id="rbx-stats-skeleton" class="grid grid-cols-3 gap-4">
-              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
-              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
-              <div class="stat-card" style="opacity:.3"><div class="stat-val" style="background:rgba(255,255,255,.06);border-radius:4px;height:28px"></div><div class="stat-lbl" style="background:rgba(255,255,255,.04);border-radius:3px;height:8px;margin-top:6px"></div></div>
-            </div>
-
-            <div class="card reveal" style="padding:0;overflow:hidden">
-              <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),#5effc4,transparent);box-shadow:0 0 16px rgba(46,232,154,0.45)"></div>
-              <div style="padding:20px 22px;padding-top:26px">
-                <div class="mono mb-4 flex items-center gap-2" style="font-size:8px;font-weight:700;letter-spacing:0.16em;color:var(--green)">
-                  <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(46,232,154,0.7);animation:livePulse 2.2s ease-out infinite;flex-shrink:0"></span>
-                  OPERATIVE_PROFILE // ROBLOX.COM
-                </div>
-                <div class="mono" style="font-size:11px">
-                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="border-bottom:1px solid rgba(255,255,255,0.04)">
-                    <span style="color:var(--dim)">JOIN_DATE</span>
-                    <span id="rbx-join" class="font-bold text-white"></span>
-                  </div>
-                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="border-bottom:1px solid rgba(255,255,255,0.04);animation-delay:.08s">
-                    <span style="color:var(--dim)">FOLLOWERS</span>
-                    <span id="rbx-followers" class="font-bold" style="color:var(--green)"></span>
-                  </div>
-                  <div data-rbx-row class="hidden flex justify-between py-2.5" style="animation-delay:.16s">
-                    <span style="color:var(--dim)">FRIENDS</span>
-                    <span id="rbx-friends" class="font-bold text-white"></span>
-                  </div>
-                </div>
-
-                <div id="rbx-desc-wrap" class="hidden mt-5 p-4 rounded-xl" style="background:rgba(46,232,154,0.03);border:1px solid rgba(46,232,154,0.1)">
-                  <div class="mono mb-2" style="font-size:8px;letter-spacing:0.12em;color:var(--green);font-weight:700">BIO_EXTRACT</div>
-                  <p id="rbx-desc" style="font-size:12px;color:var(--dim);line-height:1.65;font-family:'JetBrains Mono',monospace"></p>
-                </div>
-              </div>
-            </div>
-
-            <div class="reveal">
-              <a href="https://www.roblox.com/users/2878666652/profile" target="_blank"
-                 onclick="playClick()" class="btn btn-outline" style="font-size:11px;letter-spacing:0.08em;display:inline-flex">
-                <i data-lucide="external-link" style="width:13px;height:13px"></i>
-                VIEW ROBLOX PROFILE
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- ══ 03 SKILLS ════════════════════════════════════════════ -->
+  <!-- 03 SKILLS -->
   <div id="pg-skills" class="page" style="position:relative;">
     <div class="max-w-7xl mx-auto px-6 py-24 relative z-10" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="s-tag mb-3 reveal"><i data-lucide="cpu" style="width:11px;height:11px"></i> [STACK SPECIFICATIONS]</div>
       <h2 class="section-title mb-2 reveal">STACK SPECS</h2>
-      <p class="mono mb-12 reveal" style="font-size:11px;color:var(--dim)">— systems, UI, and gameplay. —</p>
+      <p class="mono mb-12 reveal" style="font-size:11px;color:var(--dim)">&mdash; systems, UI, and gameplay. &mdash;</p>
       <div id="skills-main" class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5"></div>
       <div id="skills-fun"  class="grid md:grid-cols-2 lg:grid-cols-4 gap-5"></div>
     </div>
@@ -471,7 +359,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 04 HISTORY ═══════════════════════════════════════════ -->
+  <!-- 04 HISTORY -->
   <div id="pg-history" class="page">
     <div class="max-w-3xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="text-center mb-14">
@@ -483,7 +371,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 06 PROJECTS ══════════════════════════════════════════ -->
+  <!-- 05 PROJECTS -->
   <div id="pg-projects" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
@@ -505,7 +393,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 07 ESTIMATOR ═════════════════════════════════════════ -->
+  <!-- 06 ESTIMATOR -->
   <div id="pg-estimator" class="page">
     <div class="max-w-5xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="s-tag mb-4 reveal"><i data-lucide="calculator" style="width:11px;height:11px"></i> [ESTIMATE // EXPENDITURES]</div>
@@ -548,8 +436,8 @@ tailwind.config = {
           </div>
           <div class="mono space-y-3 mb-6 pb-6" style="font-size:12px;border-bottom:1px solid rgba(255,255,255,0.05)">
             <div class="flex justify-between" style="color:var(--dim)"><span>Base Cost</span><span class="text-white" id="r-base">--</span></div>
-            <div class="flex justify-between" style="color:var(--dim)"><span>Complexity ×</span><span style="color:var(--accent)" id="r-comp">×1.0</span></div>
-            <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee ×</span><span style="color:var(--red)" id="r-rush">×1.0</span></div>
+            <div class="flex justify-between" style="color:var(--dim)"><span>Complexity &times;</span><span style="color:var(--accent)" id="r-comp">&times;1.0</span></div>
+            <div class="flex justify-between" style="color:var(--dim)"><span>Rush Fee &times;</span><span style="color:var(--red)" id="r-rush">&times;1.0</span></div>
           </div>
           <div class="text-right mb-6">
             <span class="mono block mb-1" style="font-size:8.5px;font-weight:700;letter-spacing:0.14em;color:var(--accent)">Total Estimated</span>
@@ -564,7 +452,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 08 REVIEWS ═══════════════════════════════════════════ -->
+  <!-- 07 REVIEWS -->
   <div id="pg-reviews" class="page">
     <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
@@ -588,7 +476,7 @@ tailwind.config = {
     </div>
   </div>
 
-  <!-- ══ 09 CONTACT ═══════════════════════════════════════════ -->
+  <!-- 08 CONTACT -->
   <div id="pg-contact" class="page">
     <div class="max-w-2xl mx-auto px-6 text-center py-24" style="padding-top:calc(var(--nav-h) + 5rem)">
       <div class="s-tag mb-4 reveal" style="margin:0 auto;width:fit-content">[CONTACT UPLINK]</div>
@@ -623,7 +511,7 @@ tailwind.config = {
               <span style="font-weight:700;font-size:13px;color:#1f2937">Discord</span>
               <span style="font-size:10px;color:#9ca3af">now</span>
             </div>
-            <div id="discord-text" style="font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">hokpy · click to copy</div>
+            <div id="discord-text" style="font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">hokpy &middot; click to copy</div>
           </div>
           <div class="momo-badge">1</div>
         </div>
@@ -636,7 +524,7 @@ tailwind.config = {
               <span style="font-weight:700;font-size:13px;color:#1f2937">Roblox</span>
               <span style="font-size:10px;color:#9ca3af">1m ago</span>
             </div>
-            <div style="font-size:11px;color:#6b7280">View my profile — Water @ Roblox</div>
+            <div style="font-size:11px;color:#6b7280">View my profile &mdash; Water @ Roblox</div>
           </div>
           <div class="momo-badge">1</div>
         </a>
@@ -644,14 +532,14 @@ tailwind.config = {
 
       <div class="mt-14 space-y-2 reveal">
         <div class="mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted);opacity:0.4">WATER DEV PORTFOLIO v1.0 // AUTH: HOKPY // SPEARHEAD</div>
-        <div class="mono" style="font-size:8px;color:var(--muted);opacity:0.25">built at 2am · powered by redbull · no bugs (allegedly)</div>
+        <div class="mono" style="font-size:8px;color:var(--muted);opacity:0.25">built at 2am &middot; powered by redbull &middot; no bugs (allegedly)</div>
       </div>
     </div>
   </div>
 
 </div>
 
-<!-- ══ REVIEW MODAL ═════════════════════════════════════════════ -->
+<!-- REVIEW MODAL -->
 <div id="review-modal" onclick="if(event.target===this)closeReviewModal()">
   <div style="width:100%;max-width:480px;border-radius:6px;overflow:hidden;background:#080b14;border:1px solid rgba(255,255,255,0.07);box-shadow:0 40px 100px rgba(0,0,0,0.7)">
     <div style="background:rgba(217,119,6,0.05);border-bottom:1px solid rgba(217,119,6,0.1);padding:14px 22px;display:flex;align-items:center;justify-content:space-between">
@@ -707,25 +595,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/config.js"></script>
 <script src="js/roblox.js"></script>
 <script src="js/main.js"></script>
-
-<script>
-(function patchRobloxSkeletons() {
-    const avatarWrap  = document.getElementById('rbx-avatar-wrap');
-    const liveStats   = document.getElementById('rbx-live-stats');
-    const skeletonAvt = document.getElementById('rbx-skeleton');
-    const skeletonSt  = document.getElementById('rbx-stats-skeleton');
-    if (!avatarWrap) return;
-    const obs = new MutationObserver(() => {
-        const avatarReady = !avatarWrap.classList.contains('hidden');
-        const statsReady  = liveStats && !liveStats.classList.contains('hidden');
-        if (avatarReady && skeletonAvt) skeletonAvt.style.display = 'none';
-        if (statsReady  && skeletonSt)  skeletonSt.style.display  = 'none';
-        if (avatarReady && statsReady) obs.disconnect();
-    });
-    obs.observe(avatarWrap, { attributes: true, attributeFilter: ['class'] });
-    if (liveStats) obs.observe(liveStats, { attributes: true, attributeFilter: ['class'] });
-})();
-</script>
 
 </body>
 </html>
