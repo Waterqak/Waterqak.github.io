@@ -100,9 +100,8 @@ function _onEnter(id) {
     page.querySelectorAll('.reveal').forEach((el, i) => {
         setTimeout(() => el.classList.add('done'), i * 65);
     });
-    if (id === 'skills')  setTimeout(_animBars, 120);
-    if (id === 'home')    setTimeout(_animCounters, 350);
-    if (id === 'reviews') renderReviews();
+    if (id === 'skills') setTimeout(_animBars, 120);
+    if (id === 'home')   setTimeout(_animCounters, 350);
 }
 
 function _updateNav(id) {
@@ -354,8 +353,8 @@ function typeWriter(lang) {
 
 let _lang = 'EN';
 const TRANS = {
-    EN: { hero_prefix: 'I fix', hero_desc: 'Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.', status: 'System Online', calc_title: 'RESOURCE ESTIMATOR', contact_sub: 'Send a transmission.' },
-    TH: { hero_prefix: 'ผมซ่อม', hero_desc: 'วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend เสถียรภาพของข้อมูล และระบบเกมซับซ้อน', status: 'สถานะ: ออนไลน์', calc_title: 'ประเมินงบประมาณ', contact_sub: 'ส่งข้อความมาได้เลย' },
+    EN: { hero_prefix: 'I fix', hero_desc: 'Specialized Roblox Systems Engineer. Backend stability, data integrity, complex mechanics.', status: 'System Online', contact_sub: 'Send a transmission.' },
+    TH: { hero_prefix: 'ผมซ่อม', hero_desc: 'วิศวกรระบบ Roblox เชี่ยวชาญด้าน Backend เสถียรภาพของข้อมูล และระบบเกมซับซ้อน', status: 'สถานะ: ออนไลน์', contact_sub: 'ส่งข้อความมาได้เลย' },
 };
 
 function toggleLanguage() {
@@ -666,7 +665,7 @@ function renderProjects() {
         const s    = COLOR_MAP[p.color] || COLOR_MAP.blue;
         const isUI = p.category === 'UI DESIGN';
 
-        const mediaH = isUI ? '480px' : '186px';
+        const mediaH  = isUI ? '480px' : '186px';
         const colSpan = isUI ? 'grid-column:1/-1;' : '';
 
         const playBtn = p.link
@@ -771,143 +770,17 @@ function renderTimeline() {
     </div>`).join('');
 }
 
-let _basePrice = 2500;
-
-function selectService(base, el) {
-    _basePrice = base;
-    document.querySelectorAll('.svc-btn').forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
-    calcBudget();
-    playClick(600, 0.05);
-}
-
-function calcBudget() {
-    const c   = parseFloat(document.getElementById('c-range')?.value || 1);
-    const r   = parseFloat(document.getElementById('r-range')?.value || 1);
-    const cur = document.getElementById('currency')?.value || 'R$';
-    const cfg = SITE.pricing.currencies[cur] || SITE.pricing.currencies['R$'];
-
-    const clbl = document.getElementById('c-lbl');
-    if (clbl) { clbl.textContent = c < 1.3 ? 'Standard' : c < 1.7 ? 'Complex' : 'Architect Level'; clbl.style.color = c < 1.3 ? 'var(--dim)' : c < 1.7 ? 'var(--accent)' : 'var(--gold)'; }
-
-    const rlbl = document.getElementById('r-lbl');
-    if (rlbl) { rlbl.textContent = r < 1.2 ? 'Standard' : r < 1.4 ? 'Priority' : 'ASAP'; rlbl.style.color = r < 1.2 ? 'var(--dim)' : r < 1.4 ? 'var(--accent)' : 'var(--red)'; }
-
-    const total = _basePrice * c * r;
-    const conv  = Math.ceil(total * cfg.rate);
-    const disp  = cfg.prefix ? cfg.sym + conv.toLocaleString() : conv.toLocaleString() + cfg.sym;
-
-    const tp = document.getElementById('total-price');
-    const sp = document.getElementById('sub-price');
-    const rb = document.getElementById('r-base');
-    const rc = document.getElementById('r-comp');
-    const rr = document.getElementById('r-rush');
-
-    if (tp) tp.textContent = disp;
-    if (rb) rb.textContent = _basePrice.toLocaleString();
-    if (rc) rc.textContent = `×${c.toFixed(1)}`;
-    if (rr) rr.textContent = `×${r.toFixed(1)}`;
-    if (sp) sp.textContent = cur !== 'USD' ? `≈ $${Math.ceil(total * 0.0035)} USD` : `≈ ${Math.ceil(total).toLocaleString()} R$`;
-}
-
 const REVIEWS_KEY = 'wds_reviews_v1';
 let _starRating = 5;
 
 function _getReviews() { try { return JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]'); } catch { return []; } }
-function _allReviews() { return [...SITE.seedReviews, ..._getReviews()]; }
+function _allReviews() { return _getReviews(); }
 
 function _stars(n, size) {
     return Array.from({ length: 5 }, (_, i) =>
         `<svg style="width:${size || 14}px;height:${size || 14}px;display:inline-block" fill="${i < n ? '#FFA800' : 'none'}" stroke="#FFA800" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`
     ).join('');
 }
-
-function renderReviews() {
-    const grid = document.getElementById('reviews-grid');
-    if (!grid) return;
-    const all = _allReviews();
-    const avg = all.reduce((a, r) => a + r.stars, 0) / all.length;
-
-    const countEl = document.getElementById('reviews-count');
-    const avgEl   = document.getElementById('reviews-avg');
-    if (countEl) countEl.textContent = all.length;
-    if (avgEl)   avgEl.textContent   = avg.toFixed(1) + ' ★';
-
-    grid.innerHTML = all.map((r, i) => `
-    <div class="card reveal" style="animation-delay:${i * 50}ms">
-        <div class="strip strip-gold"></div>
-        <div style="padding:20px;padding-top:24px">
-            <div class="flex items-start justify-between gap-3 mb-3">
-                <div class="flex items-center gap-3">
-                    <div style="width:38px;height:38px;border-radius:50%;background:rgba(200,25,42,0.1);border:1px solid rgba(200,25,42,0.3);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-weight:900;font-size:16px;color:var(--accent);flex-shrink:0">${r.name.charAt(0).toUpperCase()}</div>
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span style="font-weight:700;font-size:13px;color:#fff">${r.name}</span>
-                            ${r.verified ? `<span style="font-size:8px;font-weight:700;padding:1px 7px;border-radius:99px;background:rgba(46,232,154,0.1);color:var(--green);border:1px solid rgba(46,232,154,0.25)">✓ VERIFIED</span>` : ''}
-                        </div>
-                        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px">${r.date}</div>
-                    </div>
-                </div>
-                <div>${_stars(r.stars)}</div>
-            </div>
-            <p style="font-size:12px;color:var(--dim);line-height:1.6;font-style:italic;border-left:2px solid rgba(255,184,58,0.3);padding-left:10px">"${r.text}"</p>
-        </div>
-    </div>`).join('');
-}
-
-function openReviewModal()  { playClick(880, 0.2); const m = document.getElementById('review-modal'); if (m) { m.classList.add('open'); _syncStars(5); } }
-function closeReviewModal() { playClick(400, 0.1); document.getElementById('review-modal')?.classList.remove('open'); }
-
-function _buildStars() {
-    const sel = document.getElementById('star-sel');
-    if (!sel) return;
-    sel.innerHTML = Array.from({ length: 5 }, (_, i) => `
-        <span class="star-pick" data-v="${i + 1}" style="font-size:26px;cursor:pointer;transition:transform .15s">
-            <svg style="width:28px;height:28px;transition:all .15s" fill="${i < 5 ? '#FFA800' : 'none'}" stroke="#FFA800" stroke-width="1.5" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        </span>`
-    ).join('');
-    sel.querySelectorAll('.star-pick').forEach(s => {
-        const v = parseInt(s.dataset.v);
-        s.addEventListener('mouseenter', () => _syncStars(v), { passive: true });
-        s.addEventListener('mouseleave', () => _syncStars(_starRating), { passive: true });
-        s.addEventListener('click', () => { _starRating = v; _syncStars(v); playClick(600 + v * 80, 0.05); });
-    });
-}
-
-function _syncStars(n) {
-    document.querySelectorAll('.star-pick').forEach((s, i) => {
-        s.querySelector('svg')?.setAttribute('fill', i < n ? '#FFA800' : 'none');
-        s.style.transform = i < n ? 'scale(1.08)' : 'scale(1)';
-    });
-}
-
-function initReviewForm() {
-    _buildStars(); _starRating = 5;
-    const form = document.getElementById('review-form');
-    const ta   = document.getElementById('review-text');
-    const cc   = document.getElementById('char-count');
-    if (ta && cc) ta.addEventListener('input', () => { const l = ta.value.length; cc.textContent = `${l}/280`; cc.style.color = l > 250 ? 'var(--red)' : ''; });
-    if (!form) return;
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const name = document.getElementById('review-name')?.value.trim();
-        const text = ta?.value.trim();
-        if (!name || !text) return;
-        const stored = _getReviews();
-        stored.unshift({ id: 'u_' + Date.now(), name, stars: _starRating, text, date: new Date().toISOString().slice(0, 10), verified: false });
-        localStorage.setItem(REVIEWS_KEY, JSON.stringify(stored));
-        renderReviews();
-        closeReviewModal();
-        showToast('Field report submitted. Thanks.', 'var(--gold)');
-        unlockAch('reviewer');
-        playClick(1200, 0.3);
-    });
-}
-
-window.adminClearReviews = function () {
-    localStorage.removeItem(REVIEWS_KEY);
-    renderReviews();
-};
 
 const ACHS = {
     first_visit:    { icon: '🔭', title: 'FIRST CONTACT',  desc: 'Opened the portfolio.' },
@@ -916,7 +789,6 @@ const ACHS = {
     no_life:        { icon: '🏆', title: 'NO LIFE',        desc: 'Clicked the logo 7 times.' },
     linguist:       { icon: '🌐', title: 'LINGUIST',       desc: 'Switched site language.' },
     night_owl:      { icon: '🌙', title: 'NIGHT OWL',      desc: 'Visiting between midnight and 5am.' },
-    reviewer:       { icon: '📝', title: 'OPERATIVE',      desc: 'Submitted a field report.' },
     chaos_agent:    { icon: '🚨', title: 'REPUBLIC SPY',   desc: 'Triggered the Republic override.' },
     konami:         { icon: '🎮', title: 'GAMER',          desc: 'Entered the Konami code.' },
     hacker:         { icon: '🖤', title: 'HACKER',         desc: 'Typed "hack" in the terminal.' },
@@ -932,8 +804,8 @@ function unlockAch(id) {
     localStorage.setItem('wds_ach', JSON.stringify(_unlocked));
     _refreshAchPanel();
 
-    const a  = ACHS[id];
-    const n  = Object.keys(_unlocked).length;
+    const a    = ACHS[id];
+    const n    = Object.keys(_unlocked).length;
     const card = document.createElement('div');
     card.style.cssText = `position:fixed;bottom:${88 + (n % 3) * 88}px;left:22px;z-index:9997;width:280px;background:rgba(4,6,15,.98);border:1px solid rgba(255,184,58,.35);border-left:3px solid var(--gold);padding:11px 15px;border-radius:10px;box-shadow:0 8px 36px rgba(0,0,0,.7);transform:translateX(-320px);opacity:0;pointer-events:none;transition:all 0.42s cubic-bezier(0.175,0.885,0.32,1.275);font-family:'JetBrains Mono',monospace;will-change:transform,opacity;`;
     card.innerHTML = `<div style="font-size:7.5px;letter-spacing:.14em;color:var(--gold);margin-bottom:5px">★ ACHIEVEMENT UNLOCKED</div><div style="display:flex;align-items:center;gap:9px"><span style="font-size:24px">${a.icon}</span><div><div style="color:#fff;font-weight:900;font-size:10.5px;letter-spacing:.06em">${a.title}</div><div style="color:var(--dim);font-size:8.5px;margin-top:2px">${a.desc}</div></div></div>`;
@@ -1132,24 +1004,22 @@ function initCLI() {
     const go = (id, msg) => { setTimeout(() => navigateTo(id), 200); return `<span style="${D}">${msg}</span>`; };
 
     const cmds = {
-        help:      () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about skills projects estimator reviews contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
-        about:     () => go('home',      'Navigating...'),
-        skills:    () => go('skills',    'Loading specs...'),
-        projects:  () => go('projects',  'Accessing mission reports...'),
-        estimator: () => go('estimator', 'Loading estimator...'),
-        reviews:   () => go('reviews',   'Loading field reports...'),
-        contact:   () => go('contact',   'Opening comms...'),
-        date:      () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
-        whoami:    () => `<span style="${D}">Guest · Level 1 · Node: Spearhead-Alpha · IP: 127.0.0.1</span>`,
-        status:    () => _override ? `<span style="${B}">REPUBLIC OVERRIDE active.</span>` : `<span style="${GN}">✓ NOMINAL — All nodes green.</span>`,
-        neofetch:  () => [`<span style="${B}">WATER</span>@<span style="${B}">spearhead</span>`, '  OS: EightyOS x64 · Host: WATER.SYS v1', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', '  Legion: <span style="color:var(--red)">ACTIVE</span>', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
-        coffee:    () => [`<span style="${G}">Brewing...</span>`, `<span style="${D}">Caffeine: 9000mg. Bugs fixed: still 0.</span>`].join('<br>'),
-        uwu:       () => [`<span style="${P}">UwU what's this?? a stwange tewminal??</span>`, `<span style="${M}">[ this was a mistake. deeply sorry. ]</span>`].join('<br>'),
-        sudo:      () => `<span style="${R}">Permission denied. Reported to Handler One.</span>`,
-        hack:      () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing Legion core... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
-        clear:     () => { out.innerHTML = ''; return null; },
-        ls:        () => `<span style="${D}">home/ about/ skills/ history/ projects/ estimator/ reviews/ contact/ classified/ TODO_never_fix/</span>`,
-        ping:      () => `<span style="${GN}">PONG — 1ms (localhost, obviously)</span>`,
+        help:     () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about skills projects contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
+        about:    () => go('home',     'Navigating...'),
+        skills:   () => go('skills',   'Loading specs...'),
+        projects: () => go('projects', 'Accessing mission reports...'),
+        contact:  () => go('contact',  'Opening comms...'),
+        date:     () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
+        whoami:   () => `<span style="${D}">Guest · Level 1 · Node: Spearhead-Alpha · IP: 127.0.0.1</span>`,
+        status:   () => _override ? `<span style="${B}">REPUBLIC OVERRIDE active.</span>` : `<span style="${GN}">✓ NOMINAL — All nodes green.</span>`,
+        neofetch: () => [`<span style="${B}">WATER</span>@<span style="${B}">spearhead</span>`, '  OS: EightyOS x64 · Host: WATER.SYS v1', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', '  Legion: <span style="color:var(--red)">ACTIVE</span>', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
+        coffee:   () => [`<span style="${G}">Brewing...</span>`, `<span style="${D}">Caffeine: 9000mg. Bugs fixed: still 0.</span>`].join('<br>'),
+        uwu:      () => [`<span style="${P}">UwU what's this?? a stwange tewminal??</span>`, `<span style="${M}">[ this was a mistake. deeply sorry. ]</span>`].join('<br>'),
+        sudo:     () => `<span style="${R}">Permission denied. Reported to Handler One.</span>`,
+        hack:     () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing Legion core... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
+        clear:    () => { out.innerHTML = ''; return null; },
+        ls:       () => `<span style="${D}">home/ about/ skills/ history/ projects/ contact/ classified/ TODO_never_fix/</span>`,
+        ping:     () => `<span style="${GN}">PONG — 1ms (localhost, obviously)</span>`,
         'git blame':     () => `<span style="${D}">git blame: Water (100% of commits, 100% of bugs)</span>`,
         'git push':      () => `<span style="${R}">remote: Permission denied.</span>`,
         'touch grass':   () => `<span style="${GN}">✓ Grass touched. Rare event.</span>`,
@@ -1157,7 +1027,6 @@ function initCLI() {
         exit:            () => `<span style="${D}">lol no</span>`,
         'npm install':   () => `<span style="${D}">added 2,847 packages. 3 vulnerabilities. node_modules: 850MB.</span>`,
         'cat readme.md': () => `<span style="${D}">README: "built at 2am. please hire."</span>`,
-        'reviews clear': () => { const p = prompt('Admin PIN:'); if (p !== SITE.adminPin) return `<span style="${R}">Access denied.</span>`; adminClearReviews(); return `<span style="${GN}">✓ User reviews cleared.</span>`; },
         'pfp reset':     () => { const p = prompt('Admin PIN:'); if (p !== SITE.adminPin) return `<span style="${R}">Access denied.</span>`; resetPfp(); return `<span style="${GN}">✓ Profile picture reset.</span>`; },
     };
 
@@ -1246,14 +1115,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSkills();
     renderTimeline();
     renderProjects();
-    initReviewForm();
 
     lucide.createIcons();
     typeWriter();
-    calcBudget();
-
-    const firstSvc = document.querySelector('.svc-btn');
-    if (firstSvc) firstSvc.click();
 
     const firstFilter = document.querySelector('.filter-btn');
     if (firstFilter) firstFilter.classList.add('active');
