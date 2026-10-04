@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Add content</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tactical.css">
+<style>
+  html,body{height:auto}
+  body{max-width:880px;margin:0 auto;padding:48px 24px 96px;color:var(--text)}
+  h1{font-size:1.6rem;font-weight:600;margin-bottom:6px}
+  h2{font-size:1.1rem;font-weight:600;margin:40px 0 14px}
+  .sub{color:var(--dim);font-size:14px;margin-bottom:8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  label{display:flex;flex-direction:column;gap:6px;font:12px 'IBM Plex Mono',monospace;color:var(--dim)}
+  .wide{grid-column:1/-1}
+  input,select,textarea{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;color:var(--text);font:13px 'IBM Plex Mono',monospace;outline:0}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  textarea{min-height:200px;resize:vertical;tab-size:4}
+  pre.out{margin-top:14px;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow-x:auto;font:12px/1.6 'IBM Plex Mono',monospace;white-space:pre-wrap}
+  .row{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .btn{position:relative;overflow:hidden;padding:10px 18px;border:1px solid var(--line);border-radius:var(--r);background:transparent;color:var(--text);font:12px 'IBM Plex Mono',monospace;cursor:pointer}
+  .warn{color:var(--red);font:12px 'IBM Plex Mono',monospace}
+  .ok{color:var(--dim);font:12px 'IBM Plex Mono',monospace}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<h1>Add content</h1>
+<p class="sub">Fill in a form, copy the block, paste it into <code>js/config.js</code>. Nothing is saved here. <a href="index.html">Back to site</a></p>
+
+<h2>New project</h2>
+<p class="sub">Paste inside the <code>projects: [ ... ]</code> list. Set a status and it also appears in the Terminal Hub.</p>
+<div class="grid" id="pf">
+  <label>Title<input id="pTitle" placeholder="Chillin Place"></label>
+  <label>Category<select id="pCat"></select></label>
+  <label class="wide">Description<textarea id="pDesc" style="min-height:70px"></textarea></label>
+  <label>Your role<input id="pRole" placeholder="Scripter"></label>
+  <label>Result (a number is best)<input id="pResult" placeholder="Server lag down 40%"></label>
+  <label>Tags (comma separated)<input id="pTags" placeholder="Luau, UI, DataStore"></label>
+  <label>Roblox link (optional)<input id="pLink" placeholder="https://www.roblox.com/games/..."></label>
+  <label>Media type<select id="pMedia"><option>image</option><option>youtube</option></select></label>
+  <label>Media source (image path or video URL)<input id="pSrc" placeholder="assets/images/UI1.png"></label>
+  <label>Status in hub<select id="pStatus"><option value="">none (hidden from hub)</option><option>IN PROGRESS</option><option>SHIPPED</option></select></label>
+</div>
+<pre class="out" id="pOut"></pre>
+<div class="row"><button class="btn" id="pCopy" type="button">[ COPY ]</button></div>
+
+<h2>New code specimen</h2>
+<p class="sub">Paste inside the <code>specimens: [ ... ]</code> list. It checks your Luau naming habits.</p>
+<div class="grid">
+  <label>File name<input id="sFile" placeholder="DoorOpen.server.luau"></label>
+  <label>One-line note<input id="sNote" placeholder="What it teaches"></label>
+  <label class="wide">Luau code<textarea id="sCode" spellcheck="false"></textarea></label>
+</div>
+<div class="row"><label style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="sTabs" checked style="padding:0">turn 4-space indents into tabs</label></div>
+<div id="sLint" class="row"></div>
+<pre class="out" id="sOut"></pre>
+<div class="row"><button class="btn" id="sCopy" type="button">[ COPY ]</button></div>
+
+<script src="js/config.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const q = s => JSON.stringify(s);
+
+// ---------- project ----------
+const cats = [...new Set(SITE.projects.map(p => p.category))];
+$('pCat').innerHTML = cats.map(c => '<option>' + c + '</option>').join('');
+
+function projectSnippet() {
+    const tags = $('pTags').value.split(',').map(t => t.trim()).filter(Boolean);
+    const lines = [
+        '        {',
+        '            title:    ' + q($('pTitle').value) + ',',
+        '            category: ' + q($('pCat').value) + ',',
+        '            desc:     ' + q($('pDesc').value) + ',',
+        '            tags:     ' + q(tags) + ',',
+    ];
+    if ($('pRole').value) lines.push('            role:     ' + q($('pRole').value) + ',');
+    if ($('pResult').value) lines.push('            result:   ' + q($('pResult').value) + ',');
+    if ($('pLink').value) lines.push('            link:     ' + q($('pLink').value) + ',');
+    lines.push('            media:    ' + q($('pMedia').value) + ',', '            src:      ' + q($('pSrc').value) + ',');
+    if ($('pStatus').value) lines.push('            status:   ' + q($('pStatus').value) + ',');
+    lines.push('        },');
+    return lines.join('\n');
+}
+const paintProject = () => { $('pOut').textContent = projectSnippet(); };
+
+// ---------- specimen ----------
+function lint(code) {
+    const bare = code.replace(/--.*$/gm, '').replace(/"[^"\n]*"|'[^'\n]*'/g, '""');
+    const out = [];
+    const names = [...new Set(bare.match(/\b[A-Za-z]+(?:_[A-Za-z0-9]+)+\b/g) || [])];
+    names.forEach(n => out.push('underscore in name: ' + n));
+    const legacy = [...new Set([...bare.matchAll(/(?<![.\w])(wait|spawn|delay)\s*\(/g)].map(m => m[1]))];
+    legacy.forEach(n => out.push('use task.' + n + '() instead of ' + n + '()'));
+    return out;
+}
+function specimenSnippet() {
+    let code = $('sCode').value.replace(/\s+$/, '');
+    if ($('sTabs').checked) code = code.replace(/^((?:    )+)/gm, m => '\t'.repeat(m.length / 4));
+    const esc = code.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+    return '        { file: ' + q($('sFile').value) + ', note: ' + q($('sNote').value) + ', code: `' + esc + '` },';
+}
+function paintSpecimen() {
+    $('sOut').textContent = specimenSnippet();
+    const issues = lint($('sCode').value);
+    $('sLint').innerHTML = issues.length
+        ? issues.map(i => '<span class="warn">' + i.replace(/</g, '&lt;') + '</span>').join('')
+        : '<span class="ok">naming looks clean</span>';
+}
+
+function wireCopy(btn, getText) {
+    btn.addEventListener('click', () => navigator.clipboard.writeText(getText()).then(() => {
+        btn.textContent = '[ COPIED ]'; setTimeout(() => { btn.textContent = '[ COPY ]'; }, 1200);
+    }));
+}
+document.querySelectorAll('#pf input,#pf select,#pf textarea').forEach(n => n.addEventListener('input', paintProject));
+['sFile', 'sNote', 'sCode', 'sTabs'].forEach(id => $(id).addEventListener('input', paintSpecimen));
+wireCopy($('pCopy'), projectSnippet); wireCopy($('sCopy'), specimenSnippet);
+paintProject(); paintSpecimen();
+</script>
+</body>
+</html>

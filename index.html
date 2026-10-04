@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Water: Roblox developer focused on backend systems, UI design, gameplay mechanics, and optimization.">
+<title>Water.SYS | Roblox Portfolio</title>
+<link rel="icon" type="image/png" href="favicon.png">
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@0.460.0"></script>
+<link  href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+
+<script>
+tailwind.config = {
+  darkMode:'class',
+  theme:{ extend:{
+    fontFamily:{ sans:['IBM Plex Sans','sans-serif'], mono:['IBM Plex Mono','monospace'], display:['IBM Plex Sans','sans-serif'] },
+    colors:{ accent:'var(--accent)', gold:'var(--gold)', momo:'#C8D4EC' }
+  }}
+};
+</script>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/rbx-hologram.css">
+<link rel="stylesheet" href="css/tactical.css">
+</head>
+<body>
+
+<!-- BOOT SCREEN -->
+<div id="boot" role="dialog" aria-label="Loading">
+  <div class="boot-corner tl">SPEARHEAD SQUADRON</div>
+  <div class="boot-corner tr">EYES ONLY</div>
+  <div class="boot-wrap">
+    <h1 class="boot-mark">WATER<span>.SYS</span></h1>
+    <div class="boot-sub">secure dev system v1.0</div>
+    <div id="boot-log" class="boot-log"></div>
+    <div class="boot-bar"><i id="boot-fill"></i></div>
+    <div class="boot-meta"><span id="boot-state">BOOTING</span><span id="boot-pct">0%</span></div>
+    <button id="boot-btn" type="button" onclick="startExperience()" class="btn btn-outline mono boot-btn">INITIATE</button>
+  </div>
+  <div class="boot-corner bl">WATER SECURE DEV SYSTEM</div>
+  <div class="boot-corner br" id="boot-clock">--:--:--</div>
+</div>
+
+<!-- GLOBAL UI -->
+<audio id="bgm" loop></audio>
+<div id="tooltip"></div>
+<div class="bg-noise"></div>
+<div class="bg-mesh"></div>
+<canvas id="particles-canvas"></canvas>
+
+<div class="music-pill" onclick="toggleMute()" data-tip="Toggle music">
+  <div class="live-dot"></div>
+  <div class="flex flex-col leading-tight">
+    <span class="mono" style="font-size:7px;letter-spacing:0.15em;color:var(--muted)">NOW PLAYING</span>
+    <span class="mono font-bold" style="font-size:9px;color:#fff">SPEARHEAD RADIO</span>
+  </div>
+  <i id="mute-icon" data-lucide="volume-2" style="width:13px;height:13px;color:var(--dim)"></i>
+</div>
+
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
+    <div class="flex items-center gap-3 cursor-pointer group" data-logo-egg
+         onclick="playClick(); navigateTo('home')" data-tip="WATER.SYS: click me 7 times">
+      <div class="p-2 rounded border transition-all duration-300 group-hover:bg-[color:var(--accent)]"
+           style="background:rgba(61,139,255,0.07);border-color:rgba(61,139,255,0.18)">
+        <i data-lucide="database" style="width:15px;height:15px;color:var(--accent)"></i>
+      </div>
+      <span class="display font-black text-white" style="font-size:1.15rem;letter-spacing:0.06em">
+        WATER<span style="color:var(--accent)">.SYS</span>
+      </span>
+    </div>
+
+    <div class="hidden lg:flex items-center gap-6">
+      <a class="nav-link" href="#home" data-section="home" onclick="navigateTo('home');playClick();return false">Home</a>
+      <a class="nav-link" href="#about" data-section="about" onclick="navigateTo('about');playClick();return false">Profile</a>
+      <a class="nav-link" href="#hub" data-section="hub" onclick="navigateTo('hub');playClick();return false">Hub</a>
+      <a class="nav-link" href="#code" data-section="code" onclick="navigateTo('code');playClick();return false">Code</a>
+      <a class="nav-link" href="#history" data-section="history" onclick="navigateTo('history');playClick();return false">History</a>
+      <a class="nav-link" href="#projects" data-section="projects" onclick="navigateTo('projects');playClick();return false">Projects</a>
+    </div>
+
+    <div class="hidden lg:flex items-center gap-3">
+      <button type="button" class="kbd-hint" onclick="openPalette()" aria-label="Open command palette">CTRL K</button>
+      <button onclick="navigateTo('contact');playClick()" data-mag data-ripple class="btn btn-momo">
+        <i data-lucide="radio" style="width:13px;height:13px"></i>
+        TRANSMIT_SECURE
+      </button>
+    </div>
+
+    <button onclick="toggleMenu();playClick()" class="lg:hidden p-2 border" aria-label="Menu"
+            style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer">
+      <i data-lucide="menu" style="width:20px;height:20px;color:#fff"></i>
+    </button>
+  </div>
+</nav>
+
+<div id="mobile-menu">
+  <button onclick="toggleMenu();playClick()" class="absolute top-5 right-6" style="background:none;border:none;cursor:pointer">
+    <i data-lucide="x" style="width:26px;height:26px;color:var(--dim)"></i>
+  </button>
+  <div class="flex flex-col gap-5 mt-2">
+    <a data-section="home" onclick="navigateTo('home');playClick()">HOME</a>
+    <a data-section="about" onclick="navigateTo('about');playClick()">PROFILE</a>
+    <a data-section="hub" onclick="navigateTo('hub');playClick()">HUB</a>
+    <a data-section="code" onclick="navigateTo('code');playClick()">CODE</a>
+    <a data-section="history" onclick="navigateTo('history');playClick()">HISTORY</a>
+    <a data-section="projects" onclick="navigateTo('projects');playClick()">PROJECTS</a>
+    <a data-section="contact" onclick="navigateTo('contact');playClick()">CONTACT</a>
+  </div>
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:24px 0"></div>
+  <div class="mt-auto mono" style="font-size:8px;letter-spacing:0.2em;color:var(--muted)">WATER.SYS v1.0 // SPEARHEAD</div>
+</div>
+
+<!-- PAGES -->
+<div id="app">
+
+  <!-- 01 HOME -->
+  <div id="pg-home" class="page active">
+    <div style="padding-top:var(--nav-h);min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden">
+      <div style="position:absolute;top:8%;left:-6%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(61,139,255,0.05) 0%,transparent 70%);filter:blur(48px);animation:float1 22s ease-in-out infinite;pointer-events:none"></div>
+      <div style="position:absolute;bottom:6%;right:-4%;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(80,130,200,0.04) 0%,transparent 70%);filter:blur(42px);animation:float2 28s ease-in-out infinite;pointer-events:none"></div>
+
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(61,139,255,0.06);pointer-events:none;user-select:none;line-height:1">01</div>
+
+      <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full py-16 z-10">
+        <div>
+          <div class="reveal mb-8">
+            <button onclick="toggleOverride()" class="hero-badge" data-tip="Click to toggle system status">
+              <span style="position:relative;display:flex;width:8px;height:8px">
+                <span id="status-ping" style="position:absolute;display:inline-flex;width:100%;height:100%;border-radius:50%;background:#22c55e;opacity:0.75;animation:livePulse 2s ease-out infinite"></span>
+                <span id="status-dot"  style="position:relative;display:inline-flex;width:8px;height:8px;border-radius:50%;background:#22c55e"></span>
+              </span>
+              <span id="status-txt" class="mono" style="letter-spacing:0.14em">Open for commissions</span>
+            </button>
+          </div>
+
+          <h1 class="display font-black reveal mb-6" style="font-size:clamp(2.4rem,6vw,4.8rem);line-height:0.95;letter-spacing:-0.02em">
+            <span class="block text-white" style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px">I build</span>
+            <span id="typewriter" class="gradient-text block"></span>
+          </h1>
+
+          <p class="reveal mb-10 pl-4"
+             style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(61,139,255,0.3)">
+            Roblox developer focused on backend systems, UI design, gameplay logic, and performance.
+          </p>
+
+          <div class="flex flex-wrap gap-4 mb-10 reveal">
+            <button onclick="navigateTo('projects');playClick()" data-mag data-ripple class="btn btn-primary" style="font-size:12px;letter-spacing:0.1em">
+              VIEW DATABASE <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
+            </button>
+            <button onclick="navigateTo('contact');playClick()" data-mag class="btn btn-outline" style="font-size:11px;letter-spacing:0.1em">
+              <i data-lucide="radio" style="width:14px;height:14px"></i> HIRE ME
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 max-w-xs reveal">
+            <div class="stat-card" data-tip="20+ satisfied clients">
+              <div class="stat-val" data-count="20" data-suffix="+">20+</div>
+              <div class="stat-lbl">Commissions</div>
+            </div>
+            <div class="stat-card" data-tip="Started scripting at age 11">
+              <div class="stat-val" data-count="4" data-suffix="yrs">4yrs</div>
+              <div class="stat-lbl">Experience</div>
+            </div>
+            <div class="stat-card" data-tip="Average server lag reduction">
+              <div class="stat-val" data-count="40" data-suffix="%">40%</div>
+              <div class="stat-lbl">Avg Lag Fix</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative hidden md:block reveal">
+          <div class="terminal">
+            <div class="scanline"></div>
+            <div style="background:rgba(5,7,16,0.98);padding:9px 15px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:space-between">
+              <div class="flex items-center gap-2">
+                <i data-lucide="terminal" style="width:12px;height:12px;color:var(--accent)"></i>
+                <span class="mono" style="font-size:9px;letter-spacing:0.1em;color:var(--muted)">SPEARHEAD_TERMINAL</span>
+              </div>
+              <div class="flex gap-1.5">
+                <div class="code-dot" style="background:#ef4444;opacity:0.7" data-tip="Aesthetic only."></div>
+                <div class="code-dot" style="background:#eab308;opacity:0.7"></div>
+                <div class="code-dot" style="background:#22c55e;opacity:0.7"></div>
+              </div>
+            </div>
+            <div style="padding:12px 16px 0;font-family:'JetBrains Mono',monospace;font-size:9.5px">
+              <div class="flex justify-between items-center mb-2">
+                <span style="color:var(--muted)">CORE_LOAD</span>
+                <div class="flex items-center gap-2">
+                  <div style="width:72px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden">
+                    <div style="width:40%;height:100%;background:#00ff88;box-shadow:0 0 5px #00ff88;animation:pulse 2s ease-in-out infinite"></div>
+                  </div>
+                  <span style="color:#00ff88;font-weight:700;font-size:8px">40%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span style="color:var(--muted)">NET_UPLINK</span>
+                <div class="flex items-center gap-2">
+                  <div style="width:72px;height:3px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden">
+                    <div style="width:72%;height:100%;background:var(--accent);box-shadow:0 0 5px var(--accent);animation:pulse 2.5s ease-in-out infinite"></div>
+                  </div>
+                  <span style="color:var(--accent);font-weight:700;font-size:8px">72%</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center mb-1">
+                <span style="color:var(--muted)">LEGION_THREAT</span>
+                <span style="color:#00ff88;font-weight:700;font-size:8px" data-tip="Definitely accurate">0 &#10003;</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.04);margin:9px 0"></div>
+            </div>
+            <div style="padding:0 16px 16px;font-family:'JetBrains Mono',monospace;font-size:9.5px" onclick="document.getElementById('cli-input').focus()">
+              <div id="cli-output" style="height:145px;overflow-y:auto;margin-bottom:9px;color:var(--muted);line-height:1.9">
+                <span style="color:var(--accent)">guest@spearhead:~$</span> <span style="color:var(--muted)">type 'help' for commands</span><br>
+                <span style="color:var(--muted);font-size:8.5px">&middot; &middot; &middot; try: coffee &middot; hack &middot; uwu &middot; neofetch &middot; &middot; &middot;</span><br>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,0.04);padding-top:9px">
+                <span style="color:var(--accent)">guest@spearhead:~$</span>
+                <input id="cli-input" type="text" autocomplete="off" spellcheck="false"
+                       style="flex:1;background:transparent;border:none;outline:none;color:var(--text);caret-color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:9.5px">
+                <span class="blink" style="width:6px;height:12px;background:var(--accent);display:block;border-radius:1px"></span>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;z-index:-1;top:-20px;right:-20px;width:80px;height:80px;border-top:2px solid rgba(61,139,255,0.12);border-right:2px solid rgba(61,139,255,0.12);border-radius:0 12px 0 0;pointer-events:none"></div>
+          <div style="position:absolute;z-index:-1;bottom:-20px;left:-20px;width:80px;height:80px;border-bottom:2px solid rgba(61,139,255,0.12);border-left:2px solid rgba(61,139,255,0.12);border-radius:0 0 0 12px;pointer-events:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 ABOUT -->
+  <div id="pg-about" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="display" style="position:absolute;right:32px;top:90px;font-size:clamp(80px,10vw,120px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(61,139,255,0.05);pointer-events:none;user-select:none">02</div>
+
+      <div class="grid md:grid-cols-12 gap-10 items-start">
+        <div class="md:col-span-4">
+          <div class="card reveal" style="padding:26px">
+            <div class="strip strip-blue"></div>
+            <div class="flex items-center justify-end mb-6" style="padding-top:8px">
+              <div class="text-right">
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-bottom:3px;letter-spacing:0.1em">CLEARANCE</div>
+                <div class="display font-black text-white" style="font-size:1.3rem">SPEARHEAD <span style="color:var(--accent)">01</span></div>
+                <div class="mono" style="font-size:8px;color:var(--muted);margin-top:2px">&#11035;&#11035;&#11035;&#11035;&#11036; CLASSIFIED</div>
+              </div>
+            </div>
+            <div class="mono" style="font-size:11px">
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AGE</span><span class="font-bold text-white">16 <span style="color:var(--muted)">(yes, really)</span></span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">AFFILIATION</span><span class="font-bold" style="color:var(--accent)">SPEARHEAD (INDIE)</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">GAMEPLAY / UI DESIGN</span></div>
+              <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS</span></div>
+              <div class="flex justify-between py-2">
+                <span style="color:var(--dim)">STATUS</span>
+                <span class="font-bold flex items-center gap-1.5" style="color:var(--green)">
+                  <span class="live-dot" style="width:6px;height:6px"></span> AVAILABLE
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-8">
+          <div class="s-tag mb-4 reveal"><i data-lucide="file-text" style="width:11px;height:11px"></i> DOSSIER // PERSONNEL RECORD</div>
+          <h2 class="section-title mb-6 reveal">PERSONNEL FILE // <span style="color:var(--accent)">DOSSIER-8086</span></h2>
+
+          <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
+            Hey, I'm Water. I'm a self-taught Roblox developer who works on backend systems, UI, and gameplay mechanics. I like making things feel smooth, readable, and stable instead of just making them function.
+          </p>
+          <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
+            I care about both the code and the presentation. That means building systems that are reliable under pressure, while also making sure the interface and player experience look and feel good.
+          </p>
+
+          <div class="reveal mb-6 p-4 rounded-xl" style="background:rgba(61,139,255,0.04);border-left:3px solid var(--accent)">
+            <p class="text-white font-semibold italic" style="font-size:13px">
+              "Clean systems &rarr; smoother UI &rarr; happier players &rarr; better games."
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-8 reveal">
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;box-shadow:0 0 4px #60a5fa;margin-right:6px"></span>Luau / Systems
+            </span>
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c084fc;box-shadow:0 0 4px #c084fc;margin-right:6px"></span>UI / UX Design
+            </span>
+            <span class="mono" style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green);margin-right:6px"></span>Open to Commissions
+            </span>
+          </div>
+
+          <div class="reveal p-4 rounded-xl flex items-center gap-3 mono" style="background:rgba(61,139,255,0.03);border:1px solid rgba(61,139,255,0.12);font-size:11px">
+            <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
+            <span style="color:var(--dim)">Fastest way to reach me &rarr; Discord:</span>
+            <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">hokpy</span>
+            <span style="color:var(--muted)">(click)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-char" aria-hidden="true"><img src="assets/images/Shin.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 TERMINAL HUB -->
+  <div id="pg-hub" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24 page-pad">
+      <div class="s-tag mb-3">[ 03 // TERMINAL HUB ]</div>
+      <h2 class="section-title mb-2">ACTIVE OPERATIONS</h2>
+      <p class="hint mb-6">search, filter, or press Ctrl K for the command palette.</p>
+      <div class="hub-tools">
+        <input id="hub-search" class="hub-search" type="search" placeholder="filter projects" aria-label="Filter projects" autocomplete="off">
+        <div id="hub-chips" class="chips"></div>
+      </div>
+      <div class="hub">
+        <div>
+          <div class="hub-head" aria-hidden="true"><span>ID</span><span>NAME</span><span>STATUS</span></div>
+          <div id="hub-list" role="listbox" aria-label="Projects"></div>
+        </div>
+        <div id="hub-detail" class="hub-detail" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 CODE SPECIMENS -->
+  <div id="pg-code" class="page">
+    <div class="max-w-5xl mx-auto px-6 py-24 page-pad">
+      <div class="s-tag mb-3">[ 04 // CODE SPECIMENS ]</div>
+      <h2 class="section-title mb-2">LUAU, KEPT SIMPLE</h2>
+      <p class="hint mb-8">small scripts, clean habits.</p>
+      <div class="spec">
+        <div class="spec-bar" id="spec-tabs" role="tablist"></div>
+        <div class="spec-body">
+          <pre class="gutter" id="spec-gutter" aria-hidden="true"></pre>
+          <pre class="spec-pre"><code id="spec-code" class="language-lua"></code></pre>
+        </div>
+        <div class="spec-foot" id="spec-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 HISTORY -->
+  <div id="pg-history" class="page">
+    <div class="max-w-3xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="text-center mb-14">
+        <div class="s-tag mb-3 reveal" style="margin:0 auto;width:fit-content">[SERVICE RECORD // MISSION LOG]</div>
+        <h2 class="section-title reveal">SERVICE RECORD</h2>
+        <p class="mono mt-2 reveal" style="font-size:11px;color:var(--dim)">A compact service board — drag a record to reposition it.</p>
+      </div>
+      <div id="timeline" class="relative"></div>
+    </div>
+  </div>
+
+  <!-- 06 PROJECTS -->
+  <div id="pg-projects" class="page">
+    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
+      <div class="project-head flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
+        <div>
+          <div class="s-tag mb-3 reveal"><i data-lucide="folder-open" style="width:11px;height:11px"></i> [PROJECT FILES // SERVICE FILES]</div>
+          <h2 class="section-title reveal">COMBAT DEBRIEFINGS</h2>
+          <p class="reveal mt-1" style="color:var(--dim);font-size:13px">Drag cards between lanes to reorganize the board. Filter by category when you want a tighter view.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 reveal">
+          <button class="filter-btn active" onclick="filterProjects('all',this)">ALL</button>
+          <button class="filter-btn" onclick="filterProjects('GAMEPLAY',this)">GAMEPLAY</button>
+          <button class="filter-btn" onclick="filterProjects('FULL GAME',this)">FULL GAMES</button>
+          <button class="filter-btn" onclick="filterProjects('OPTIMIZATION',this)">OPTIMIZATION</button>
+          <button class="filter-btn" onclick="filterProjects('RPG SYSTEM',this)">RPG SYSTEMS</button>
+          <button class="filter-btn" onclick="filterProjects('UI DESIGN',this)">UI DESIGN</button>
+        </div>
+      </div>
+      <div id="proj-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
+    </div>
+  </div>
+
+  <!-- 07 CONTACT -->
+  <div id="pg-contact" class="page">
+    <div class="contact-page">
+      <button class="btn btn-momo contact-action reveal" type="button" onclick="copyDiscord();playClick();">
+        <i data-lucide="message-circle" style="width:15px;height:15px"></i>
+        CONTACT ME ON DISCORD
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/config.js?v=20261007"></script>
+<script src="js/roblox.js?v=20261007"></script>
+<script src="js/main.js?v=20261007"></script>
+<script src="js/hub.js?v=20261007"></script>
+<script src="js/commission.js?v=20261007"></script>
+<script src="js/fx.js?v=20261007"></script>
+
+</body>
+</html>
