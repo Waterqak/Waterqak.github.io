@@ -5,7 +5,7 @@ const SITE = {
     roblox: "https://www.roblox.com/users/2878666652/profile",
 
     bgm: "assets/music/theme3.mp3",
-    volume: 1,
+    volume: 0.7,
 
     stats: [
         { value: "20+", label: "Commissions" },
