@@ -4,7 +4,7 @@ const SITE = {
     discord: "hokpy",
     roblox: "https://www.roblox.com/users/2878666652/profile",
 
-    bgm: "assets/music/theme2.mp3",
+    bgm: "assets/music/theme3.mp3",
     volume: 1,
 
     stats: [
