@@ -420,10 +420,7 @@ end)`
 
     // Rotating hero phrases
     phrases: [
-        "Game Systems That Work.",
-        "Clean Backends.",
-        "Zero Server Lag.",
-        "Smooth Gameplay.",
+        "Game Systems That Work."
     ],
 
     konami: ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"],
