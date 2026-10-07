@@ -107,6 +107,18 @@ const SITE = {
             color: "blue",
         },
         {
+            title: "Weather System",
+            category: "Visual",
+            desc: "A smart weather system, that can be used in any game. With a weather realistic weather cycles.",
+            role: "Scripter",
+            result: "Smooth and clean weathers.",
+            tags: ["Lighting", "Visual Effects"],
+            link: "",
+            media: "youtube",
+            src: "https://youtu.be/_GEdA3nrXy8",
+            color: "blue",
+        },
+        {
             title: "Quest Engine",
             category: "RPG SYSTEM",
             desc: "Branching dialogue system with quest progression and smooth UI transitions.",
