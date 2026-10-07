@@ -1,1 +1,65 @@
-{ "updatedAt": null, "games": {} }
+{
+  "updatedAt": "2026-10-07T06:27:48.717Z",
+  "games": {
+    "17290214724": {
+      "universeId": 5915413518,
+      "name": "Chillin Place. [Nostalgic Time]",
+      "description": "Welcome to your personal oasis of calm and community on Roblox! Let the soft patter of rain and the glow of lantern light wash away your worries. Whether you’re seeking a quiet moment alone or a cozy hangout with friends, Chillin Place has everything you need to relax, recharge, and connect.",
+      "genre": "All",
+      "maxPlayers": 20,
+      "created": "2024-04-26T11:13:08.213Z",
+      "updated": "2026-10-06T16:14:33.8017736Z",
+      "playing": 0,
+      "visits": 9423,
+      "favorites": 53,
+      "likes": 33,
+      "dislikes": 6,
+      "icon": "https://tr.rbxcdn.com/180DAY-7f8db9b4a3fa66ee643560bc38c62573/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-5c8cdc77c1e2c04e3b3a1f854915829c/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-9a65dc23e1baab8c23913aa1a176ed1b/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-869b6a6bec03db8f3cbd7892878e19d2/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-24d3f1755dc7d9516f50296477081074/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-1145d11a4fd20b052179471f9a35341a/768/432/Image/Png/noFilter"
+      ]
+    },
+    "85862915773488": {
+      "universeId": 9509332062,
+      "name": "Run or Burn for Brainrots🔥",
+      "description": "🌋 THE LAVA IS RISING… RUN!!\n\n🚨 3 SECOND WARNING\n🌊 Giant lava wave floods the map\n💥 Screen shakes. Sirens scream. Chaos begins.\n\n🏆 Survive to earn Wins\n⚡ Train speed & reach higher ground\n🐾 Unlock powerful pets\n👑 Become #1 on the leaderboard\n\nOnly the fastest survive.",
+      "genre": "All",
+      "maxPlayers": 26,
+      "created": "2026-01-05T18:06:22.457Z",
+      "updated": "2026-06-04T14:24:16.809Z",
+      "playing": 0,
+      "visits": 6313,
+      "favorites": 14,
+      "likes": 23,
+      "dislikes": 3,
+      "icon": "https://tr.rbxcdn.com/180DAY-a5ccf6d4c85287f191bace57c4bd2133/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-093599f5a0b3ac9594b2a13b25a6cb0e/768/432/Image/Png/noFilter"
+      ]
+    },
+    "140471518514522": {
+      "universeId": 6622668815,
+      "name": "Project Halo [Still in remaking]",
+      "description": "The Gate Zero Incident\n\nSetting\nSet in the Blue Archive universe, years before modern Kivotos and the academies existed. Back then, SCHALE was a secret military black-ops team cleaning up corporate disasters.\n\nStory\nA tech company dug deep underground into ancient ruins at Site Gate Zero. They tried to use Pyroxene crystals to artificially create a Mystic and a synthetic Halo. \n\nThe experiment failed horribly. The crystal core sent out a signal that hijacked the minds and bodies of all 847 staff members. The victims are still awake and aware inside their own heads, crying and begging for help, but their bodies are forced to shoot at anyone who enters.\n\nThe Mission\nYou lead a SCHALE squad sent into the facility. Your goal is to fight down to the bottom floor, recover the research data, and burn the crystal core before the signal spreads outside.",
+      "genre": "All",
+      "maxPlayers": 30,
+      "created": "2024-10-01T11:58:56.743Z",
+      "updated": "2026-10-04T19:20:46.637Z",
+      "playing": 0,
+      "visits": 1221,
+      "favorites": 58,
+      "likes": 37,
+      "dislikes": 2,
+      "icon": "https://tr.rbxcdn.com/180DAY-8a06c431ad071e03914deafc03aa434e/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-48fa84d77e3cb3cddf71475cd9b09d67/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-848ae8c54c9fdd71698b61373be74f27/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-c1818a6f4e581db311014262b9ad4f06/768/432/Image/Png/noFilter"
+      ]
+    }
+  }
+}
