@@ -167,6 +167,18 @@ const SITE = {
             color: "blue",
         },
         {
+            title: "Blue archive - Train",
+            category: "FULL GAME",
+            desc: "A showcased game based from Train Scene.",
+            role: "Scripter",
+            result: "Live on Roblox",
+            tags: ["Showcase", "Live2D"],
+            link: "https://www.roblox.com/games/18485180189/Blue-archive-Train",
+            media: "image",
+            src: "https://tr.rbxcdn.com/180DAY-4234c54049fc9ea063501b1bb27f0969/768/432/Image/Png/noFilter",
+            color: "blue",
+        },
+        {
             title: "Blind Mode Logic",
             category: "GAMEPLAY",
             desc: "Vision restriction mechanic with dynamic spawn handling and clean game-state control.",
