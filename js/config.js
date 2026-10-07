@@ -108,7 +108,7 @@ const SITE = {
         },
         {
             title: "Weather System",
-            category: "Visual",
+            category: "System",
             desc: "A smart weather system, that can be used in any game. With a weather realistic weather cycles.",
             role: "Scripter",
             result: "Smooth and clean weathers.",
