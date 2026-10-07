@@ -71,7 +71,7 @@ const SITE = {
             color: "gold",
         },
         {
-            title: "Operation: Azure Rift",
+            title: "Project Halo [Still in remaking]",
             category: "FULL GAME",
             desc: "Story-driven FPS with systems, UI, and narrative structure inspired by Blue Archive.",
             role: "Scripter",
@@ -192,7 +192,7 @@ const SITE = {
         },
     ],
 
-    // status is my best guess from the repo. Edit freely.
+
     hub: [
         { title: "Operation: Azure Rift", status: "ON HOLD" },
         { title: "Quest Engine", status: "SHIPPED" },
@@ -202,6 +202,7 @@ const SITE = {
         { title: "Door Kicking Engine", status: "SHIPPED" },
         { title: "Yan - Chan Simulator", status: "SHIPPED" },
         { title: "Project Unist", status: "IN PROGRESSED" },
+        { title: "Weather System", status: "SHIPPED" },
 
     ],
 
