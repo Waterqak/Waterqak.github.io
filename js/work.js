@@ -8,14 +8,14 @@
         return node;
     };
 
-    // What each group means in plain words, so a client can find what they need
+    // Group projects clearly into Featured, Systems, Other, and All
     const KINDS = [
-        { id: 'all',    label: 'All work',   blurb: 'Each project shows what it is, what I did, and what came of it.' },
-        { id: 'game',   label: 'Full games', cats: ['FULL GAME'],                                blurb: 'Complete experiences I scripted from start to finish.' },
-        { id: 'system', label: 'Systems',    cats: ['GAMEPLAY', 'RPG SYSTEM', 'OPTIMIZATION'],   blurb: 'Self-contained mechanics I can build, or fix, inside your game.' },
-        { id: 'ui',     label: 'UI design',  cats: ['UI DESIGN'],                                blurb: 'Interfaces designed and built to feel clear and quick.' },
+        { id: 'featured', label: 'Featured Work', blurb: 'Top engineering projects: live games, DataStore setups, and optimization.' },
+        { id: 'systems',  label: 'Systems & Demos', blurb: 'Modular engines, weather, dialogue, and gameplay mechanics.' },
+        { id: 'other',    label: 'Other Work',    blurb: 'Showcases, Live2D scenes, and UI concepts.' },
+        { id: 'all',      label: 'All Projects',  blurb: 'Full catalogue of 20+ shipped projects and prototypes.' },
     ];
-    const kindOf = p => KINDS.find(k => k.cats && k.cats.includes(p.category)) || KINDS[2];
+    const kindOf = p => KINDS.find(k => k.id === (p.group || 'other')) || KINDS[0];
 
     function statusOf(p) {
         const hub = SITE.hub.find(h => h.title === p.title);
@@ -39,8 +39,8 @@
         const rail = document.getElementById('work-rail');
         if (!stage) return;
 
-        const state = { kind: 'all', i: 0, shot: 0 };
-        const visible = () => SITE.projects.filter(p => state.kind === 'all' || kindOf(p).id === state.kind);
+        const state = { kind: 'featured', i: 0, shot: 0 };
+        const visible = () => SITE.projects.filter(p => state.kind === 'all' || (p.group || 'other') === state.kind);
 
         function frame(p) {
             const box = el('div', 'work-frame');

@@ -17,16 +17,46 @@ const _loop = (() => {
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let muted = false;
 
-function playClick(freq = 600, dur = 0.08) {
+// ── SFX System: preload and play real sound files ──
+const _sfxCache = {};
+function _loadSfx(name) {
+    if (_sfxCache[name]) return _sfxCache[name];
+    const path = SITE.sfx && SITE.sfx[name];
+    if (!path) return null;
+    const audio = new Audio(path);
+    audio.preload = 'auto';
+    audio.volume = 0.5;
+    _sfxCache[name] = audio;
+    return audio;
+}
+
+// Preload all SFX on first interaction
+let _sfxPreloaded = false;
+function _preloadAllSfx() {
+    if (_sfxPreloaded || !SITE.sfx) return;
+    _sfxPreloaded = true;
+    Object.keys(SITE.sfx).forEach(name => _loadSfx(name));
+}
+
+function playSfx(name, vol) {
     if (muted) return;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.025, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-    osc.start(); osc.stop(audioCtx.currentTime + dur);
+    _preloadAllSfx();
+    const src = _loadSfx(name);
+    if (!src) return;
+    // Clone so overlapping plays don't cut each other off
+    const s = src.cloneNode();
+    s.volume = vol != null ? vol : 0.5;
+    s.play().catch(() => {});
+}
+
+// Main click sound - used everywhere
+function playClick() {
+    playSfx('click', 0.45);
+}
+
+// Hover sound - lighter
+function playHover() {
+    playSfx('hover', 0.25);
 }
 
 function toggleMute() {
@@ -75,6 +105,7 @@ function navigateTo(id, instant) {
     nextEl.classList.add('active');
     root.style.setProperty('--active', next);
     _active = next;
+    playSfx('swipe', 0.3);
     setTimeout(() => _onEnter(id), 250);
     setTimeout(() => { _busy = false; }, DUR);
 }
@@ -111,34 +142,8 @@ function initKeyboardNav() {
 }
 
 function initWheelNav() {
-    let cd = false;
-    let _lastWheelAt = 0;
-    document.addEventListener('wheel', e => {
-        // Code has its own scroll surface. Never let a tiny code-scroll gesture
-        // become a full page turn. Users can still turn the wheel anywhere else.
-        if (e.target.closest && e.target.closest('#pg-code .spec-body')) return;
-        // Any panel that actually overflows keeps its own scroll (small screens, long lists)
-        const own = e.target.closest && e.target.closest('.owns-scroll');
-        if (own && own.scrollHeight > own.clientHeight + 2) {
-            const up = e.deltaY < 0;
-            const atEdge = up ? own.scrollTop <= 2 : own.scrollTop + own.clientHeight >= own.scrollHeight - 2;
-            const now = Date.now(), gap = now - _lastWheelAt;
-            _lastWheelAt = now;
-            if (!atEdge) return;      // keep scrolling inside the frame
-            if (gap < 220) return;    // same gesture or trackpad inertia: only a fresh scroll at the edge turns the page
-        }
-
-        if (_busy || cd) return;
-        const pg = document.querySelector('.page.active');
-        if (!pg) return;
-        const ids = SITE.sections.map(s => s.id);
-        const dir = e.deltaY > 0 ? 1 : -1;
-        if (Math.abs(e.deltaY) < 35 && Math.abs(e.deltaX) < 35) return;
-        e.preventDefault();
-        cd = true;
-        setTimeout(() => { cd = false; }, 900);
-        navigateTo(ids[Math.max(0, Math.min(ids.length - 1, _active + dir))]);
-    }, { passive: false });
+    // Normal mouse wheel scrolling is preserved so trackpads and mice scroll content naturally.
+    // Page navigation is handled by the tactical wheel buttons, arrow keys, and top nav links.
 }
 
 function initSwipeNav() {
@@ -190,12 +195,24 @@ function runBoot() {
     window._bootKey = e => { if (e.key === 'Enter' && btn.classList.contains('ready')) startExperience(); };
     document.addEventListener('keydown', window._bootKey);
 
+    // Click anywhere on the boot screen to skip ahead
+    const boot = document.getElementById('boot');
+    let _skipBoot = false;
+    boot.addEventListener('click', (e) => {
+        if (e.target === btn || e.target.closest('#boot-btn')) return; // let the button handle itself
+        if (btn.classList.contains('ready')) {
+            startExperience();
+        } else {
+            _skipBoot = true; // skip remaining lines
+        }
+    });
+
     let i = 0;
     function next() {
         if (i >= lines.length) {
             state.textContent = 'READY';
             state.style.color = 'var(--accent)';
-            setTimeout(() => btn.classList.add('ready'), 250);
+            setTimeout(() => btn.classList.add('ready'), 120);
             return;
         }
         const l = lines[i];
@@ -203,19 +220,26 @@ function runBoot() {
         d.className = 'boot-line';
         d.innerHTML = `<span>${l.txt}</span><span class="${l.cls}">${l.val}</span>`;
         cont.appendChild(d);
-        playClick(800 + i * 50, 0.04);
+        playSfx('boot', 0.3);
         i++;
         const p = Math.round(i / lines.length * 100);
         fill.style.width = p + '%';
         pct.textContent = p + '%';
-        setTimeout(next, 260);
+
+        // If user clicked to skip, fast-forward remaining lines
+        if (_skipBoot) {
+            setTimeout(next, 30);
+        } else {
+            setTimeout(next, 180);
+        }
     }
-    setTimeout(next, 450);
+    setTimeout(next, 300);
 }
 
 function startExperience() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    playClick(880, 0.25);
+    _preloadAllSfx();
+    playSfx('initiate', 0.6);
     const boot = document.getElementById('boot');
     if (!boot) return;
     boot.classList.add('exit');
@@ -226,13 +250,21 @@ function startExperience() {
         document.body.style.opacity    = '0';
         document.body.style.transition = 'opacity 0.6s ease';
         requestAnimationFrame(() => { document.body.style.opacity = '1'; });
+        // Music does NOT autoplay. User can toggle it via the music pill.
+        // This removes the jarring surprise of music starting on a portfolio site.
         const bgm = document.getElementById('bgm');
-        if (bgm && SITE.bgm) { bgm.src = SITE.bgm; bgm.volume = SITE.volume || 1; bgm.play().catch(() => {}); }
+        if (bgm && SITE.bgm) {
+            bgm.src = SITE.bgm;
+            bgm.volume = SITE.volume || 1;
+            // Don't autoplay - let user control via the music pill
+        }
         setTimeout(() => _onEnter('home'), 400);
     }, 470);
 }
 
 function initParticles() {
+    // Accessibility: respect reduced motion preferences
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const cv = document.getElementById('particles-canvas');
     if (!cv) return;
     const ctx = cv.getContext('2d', { alpha: true });
@@ -332,7 +364,7 @@ function typeWriter() {
     const el = document.getElementById('typewriter');
     if (!el) return;
     clearTimeout(_twTimer);
-    const phrases = SITE.phrases || ['Broken Code.'];
+    const phrases = SITE.phrases || ['Game Systems.'];
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = phrases[0]; return; }
     let p = 0, i = 0, deleting = false;
     (function tick() {
@@ -376,7 +408,7 @@ function toggleOverride() {
         if (dot)   dot.classList.replace('bg-green-500', 'bg-blue-500');
         if (ping)  ping.classList.replace('bg-green-500', 'bg-blue-500');
         if (badge) badge.classList.add('critical');
-        playClick(140, 0.5);
+        playSfx('error', 0.5);
     } else {
         root.style.setProperty('--accent',  '#3d8bff');
         root.style.setProperty('--accent2', '#3d8bff');
@@ -385,7 +417,7 @@ function toggleOverride() {
         if (dot)   dot.classList.replace('bg-blue-500', 'bg-green-500');
         if (ping)  ping.classList.replace('bg-blue-500', 'bg-green-500');
         if (badge) badge.classList.remove('critical');
-        playClick(1200, 0.25);
+        playSfx('click', 0.5);
     }
 }
 
@@ -534,7 +566,11 @@ function initCursorTrail() {
 }
 
 function toggleMenu() {
-    document.getElementById('mobile-menu')?.classList.toggle('open');
+    const menu = document.getElementById('mobile-menu');
+    if (!menu) return;
+    const wasOpen = menu.classList.contains('open');
+    menu.classList.toggle('open');
+    playSfx(wasOpen ? 'close' : 'open', 0.4);
 }
 
 const COLOR_MAP = {
@@ -596,7 +632,7 @@ function initCLI() {
         shortcuts: () => { setTimeout(() => window.openHelp && window.openHelp(), 120); return 'Shortcuts:'; },
         help:     () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about projects contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
         about:    () => go('home',     'Navigating...'),
-        projects: () => go('projects', 'Accessing mission reports...'),
+        projects: () => go('projects', 'Accessing project files...'),
         contact:  () => go('contact',  'Opening comms...'),
         date:     () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
         whoami:   () => `<span style="${D}">Guest · Level 1 · Node: Spearhead-Alpha · IP: 127.0.0.1</span>`,
@@ -633,7 +669,7 @@ function initCLI() {
         if (e.key !== 'Enter') return;
         const raw = inp.value.trim(), cmd = raw.toLowerCase();
         if (!cmd) return;
-        playClick(1200, 0.04);
+        playClick();
         out.innerHTML += `<div style="margin-bottom:2px"><span style="${B}">guest@spearhead:~$</span> <span style="color:#7080a0">${esc(raw)}</span></div>`;
         const jump = cmd.match(/^(?:goto|cd)\s+(\w+)$/);
         const h = jump && SITE.sections.some(s => s.id === jump[1]) ? () => go(jump[1], 'Navigating...') : cmds[cmd];
@@ -651,7 +687,7 @@ function initLogoEgg() {
         n++; clearTimeout(t);
         t = setTimeout(() => { n = 0; }, 2200);
         if (n >= 7) {
-            n = 0; playClick(440, 0.5);
+            n = 0; playSfx('initiate', 0.5);
             const cols = ['#C8192A', '#FFB83A', '#2EE89A', '#5090D0', '#a855f7'];
             let ci = 0;
             const iv = setInterval(() => {
@@ -673,10 +709,20 @@ function initMobileLinks() {
     });
 }
 
+// Add hover SFX to all interactive elements
+function initHoverSfx() {
+    const selectors = '.btn, .nav-link, .hub-row, .chip, .rail-item, .spec-tab, .work-arrow, .filter-btn, .hero-badge, .stat-card';
+    document.querySelectorAll(selectors).forEach(el => {
+        if (el._hoverSfxInit) return;
+        el._hoverSfxInit = true;
+        el.addEventListener('mouseenter', () => playHover(), { passive: true });
+    });
+}
+
 (function () {
     setTimeout(() => console.log(
-        '%c\n  WATER DATABASE SYSTEM v1\n  SPEARHEAD SQUADRON: CLASSIFIED\n  Bug count: 0 (official lie)\n  Try CLI: coffee · hack · neofetch\n',
-        'color:#C8192A;font-family:monospace;font-size:11px;'
+        '%c\n  WATER.SYS v1\n  Roblox Systems & Gameplay Engineer\n  Try CLI: coffee · hack · neofetch\n',
+        'color:#3d8bff;font-family:monospace;font-size:11px;'
     ), 1200);
 })();
 
@@ -692,6 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLogoEgg();
     initMobileLinks();
     initUptime();
+    initHoverSfx();
 
 
     lucide.createIcons();

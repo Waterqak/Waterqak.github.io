@@ -4,10 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WATER.SYS | Roblox Systems & Gameplay Engineer</title>
   <meta name="description"
-    content="Water: Roblox developer focused on backend systems, UI design, gameplay mechanics, and optimization.">
-  <title>Water.SYS | Roblox Portfolio</title>
+    content="I build gameplay systems, backend logic, and performance-focused Roblox experiences. 20+ projects shipped, 4 years experience, -40% server lag.">
   <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Social & Open Graph Metadata -->
+  <meta property="og:site_name" content="WATER.SYS">
+  <meta property="og:title" content="WATER.SYS | Roblox Systems & Gameplay Engineer">
+  <meta property="og:description" content="I build gameplay systems, backend logic, and performance-focused Roblox experiences. 20+ projects shipped, -40% server lag.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/images/Shin.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WATER.SYS | Roblox Systems & Gameplay Engineer">
+  <meta name="twitter:description" content="I build gameplay systems, backend logic, and performance-focused Roblox experiences. 20+ projects shipped, -40% server lag.">
 
   <link
     href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap"
@@ -36,6 +46,9 @@
 </head>
 
 <body>
+
+  <!-- ACCESSIBLE SKIP LINK -->
+  <a href="#app" class="skip-link">Skip to content</a>
 
   <!-- BOOT SCREEN -->
   <div id="boot" role="dialog" aria-label="Loading">
@@ -153,7 +166,7 @@
 
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center w-full py-16 z-10">
           <div>
-            <div class="reveal mb-8">
+            <div class="reveal mb-5">
               <button onclick="toggleOverride()" class="hero-badge" data-tip="Click to toggle system status">
                 <span style="position:relative;display:flex;width:8px;height:8px">
                   <span id="status-ping"
@@ -161,45 +174,49 @@
                   <span id="status-dot"
                     style="position:relative;display:inline-flex;width:8px;height:8px;border-radius:50%;background:#22c55e"></span>
                 </span>
-                <span id="status-txt" class="mono" style="letter-spacing:0.14em">Open for commissions</span>
+                <span id="status-txt" class="mono" style="letter-spacing:0.14em">COMMISSIONS OPEN</span>
               </button>
             </div>
 
+            <div class="reveal mb-3">
+              <span class="mono" style="font-size:11px;letter-spacing:0.16em;color:var(--accent);font-weight:700">ROBLOX SYSTEMS & GAMEPLAY ENGINEER</span>
+            </div>
+
             <h1 class="display font-black reveal mb-6"
-              style="font-size:clamp(2.4rem,6vw,4.8rem);line-height:0.95;letter-spacing:-0.02em">
+              style="font-size:clamp(2.4rem,5.5vw,4.6rem);line-height:0.95;letter-spacing:-0.02em">
               <span class="block text-white"
-                style="opacity:0.75;font-size:0.55em;letter-spacing:0.04em;margin-bottom:6px">I build</span>
+                style="opacity:0.8;font-size:0.5em;letter-spacing:0.04em;margin-bottom:6px">I build</span>
               <span id="typewriter" class="gradient-text block"></span>
             </h1>
 
-            <p class="reveal mb-10 pl-4"
-              style="color:var(--dim);max-width:480px;font-size:14px;line-height:1.75;border-left:2px solid rgba(61,139,255,0.3)">
-              Roblox developer focused on backend systems, UI design, gameplay logic, and performance.
+            <p class="reveal mb-8 pl-4"
+              style="color:var(--dim);max-width:490px;font-size:14px;line-height:1.75;border-left:2px solid rgba(61,139,255,0.3)">
+              I build gameplay systems, backend logic, and performance-focused Roblox experiences. If your game is lagging, dropping data, or breaking under pressure, I make it run clean.
             </p>
 
             <div class="flex flex-wrap gap-4 mb-10 reveal">
               <button onclick="navigateTo('projects');playClick()" data-mag data-ripple class="btn btn-primary"
                 style="font-size:12px;letter-spacing:0.1em">
-                VIEW DATABASE <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
+                VIEW MY WORK <i data-lucide="arrow-right" style="width:15px;height:15px"></i>
               </button>
               <button onclick="navigateTo('contact');playClick()" data-mag class="btn btn-outline"
                 style="font-size:11px;letter-spacing:0.1em">
-                <i data-lucide="radio" style="width:14px;height:14px"></i> HIRE ME
+                <i data-lucide="message-circle" style="width:14px;height:14px"></i> CONTACT ME
               </button>
             </div>
 
             <div class="grid grid-cols-3 gap-3 max-w-xs reveal">
-              <div class="stat-card" data-tip="20+ satisfied clients">
+              <div class="stat-card" data-tip="20+ shipped projects on Roblox">
                 <div class="stat-val" data-count="20" data-suffix="+">20+</div>
-                <div class="stat-lbl">Commissions</div>
+                <div class="stat-lbl">Shipped</div>
               </div>
-              <div class="stat-card" data-tip="Started scripting at age 11">
-                <div class="stat-val" data-count="4" data-suffix="yrs">4yrs</div>
-                <div class="stat-lbl">Experience</div>
+              <div class="stat-card" data-tip="4+ years writing Luau & systems">
+                <div class="stat-val" data-count="4" data-suffix="yrs">4 yrs</div>
+                <div class="stat-lbl">Building</div>
               </div>
-              <div class="stat-card" data-tip="Average server lag reduction">
-                <div class="stat-val" data-count="40" data-suffix="%">40%</div>
-                <div class="stat-lbl">Avg Lag Fix</div>
+              <div class="stat-card" data-tip="Benchmark from live game optimization (Farm project)">
+                <div class="stat-val" data-count="40" data-suffix="%">-40%</div>
+                <div class="stat-lbl">Peak Lag Cut</div>
               </div>
             </div>
           </div>
@@ -307,20 +324,18 @@
                 <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span
                     style="color:var(--dim)">CODENAME</span><span class="font-bold text-white">WATER</span></div>
                 <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span
-                    style="color:var(--dim)">AGE</span><span class="font-bold text-white">16 <span
-                      style="color:var(--muted)">(yes, really)</span></span></div>
+                    style="color:var(--dim)">ROLE</span><span class="font-bold text-white">SYSTEMS / BACKEND</span></div>
                 <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span
-                    style="color:var(--dim)">AFFILIATION</span><span class="font-bold"
-                    style="color:var(--accent)">SPEARHEAD (INDIE)</span></div>
+                    style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS BUILDING</span></div>
                 <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span
-                    style="color:var(--dim)">SPECIALTY</span><span class="font-bold text-white">GAMEPLAY / UI
-                    DESIGN</span></div>
+                    style="color:var(--dim)">SHIPPED</span><span class="font-bold text-white">20+ PROJECTS</span></div>
                 <div class="flex justify-between py-2" style="border-bottom:1px solid rgba(255,255,255,0.04)"><span
-                    style="color:var(--dim)">EXPERIENCE</span><span class="font-bold text-white">4+ YRS</span></div>
+                    style="color:var(--dim)">SPECIALTY</span><span class="font-bold"
+                    style="color:var(--accent)">LUAU / OPTIMIZATION</span></div>
                 <div class="flex justify-between py-2">
                   <span style="color:var(--dim)">STATUS</span>
                   <span class="font-bold flex items-center gap-1.5" style="color:var(--green)">
-                    <span class="live-dot" style="width:6px;height:6px"></span> AVAILABLE
+                    <span class="live-dot" style="width:6px;height:6px"></span> COMMISSIONS OPEN
                   </span>
                 </div>
               </div>
@@ -334,50 +349,57 @@
                 style="color:var(--accent)">DOSSIER-8086</span></h2>
 
             <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
-              Hey, I'm Water. I'm a self-taught Roblox developer who works on backend systems, UI, and gameplay
-              mechanics. I like making things feel smooth, readable, and stable instead of just making them function.
+              Hey, I'm Water. I mostly work on the parts of a Roblox game that actually have to function.
             </p>
             <p class="reveal mb-5" style="color:var(--dim);font-size:14px;line-height:1.8">
-              I care about both the code and the presentation. That means building systems that are reliable under
-              pressure, while also making sure the interface and player experience look and feel good.
+              A lot of games look great in screenshots, but start stuttering the moment 20 players join or someone's inventory fails to save. That's where I come in: writing modular Luau, setting up DataStore pipelines that never lose data, decoupling heavy loops, and cutting server lag.
             </p>
 
-            <div class="reveal mb-6 p-4 rounded-xl"
+            <div class="reveal mb-8 p-4 rounded-xl"
               style="background:rgba(61,139,255,0.04);border-left:3px solid var(--accent)">
               <p class="text-white font-semibold italic" style="font-size:13px">
-                "Clean systems &rarr; smoother UI &rarr; happier players &rarr; better games."
+                "Clean code, fast servers, and systems that don't need a total rewrite two weeks later."
               </p>
             </div>
 
-            <div class="flex flex-wrap gap-2 mb-8 reveal">
-              <span class="mono"
-                style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
-                <span
-                  style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;box-shadow:0 0 4px #60a5fa;margin-right:6px"></span>Luau
-                / Systems
-              </span>
-              <span class="mono"
-                style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
-                <span
-                  style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c084fc;box-shadow:0 0 4px #c084fc;margin-right:6px"></span>UI
-                / UX Design
-              </span>
-              <span class="mono"
-                style="font-size:10px;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.07);color:var(--dim);background:rgba(255,255,255,0.02)">
-                <span
-                  style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green);margin-right:6px"></span>Open
-                to Commissions
-              </span>
+            <!-- PROOF POINTS -->
+            <div class="grid sm:grid-cols-3 gap-3 mb-8 reveal">
+              <div class="p-3.5 rounded-lg border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.06)">
+                <div class="mono text-white font-bold text-xs mb-1.5 flex items-center gap-1.5">
+                  <i data-lucide="zap" style="width:13px;height:13px;color:var(--accent)"></i> Server Optimization
+                </div>
+                <p class="text-xs" style="color:var(--dim);line-height:1.6">
+                  Reduced server lag by ~40% on live projects by decoupling heartbeat loops and throttling remotes.
+                </p>
+              </div>
+
+              <div class="p-3.5 rounded-lg border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.06)">
+                <div class="mono text-white font-bold text-xs mb-1.5 flex items-center gap-1.5">
+                  <i data-lucide="database" style="width:13px;height:13px;color:var(--accent)"></i> Data Persistence
+                </div>
+                <p class="text-xs" style="color:var(--dim);line-height:1.6">
+                  Built reliable player progression with session-locking and auto-retry to eliminate data loss.
+                </p>
+              </div>
+
+              <div class="p-3.5 rounded-lg border" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.06)">
+                <div class="mono text-white font-bold text-xs mb-1.5 flex items-center gap-1.5">
+                  <i data-lucide="cpu" style="width:13px;height:13px;color:var(--accent)"></i> Modular Systems
+                </div>
+                <p class="text-xs" style="color:var(--dim);line-height:1.6">
+                  Engineered reusable quest trees, dynamic weather cycles, dialogue flows, and physics interactions.
+                </p>
+              </div>
             </div>
 
             <div class="reveal p-4 rounded-xl flex items-center gap-3 mono"
               style="background:rgba(61,139,255,0.03);border:1px solid rgba(61,139,255,0.12);font-size:11px">
-              <i data-lucide="zap" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
-              <span style="color:var(--dim)">Fastest way to reach me &rarr; Discord:</span>
+              <i data-lucide="message-circle" style="width:15px;height:15px;color:var(--accent);flex-shrink:0"></i>
+              <span style="color:var(--dim)">Fastest way to reach me: Discord:</span>
               <span onclick="copyDiscord();playClick()" class="font-bold cursor-pointer" style="color:var(--accent)"
                 onmouseover="this.style.textDecoration='underline'"
-                onmouseout="this.style.textDecoration='none'">hokpy</span>
-              <span style="color:var(--muted)">(click)</span>
+                onmouseout="this.style.textDecoration='none'">hoekpy</span>
+              <span style="color:var(--muted)">(click to copy)</span>
             </div>
           </div>
         </div>
@@ -458,10 +480,20 @@
     <!-- 07 CONTACT -->
     <div id="pg-contact" class="page">
       <div class="contact-page">
-        <button class="btn btn-momo contact-action reveal" type="button" onclick="copyDiscord();playClick();">
-          <i data-lucide="message-circle" style="width:15px;height:15px"></i>
-          CONTACT ME ON DISCORD
-        </button>
+        <div class="s-tag mb-3 reveal">[ 07 // TRANSMIT SECURE ]</div>
+        <h2 class="section-title mb-2 reveal">COMMISSIONS & CONTACT</h2>
+        <p class="hint mb-6 reveal">Need a system built or lag fixed? Message me directly on Discord.</p>
+        <div id="commission-panel" class="commission reveal" style="max-width:560px;width:100%"></div>
+        <div class="flex flex-wrap gap-3 justify-center reveal">
+          <button class="btn btn-momo contact-action" type="button" onclick="copyDiscord();playClick();">
+            <i data-lucide="message-circle" style="width:15px;height:15px"></i>
+            COPY DISCORD (hoekpy)
+          </button>
+          <a class="btn btn-outline" href="https://www.roblox.com/users/2878666652/profile" target="_blank" rel="noopener">
+            <i data-lucide="external-link" style="width:14px;height:14px"></i>
+            ROBLOX PROFILE
+          </a>
+        </div>
       </div>
     </div>
 
