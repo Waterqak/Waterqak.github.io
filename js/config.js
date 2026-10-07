@@ -292,6 +292,7 @@ const SITE = {
         { title: "Blue archive - Hina Recollection", status: "SHIPPED" },
         { title: "Blue archive - Hanako Recollection", status: "SHIPPED" },
         { title: "Blue archive - Arona Room", status: "SHIPPED" },
+        { title: "Blue archive - Train", status: "SHIPPED" },
 
     ],
 
