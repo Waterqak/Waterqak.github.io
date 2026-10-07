@@ -109,54 +109,5 @@ const ROBLOX = (() => {
         } catch { /* silent */ }
     }
 
-    async function loadGameData() {
-        const rbxProjects = SITE.projects.filter(p => p.link?.includes('roblox.com/games'));
-        if (!rbxProjects.length) return;
-        try {
-            const pairs = await Promise.all(
-                rbxProjects.map(async p => {
-                    const pid = placeId(p.link);
-                    if (!pid) return null;
-                    const uid = await universeId(pid).catch(() => null);
-                    return uid ? { project: p, uid } : null;
-                })
-            );
-            const valid = pairs.filter(Boolean);
-            if (!valid.length) return;
-
-            const ids = valid.map(v => v.uid).join(',');
-            const [icons, banners, gameData] = await Promise.all([
-                get(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${ids}&size=512x512&format=Png`),
-                get(`https://thumbnails.roblox.com/v1/games/multiget/thumbnails?universeIds=${ids}&size=768x432&format=Png&countPerUniverse=1`),
-                get(`https://games.roblox.com/v1/games?universeIds=${ids}`),
-            ]);
-
-            const bannerMap = {};
-            banners?.data?.forEach(g => {
-                const u = g.thumbnails?.[0]?.imageUrl;
-                if (u) bannerMap[g.universeId] = u;
-            });
-
-            const iconMap = {};
-            icons?.data?.forEach(g => { if (g.imageUrl) iconMap[g.targetId] = g.imageUrl; });
-
-            const infoMap = {};
-            gameData?.data?.forEach(g => {
-                infoMap[g.id] = { visits: g.visits, playing: g.playing, favorited: g.favoritedCount };
-            });
-
-            let changed = false;
-            valid.forEach(({ project, uid }) => {
-                const img = bannerMap[uid] || iconMap[uid];
-                if (img) { project.src = img; project.media = 'image'; changed = true; }
-                const info = infoMap[uid];
-                if (info) { project.rbxVisits = info.visits; project.rbxPlaying = info.playing; project.rbxFav = info.favorited; }
-            });
-
-            if (changed) renderProjects();
-
-        } catch { /* silent */ }
-    }
-
-    return { init: () => Promise.all([loadProfile(), loadGameData()]) };
+    return { init: () => loadProfile() };
 })();

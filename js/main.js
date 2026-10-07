@@ -112,10 +112,21 @@ function initKeyboardNav() {
 
 function initWheelNav() {
     let cd = false;
+    let _lastWheelAt = 0;
     document.addEventListener('wheel', e => {
         // Code has its own scroll surface. Never let a tiny code-scroll gesture
         // become a full page turn. Users can still turn the wheel anywhere else.
         if (e.target.closest && e.target.closest('#pg-code .spec-body')) return;
+        // Any panel that actually overflows keeps its own scroll (small screens, long lists)
+        const own = e.target.closest && e.target.closest('.owns-scroll');
+        if (own && own.scrollHeight > own.clientHeight + 2) {
+            const up = e.deltaY < 0;
+            const atEdge = up ? own.scrollTop <= 2 : own.scrollTop + own.clientHeight >= own.scrollHeight - 2;
+            const now = Date.now(), gap = now - _lastWheelAt;
+            _lastWheelAt = now;
+            if (!atEdge) return;      // keep scrolling inside the frame
+            if (gap < 220) return;    // same gesture or trackpad inertia: only a fresh scroll at the edge turns the page
+        }
 
         if (_busy || cd) return;
         const pg = document.querySelector('.page.active');
@@ -137,7 +148,7 @@ function initSwipeNav() {
     if (!app) return;
     app.addEventListener('touchstart', e => {
         const t = e.target;
-        blocked = !!(t.closest && (t.closest('#pg-code .spec-body') || t.closest('.board-card') || t.closest('.board-lane-body')));
+        blocked = !!(t.closest && (t.closest('#pg-code .spec-body') || (t.closest('.owns-scroll') && t.closest('.owns-scroll').scrollHeight > t.closest('.owns-scroll').clientHeight + 2)));
         sy = e.touches[0].clientY; st = Date.now();
     }, { passive: true });
     app.addEventListener('touchend', e => {
@@ -553,204 +564,6 @@ function _media(p) {
     return `<div class="w-full h-full flex items-center justify-center" style="background:rgba(20,24,40,0.8);"><i data-lucide="gamepad-2" style="width:40px;height:40px;color:var(--dim)"></i></div>`;
 }
 
-let _projFilter = 'all';
-const PROJECT_BOARD_KEY = 'wds_project_board_v2';
-const TIMELINE_BOARD_KEY = 'wds_timeline_board_v2';
-
-const BOARD_LANES = {
-    projects: [
-        { id: 'shipped', label: 'SHIPPED', hint: 'live / delivered' },
-        { id: 'building', label: 'IN BUILD', hint: 'active / developing' },
-        { id: 'systems', label: 'SYSTEMS', hint: 'mechanics / showcase' },
-    ],
-    timeline: [
-        { id: 'current', label: 'CURRENT', hint: '2022 → now' },
-        { id: 'growth', label: 'DEVELOPMENT', hint: '2021 → 2022' },
-        { id: 'origin', label: 'ORIGIN', hint: '~2020' },
-    ],
-};
-
-function _loadBoard(key, items, lanes, defaults) {
-    let state = null;
-    try { state = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) {}
-    if (!state || !state.lanes) state = { lanes: Object.fromEntries(lanes.map(l => [l.id, []])) };
-
-    const known = new Set(items.map(x => x.id));
-    for (const lane of lanes) {
-        if (!Array.isArray(state.lanes[lane.id])) state.lanes[lane.id] = [];
-        state.lanes[lane.id] = state.lanes[lane.id].filter(id => known.has(id));
-    }
-
-    const placed = new Set(Object.values(state.lanes).flat());
-    items.forEach(item => {
-        if (!placed.has(item.id)) {
-            const lane = defaults(item);
-            state.lanes[lane] ||= [];
-            state.lanes[lane].push(item.id);
-        }
-    });
-    return state;
-}
-
-function _saveBoard(key, state) {
-    try { localStorage.setItem(key, JSON.stringify(state)); } catch (_) {}
-}
-
-function _boardCard(project, index, compact = false) {
-    const s = COLOR_MAP[project.color] || COLOR_MAP.blue;
-    const mediaH = compact ? '132px' : '148px';
-    const playBtn = project.link
-        ? `<a href="${project.link}" target="_blank" rel="noreferrer" onclick="event.stopPropagation()" class="btn btn-outline mt-3 w-full justify-center" style="padding:7px;border-radius:6px;font-size:10px;letter-spacing:.08em">\n             <i data-lucide="gamepad-2" style="width:13px;height:13px"></i> OPEN EXPERIENCE\n           </a>`
-        : '';
-    const meta = (project.role || project.result)
-        ? `<dl class="proj-meta board-meta">${project.role ? `<div><dt>ROLE</dt><dd>${project.role}</dd></div>` : ''}${project.result ? `<div><dt>RESULT</dt><dd>${project.result}</dd></div>` : ''}</dl>`
-        : '';
-    const tags = (project.tags || []).map(tag => `<span class="board-tag">${tag}</span>`).join('');
-
-    return `<article class="board-card card" draggable="true" data-board-id="${encodeURIComponent(project.id)}" data-board-type="projects" tabindex="0" aria-label="Drag ${project.title}">
-        <div class="board-card-top">
-            <span class="board-drag-handle" aria-hidden="true"><i data-lucide="grip-vertical" style="width:14px;height:14px"></i></span>
-            <span class="board-index">${String(index + 1).padStart(2, '0')}</span>
-            <span class="board-cat">${project.category}</span>
-        </div>
-        <div class="board-media" style="height:${mediaH}">${_media(project)}</div>
-        <div class="board-body">
-            <div class="board-title-row"><h3>${project.title}</h3></div>
-            <p class="board-desc">${project.desc}</p>
-            ${meta}
-            ${tags ? `<div class="board-tags">${tags}</div>` : ''}
-            ${playBtn}
-        </div>
-    </article>`;
-}
-
-function _boardShell(type, state, itemMap, lanes, emptyText) {
-    return lanes.map((lane, laneIndex) => {
-        const ids = state.lanes[lane.id] || [];
-        const cards = ids.map((id, i) => itemMap.get(id)).filter(Boolean)
-            .map((item, i) => type === 'projects' ? _boardCard(item, i) : _timelineCard(item, i)).join('');
-        return `<section class="board-lane" data-lane-id="${lane.id}" data-board-type="${type}">
-            <header class="board-lane-head">
-                <div><span class="board-lane-kicker">0${laneIndex + 1}</span><h3>${lane.label}</h3><p>${lane.hint}</p></div>
-                <span class="board-count">${ids.length}</span>
-            </header>
-            <div class="board-lane-body" data-drop-lane="${lane.id}">${cards || `<div class="board-empty">${emptyText}</div>`}</div>
-        </section>`;
-    }).join('');
-}
-
-function _timelineCard(item, index) {
-    return `<article class="board-card timeline-board-card card" draggable="true" data-board-id="${encodeURIComponent(item.id)}" data-board-type="timeline" tabindex="0" aria-label="Drag ${item.title}">
-        <div class="board-card-top">
-            <span class="board-drag-handle" aria-hidden="true"><i data-lucide="grip-vertical" style="width:14px;height:14px"></i></span>
-            <span class="board-index">${String(index + 1).padStart(2, '0')}</span>
-            <span class="board-cat">${item.period}</span>
-        </div>
-        <div class="board-body">
-            <h3>${item.title}</h3>
-            <p class="board-desc">${item.desc}</p>
-            ${item.tags?.length ? `<div class="board-tags">${item.tags.map(tag => `<span class="board-tag">${tag}</span>`).join('')}</div>` : ''}
-        </div>
-    </article>`;
-}
-
-function _initBoardDrag(container, key, items, lanes, defaults, type) {
-    if (!container || container.dataset.boardReady === '1') return;
-    container.dataset.boardReady = '1';
-
-    container.addEventListener('dragstart', e => {
-        const card = e.target.closest('.board-card');
-        if (!card || card.dataset.boardType !== type) return;
-        if (e.target.closest('a,button,input,textarea,iframe')) { e.preventDefault(); return; }
-        card.classList.add('is-dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', JSON.stringify({ id: decodeURIComponent(card.dataset.boardId), type }));
-    });
-
-    container.addEventListener('dragend', e => {
-        const card = e.target.closest('.board-card');
-        card?.classList.remove('is-dragging');
-        container.querySelectorAll('.board-lane.is-over,.board-card.is-drop-target').forEach(el => el.classList.remove('is-over','is-drop-target'));
-    });
-
-    container.addEventListener('dragover', e => {
-        const lane = e.target.closest('.board-lane');
-        if (!lane || lane.dataset.boardType !== type) return;
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        container.querySelectorAll('.board-lane.is-over').forEach(el => { if (el !== lane) el.classList.remove('is-over'); });
-        lane.classList.add('is-over');
-        const card = e.target.closest('.board-card');
-        container.querySelectorAll('.board-card.is-drop-target').forEach(el => { if (el !== card) el.classList.remove('is-drop-target'); });
-        if (card) card.classList.add('is-drop-target');
-    });
-
-    container.addEventListener('drop', e => {
-        const laneEl = e.target.closest('.board-lane');
-        if (!laneEl) return;
-        e.preventDefault();
-        container.querySelectorAll('.board-lane.is-over,.board-card.is-drop-target').forEach(el => el.classList.remove('is-over','is-drop-target'));
-        let payload; try { payload = JSON.parse(e.dataTransfer.getData('text/plain') || '{}'); } catch (_) { return; }
-        if (!payload.id || payload.type !== type) return;
-
-        const itemList = type === 'projects' ? items.map((x, i) => ({...x, id: `project-${i}`})) : items.map((x, i) => ({...x, id: `timeline-${i}`}));
-        const state = _loadBoard(key, itemList, lanes, defaults);
-        let fromLane = lanes.find(l => state.lanes[l.id]?.includes(payload.id));
-        if (!fromLane) return;
-        const fromIndex = state.lanes[fromLane.id].indexOf(payload.id);
-        state.lanes[fromLane.id].splice(fromIndex, 1);
-        const toLane = laneEl.dataset.laneId;
-        const targetCard = e.target.closest('.board-card');
-        let insertIndex = state.lanes[toLane]?.length || 0;
-        if (targetCard) {
-            const targetId = decodeURIComponent(targetCard.dataset.boardId);
-            const current = state.lanes[toLane] || [];
-            const targetIndex = current.indexOf(targetId);
-            if (targetIndex >= 0) insertIndex = targetIndex + (e.clientY > targetCard.getBoundingClientRect().top + targetCard.getBoundingClientRect().height / 2 ? 1 : 0);
-        }
-        state.lanes[toLane] ||= [];
-        state.lanes[toLane].splice(Math.max(0, Math.min(insertIndex, state.lanes[toLane].length)), 0, payload.id);
-        _saveBoard(key, state);
-        type === 'projects' ? renderProjects() : renderTimeline();
-        playClick(760, 0.05);
-    });
-}
-
-function filterProjects(cat, btn) {
-    _projFilter = cat;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderProjects();
-    playClick(600, 0.05);
-}
-
-function renderProjects() {
-    const grid = document.getElementById('proj-grid');
-    if (!grid) return;
-    const all = SITE.projects.map((p, i) => ({ ...p, id: `project-${i}` }));
-    const itemMap = new Map(all.map(p => [p.id, p]));
-    const state = _loadBoard(PROJECT_BOARD_KEY, all, BOARD_LANES.projects, p => /in development/i.test(p.result || '') ? 'building' : /live on roblox/i.test(p.result || '') ? 'shipped' : 'systems');
-    const visible = _projFilter === 'all' ? all : all.filter(p => p.category === _projFilter);
-    const visibleSet = new Set(visible.map(p => p.id));
-    const filteredState = { lanes: Object.fromEntries(BOARD_LANES.projects.map(l => [l.id, (state.lanes[l.id] || []).filter(id => visibleSet.has(id))])) };
-    grid.className = 'ops-board';
-    grid.innerHTML = _boardShell('projects', filteredState, itemMap, BOARD_LANES.projects, 'Drop a project here');
-    lucide.createIcons();
-    _initBoardDrag(grid, PROJECT_BOARD_KEY, all, BOARD_LANES.projects, p => /in development/i.test(p.result || '') ? 'building' : /live on roblox/i.test(p.result || '') ? 'shipped' : 'systems', 'projects');
-}
-
-function renderTimeline() {
-    const wrap = document.getElementById('timeline');
-    if (!wrap) return;
-    const all = SITE.timeline.map((t, i) => ({ ...t, id: `timeline-${i}` }));
-    const itemMap = new Map(all.map(t => [t.id, t]));
-    const state = _loadBoard(TIMELINE_BOARD_KEY, all, BOARD_LANES.timeline, t => t.id === 'timeline-0' ? 'current' : t.id === 'timeline-1' ? 'growth' : 'origin');
-    wrap.className = 'ops-board';
-    wrap.innerHTML = _boardShell('timeline', state, itemMap, BOARD_LANES.timeline, 'Drop a record here');
-    lucide.createIcons();
-    _initBoardDrag(wrap, TIMELINE_BOARD_KEY, all, BOARD_LANES.timeline, t => t.id === 'timeline-0' ? 'current' : t.id === 'timeline-1' ? 'growth' : 'origin', 'timeline');
-}
-
 const REVIEWS_KEY = 'wds_reviews_v1';
 let _starRating = 5;
 
@@ -880,8 +693,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileLinks();
     initUptime();
 
-    renderTimeline();
-    renderProjects();
 
     lucide.createIcons();
     typeWriter();

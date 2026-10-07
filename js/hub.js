@@ -25,6 +25,8 @@
         if (!list || !detail) return;
 
         const rows = allRows();
+        list.parentElement.classList.add('owns-scroll'); // the list of work scrolls in its own frame
+        detail.classList.add('owns-scroll');
         const state = { q: '', status: 'ALL' };
         let visible = [], buttons = [];
 
@@ -36,7 +38,7 @@
                 el('p', '', p.desc)
             );
             const params = el('dl', 'hub-params');
-            const entries = { category: p.category, stack: p.tags.join(', '), ...(p.role ? { role: p.role } : {}), ...(p.result ? { result: p.result } : {}), status: r.status, ...(r.params || {}) };
+            const entries = { category: p.category, stack: p.tags.join(', '), ...(p.role ? { role: p.role } : {}), ...(p.result ? { result: p.result } : {}), status: r.status, ...(p.rbx ? { playing: (window.fmtRbxNum || String)(p.rbx.playing), visits: (window.fmtRbxNum || String)(p.rbx.visits) } : {}), ...(r.params || {}) };
             Object.entries(entries).forEach(([k, v]) => { params.append(el('dt', '', k), el('dd', '', v)); });
             const links = el('div', 'hub-links');
             const url = p.link || (p.media === 'youtube' ? p.src : '');
@@ -123,6 +125,12 @@
 
         if (chipBox) renderChips();
         renderList();
+
+        // live Roblox numbers or descriptions arrived: redraw the open row's detail
+        window.addEventListener('rbx:update', () => {
+            const at = buttons.findIndex(b => b.getAttribute('aria-selected') === 'true');
+            if (at >= 0 && visible[at]) renderDetail(visible[at], at);
+        });
     }
 
     function buildSpecimens() {

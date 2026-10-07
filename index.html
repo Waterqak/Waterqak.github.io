@@ -349,38 +349,34 @@ tailwind.config = {
 
   <!-- 05 HISTORY -->
   <div id="pg-history" class="page">
-    <div class="max-w-3xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
-      <div class="text-center mb-14">
-        <div class="s-tag mb-3 reveal" style="margin:0 auto;width:fit-content">[SERVICE RECORD // MISSION LOG]</div>
-        <h2 class="section-title reveal">SERVICE RECORD</h2>
-        <p class="mono mt-2 reveal" style="font-size:11px;color:var(--dim)">A compact service board — drag a record to reposition it.</p>
-      </div>
-      <div id="timeline" class="relative"></div>
-    </div>
-  </div>
-
-  <!-- 06 PROJECTS -->
-  <div id="pg-projects" class="page">
-    <div class="max-w-7xl mx-auto px-6 py-24" style="padding-top:calc(var(--nav-h) + 4rem)">
-      <div class="project-head flex flex-col md:flex-row md:items-end justify-between mb-12 gap-5">
+    <div class="work-wrap owns-scroll">
+      <header class="work-head">
         <div>
-          <div class="s-tag mb-3 reveal"><i data-lucide="folder-open" style="width:11px;height:11px"></i> [PROJECT FILES // SERVICE FILES]</div>
-          <h2 class="section-title reveal">COMBAT DEBRIEFINGS</h2>
-          <p class="reveal mt-1" style="color:var(--dim);font-size:13px">Drag cards between lanes to reorganize the board. Filter by category when you want a tighter view.</p>
+          <h2 class="section-title">Experience</h2>
+          <p class="work-lede">How I got here, and what that means for your project.</p>
         </div>
-        <div class="flex flex-wrap gap-2 reveal">
-          <button class="filter-btn active" onclick="filterProjects('all',this)">ALL</button>
-          <button class="filter-btn" onclick="filterProjects('GAMEPLAY',this)">GAMEPLAY</button>
-          <button class="filter-btn" onclick="filterProjects('FULL GAME',this)">FULL GAMES</button>
-          <button class="filter-btn" onclick="filterProjects('OPTIMIZATION',this)">OPTIMIZATION</button>
-          <button class="filter-btn" onclick="filterProjects('RPG SYSTEM',this)">RPG SYSTEMS</button>
-          <button class="filter-btn" onclick="filterProjects('UI DESIGN',this)">UI DESIGN</button>
-        </div>
+      </header>
+      <ol id="timeline" class="hist"></ol>
+      <div class="hist-cta">
+        <button type="button" class="btn btn-outline" onclick="navigateTo('projects')">See the work</button>
+        <button type="button" class="btn btn-outline" onclick="navigateTo('contact')">Start a commission</button>
       </div>
-      <div id="proj-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-7"></div>
     </div>
   </div>
 
+  <div id="pg-projects" class="page">
+    <div class="work-wrap owns-scroll">
+      <header class="work-head">
+        <div>
+          <h2 class="section-title">Selected work</h2>
+          <p id="work-lede" class="work-lede"></p>
+        </div>
+        <div id="work-filter" class="chips" role="group" aria-label="Project type"></div>
+      </header>
+      <div id="work-stage" class="work-stage"></div>
+      <div id="work-rail" class="work-rail" role="listbox" aria-label="All projects"></div>
+    </div>
+  </div>
   <!-- 07 CONTACT -->
   <div id="pg-contact" class="page">
     <div class="contact-page">
@@ -398,6 +394,9 @@ tailwind.config = {
 <script src="js/main.js?v=20261007"></script>
 <script src="js/hub.js?v=20261007"></script>
 <script src="js/commission.js?v=20261007"></script>
+<script src="js/work.js?v=20261010"></script>
+<script src="js/rbxlive.js?v=20261010"></script>
+<script src="js/fit.js?v=20261009"></script>
 <script src="js/fx.js?v=20261007"></script>
 
 </body>
