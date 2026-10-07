@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-07T13:47:23.254Z",
+  "updatedAt": "2026-10-07T18:22:55.977Z",
   "games": {
     "17290214724": {
       "universeId": 5915413518,
@@ -59,6 +59,136 @@
         "https://tr.rbxcdn.com/180DAY-48fa84d77e3cb3cddf71475cd9b09d67/768/432/Image/Png/noFilter",
         "https://tr.rbxcdn.com/180DAY-848ae8c54c9fdd71698b61373be74f27/768/432/Image/Png/noFilter",
         "https://tr.rbxcdn.com/180DAY-c1818a6f4e581db311014262b9ad4f06/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18471104087": {
+      "universeId": 6259705299,
+      "name": "Blue archive - Noa Recollection",
+      "description": "",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-07-13T14:19:31.12Z",
+      "updated": "2024-07-13T15:27:54.467Z",
+      "playing": 0,
+      "visits": 21,
+      "favorites": 4,
+      "likes": 3,
+      "dislikes": 1,
+      "icon": "https://tr.rbxcdn.com/180DAY-18592412bbc305dfc2468fa6a025ae33/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-e18e7f148beb3b4ca5becb1e18fe8b90/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-c698047e6fdbf080fdefd4a7a3f5f9b1/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18272638182": {
+      "universeId": 6194646565,
+      "name": "Blue archive - Serika Recollection",
+      "description": "👍",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-06-30T09:45:39.897Z",
+      "updated": "2024-07-12T14:24:12.92Z",
+      "playing": 0,
+      "visits": 66,
+      "favorites": 8,
+      "likes": 6,
+      "dislikes": 0,
+      "icon": "https://tr.rbxcdn.com/180DAY-28265289229d72b52e1a68c556dcb0b8/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-b77b650189b4584b07497a50962c6d4e/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18466780591": {
+      "universeId": 6258116977,
+      "name": "Blue Archive - Hina(Dress) Recollection",
+      "description": "",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-07-13T07:21:49.82Z",
+      "updated": "2024-07-13T13:49:53.22Z",
+      "playing": 0,
+      "visits": 177,
+      "favorites": 14,
+      "likes": 11,
+      "dislikes": 0,
+      "icon": "https://tr.rbxcdn.com/180DAY-455278deecb4e92a4e246c38f5d83c5b/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-8afd178236abfcb92489eebb5fea1ad1/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-bd343b7b23b0f88c9cd4a5cafcb92e3c/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18453893127": {
+      "universeId": 6253933438,
+      "name": "Blue archive - Miyu Recollection",
+      "description": "",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-07-12T11:36:00.607Z",
+      "updated": "2024-09-07T14:28:55.033Z",
+      "playing": 0,
+      "visits": 50,
+      "favorites": 7,
+      "likes": 5,
+      "dislikes": 3,
+      "icon": "https://tr.rbxcdn.com/180DAY-62b887fe92aeb4de0c97ceb1692d7779/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-21b2c2ac83ed7b1ba823f11727324877/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-44a5badc203c45ce2b81951ebdc5a576/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18344506909": {
+      "universeId": 6219158992,
+      "name": "Blue archive - Hanako Recollection",
+      "description": "",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-07-05T12:37:14.48Z",
+      "updated": "2024-07-12T16:14:20.743Z",
+      "playing": 0,
+      "visits": 77,
+      "favorites": 5,
+      "likes": 2,
+      "dislikes": 0,
+      "icon": "https://tr.rbxcdn.com/180DAY-2fe36312568af2f6f36506baf012a493/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-da8e371843f085b4ee3f19c813bcc00b/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18290768266": {
+      "universeId": 6200875773,
+      "name": "Blue archive - Arona Room",
+      "description": "💻",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-07-01T15:38:04.163Z",
+      "updated": "2024-09-22T13:35:43.61Z",
+      "playing": 0,
+      "visits": 16,
+      "favorites": 5,
+      "likes": 2,
+      "dislikes": 0,
+      "icon": "https://tr.rbxcdn.com/180DAY-2f39489f930159ef79ea48f9920c56ee/512/512/Image/Png/noFilter",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-8fb3000a091bc1a77c8ac5bb9f8113ae/768/432/Image/Png/noFilter",
+        "https://tr.rbxcdn.com/180DAY-e7a9b4d89bebc8d9aafbbc640ede61d0/768/432/Image/Png/noFilter"
+      ]
+    },
+    "18485180189": {
+      "universeId": 6264072997,
+      "name": "Blue archive - Train",
+      "description": "",
+      "genre": "All",
+      "maxPlayers": 50,
+      "created": "2024-07-14T10:23:51.603Z",
+      "updated": "2025-05-18T11:35:00.2Z",
+      "playing": 0,
+      "visits": 6,
+      "favorites": 0,
+      "likes": 1,
+      "dislikes": 0,
+      "icon": "https://t4.rbxcdn.com/180DAY-dc729135d7789ab11a92a9d761648577",
+      "screenshots": [
+        "https://tr.rbxcdn.com/180DAY-4234c54049fc9ea063501b1bb27f0969/768/432/Image/Png/noFilter"
       ]
     }
   }
