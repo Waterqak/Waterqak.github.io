@@ -77,7 +77,7 @@ const SITE = {
             role: "Scripter",
             result: "Playable on Roblox, in development",
             tags: ["FPS", "Narrative", "UI"],
-            link: "https://www.roblox.com/games/140471518514522/Operation-Azure-Rift",
+            link: "https://www.roblox.com/games/140471518514522/Project-Halo",
             media: "image",
             src: "https://tr.rbxcdn.com/180DAY-1384a973e73995479b5db690aa51e902/768/432/Image/Png/noFilter",
             color: "blue",
@@ -194,7 +194,7 @@ const SITE = {
 
 
     hub: [
-        { title: "Operation: Azure Rift", status: "ON HOLD" },
+        { title: "Project Halo [Still in remaking]", status: "IN PROGRESSED" },
         { title: "Quest Engine", status: "SHIPPED" },
         { title: "Chillin Place", status: "SHIPPED" },
         { title: "Escape Lava: Collect Brainrots", status: "SHIPPED" },
