@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-07T18:22:55.977Z",
+  "updatedAt": "2026-10-08T00:04:45.977Z",
   "games": {
     "17290214724": {
       "universeId": 5915413518,
@@ -8,7 +8,7 @@
       "genre": "All",
       "maxPlayers": 20,
       "created": "2024-04-26T11:13:08.213Z",
-      "updated": "2026-10-06T16:14:33.8017736Z",
+      "updated": "2026-10-06T16:14:33.801Z",
       "playing": 0,
       "visits": 9423,
       "favorites": 53,
@@ -50,7 +50,7 @@
       "created": "2024-10-01T11:58:56.743Z",
       "updated": "2026-10-04T19:20:46.637Z",
       "playing": 0,
-      "visits": 1221,
+      "visits": 1223,
       "favorites": 58,
       "likes": 37,
       "dislikes": 2,
