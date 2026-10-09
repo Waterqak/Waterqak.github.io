@@ -15,9 +15,9 @@ img{filter:none!important}
 img[style*="floatHolo"],.char-img{animation:none!important}
 
 /* one radius, one border */
-.card,.terminal,.stat-card,.hub,.spec{background:var(--panel);border:1px solid var(--line);overflow:hidden}
+.card,.stat-card,.hub,.spec{background:var(--panel);border:1px solid var(--line);overflow:hidden}
 .card::before{display:none}
-.card:hover,.terminal:hover,.stat-card:hover{border-color:var(--muted)}
+.card:hover,.stat-card:hover{border-color:var(--muted)}
 .s-tag,.hero-badge{background:transparent;border:0;padding:0;color:var(--dim);letter-spacing:.1em}
 nav{background:var(--bg);border-bottom:1px solid var(--line)}
 
@@ -173,7 +173,7 @@ span[style*="#60a5fa"],span[style*="#c084fc"]{background:var(--dim)!important}
 
 /* round language: big radii on panels, pills on controls, true circles on dots */
 :root{--r:18px;--r-sm:10px}
-.card,.terminal,.stat-card,.hub,.spec,.momo-wrap,.pal-box,.commission{border-radius:var(--r)!important}
+.card,.stat-card,.hub,.spec,.momo-wrap,.pal-box,.commission{border-radius:var(--r)!important}
 .btn,.filter-btn,.hero-badge,.kbd-hint,.chip,.hub-search{border-radius:999px!important}
 [class*="rounded"]:not(.rounded-full){border-radius:var(--r-sm)!important}
 .rounded-full,.momo-avatar,.live-dot,.blk{border-radius:50%!important}
@@ -199,34 +199,34 @@ span[style*="#60a5fa"],span[style*="#c084fc"]{background:var(--dim)!important}
 .proj-meta dt{font:11px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--muted)}
 .proj-meta dd{font-size:12px;color:var(--text);line-height:1.4}
 
-/* the wheel: every page sits on one big disc, turning it swings the next page up from the side */
-:root{--step:20deg;--vh:1vh;--vw:1vw;--wr:clamp(560px,calc(var(--vh) * 86),940px);--peek:72px;--active:0}
-@media(max-width:700px){:root{--wr:clamp(420px,calc(var(--vh) * 70),700px);--peek:64px}}
-.page{transform-origin:50% calc(100% + var(--wr));
-transform:rotate(calc((var(--i,0) - var(--active)) * var(--step)));
-visibility:hidden;
-transition:transform .8s var(--ease),opacity .5s ease,visibility 0s linear .8s}
-.page.active{transform:none;visibility:visible;transition-delay:0s,0s,0s}
-html.wheel-snap .page,html.wheel-snap #wheel{transition:none!important}
-#wheel{position:fixed;left:50%;bottom:calc(var(--peek) - var(--wr) * 2);width:calc(var(--wr) * 2);height:calc(var(--wr) * 2);
-margin-left:calc(var(--wr) * -1);border:1px solid var(--line);border-radius:50%;z-index:60;pointer-events:none;
-transform:rotate(calc(var(--active) * var(--step) * -1));transition:transform .8s var(--ease)}
-#wheel::before{content:'';position:absolute;inset:0;border-radius:50%;opacity:.55;
-background:repeating-conic-gradient(from -.35deg,var(--muted) 0 .7deg,transparent .7deg 5deg);
--webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 9px),#000 calc(100% - 1px),transparent calc(100% - 1px));
-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 9px),#000 calc(100% - 1px),transparent calc(100% - 1px))}
-.wheel-stop{position:absolute;left:50%;top:50%;width:0;height:0;transform:rotate(var(--ang))}
-.wheel-btn{position:absolute;left:0;top:calc(var(--wr) * -1 + 16px);transform:translateX(-50%);pointer-events:auto;
-background:none;border:0;padding:4px 8px;font:11px 'IBM Plex Mono',monospace;letter-spacing:.14em;color:var(--muted);cursor:pointer;white-space:nowrap;transition:color .15s ease}
-.wheel-btn::before{content:'';position:absolute;left:50%;top:-16px;width:1px;height:14px;background:var(--muted)}
-.wheel-btn:hover{color:var(--text)}
-.wheel-btn.active{color:var(--accent)}
-.wheel-btn.active::before{background:var(--accent);height:18px}
+/* Scripted section transitions: short, deliberate, and easy to follow. */
+:root{--vh:1vh;--vw:1vw;--page-transition:520ms}
+.page{
+  transform:translate3d(0,14px,0) scale(.996);
+  visibility:hidden;
+  will-change:opacity,transform;
+  transition:opacity 380ms cubic-bezier(.22,.75,.25,1),
+             transform 520ms cubic-bezier(.22,.9,.36,1),
+             visibility 0s linear 520ms;
+}
+.page.active{
+  transform:translate3d(0,0,0) scale(1);
+  visibility:visible;
+  transition-delay:0s,0s,0s;
+}
+.page.is-leaving{
+  opacity:0;
+  transform:translate3d(0,-9px,0) scale(.996);
+  visibility:visible;
+  pointer-events:none;
+  z-index:3;
+  transition-delay:0s,0s,0s;
+}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
 
 
-/* 86.2 // wheel navigation + calm code + deliberate drag/drop boards */
+/* 86.2 // calm code and deliberate project browsing */
 .page{scrollbar-width:none;overflow:hidden;overscroll-behavior:none}
 .page::-webkit-scrollbar{display:none;width:0;height:0}
 .page > .max-w-7xl,.page > .max-w-5xl,.page > .max-w-3xl,.page > .max-w-2xl{
@@ -236,7 +236,7 @@ background:none;border:0;padding:4px 8px;font:11px 'IBM Plex Mono',monospace;let
   min-height:100%;
 }
 
-/* hub + code fit the viewport. Code owns its own scroll and ignores wheel-to-page turning. */
+/* Hub and code fit the viewport; each workspace owns its own scroll. */
 #pg-hub>.max-w-7xl,#pg-code>.max-w-5xl{height:100%;display:flex;flex-direction:column;overflow:hidden}
 #pg-hub>.max-w-7xl{padding-top:calc(var(--nav-h) + 1.55rem)!important}
 #pg-hub .hub-tools{margin-bottom:14px;flex:0 0 auto}
@@ -275,8 +275,8 @@ background:none;border:0;padding:4px 8px;font:11px 'IBM Plex Mono',monospace;let
    1. The layout fits the screen.
    2. If it does not, the frame that overflows scrolls on its own (.owns-scroll).
    3. If that is still too cramped, js/fit.js scales the whole UI down, like UIScale in Roblox. */
-/* the ring owns the strip under the pages, so scrolling content never slides beneath it */
-.page{bottom:var(--peek)}
+/* Full-height pages use the entire viewport. */
+.page{bottom:0}
 #pg-home>div{min-height:100%!important}
 .owns-scroll{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .owns-scroll::-webkit-scrollbar{display:block;width:6px;height:6px}
@@ -388,7 +388,7 @@ background:none;border:0;padding:4px 8px;font:11px 'IBM Plex Mono',monospace;let
   outline: 2px solid var(--accent) !important;
   outline-offset: 2px !important;
 }
-.btn:focus-visible, a:focus-visible, button:focus-visible, input:focus-visible, [role="button"]:focus-visible, .wheel-btn:focus-visible {
+.btn:focus-visible, a:focus-visible, button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
   outline: 2px solid #60a5fa !important;
   outline-offset: 2px !important;
 }

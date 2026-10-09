@@ -193,7 +193,7 @@
             stage.querySelectorAll('.work-chip[data-k]').forEach(c => { const t = text[c.dataset.k]; if (t) c.lastChild.textContent = t; });
         });
 
-        setKind('all');
+        setKind('featured');
     }
 
     // ---------- history ----------

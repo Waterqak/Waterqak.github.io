@@ -86,7 +86,7 @@ const SITE = {
         {
             title: "Farm Optimization",
             category: "OPTIMIZATION",
-            group: "featured",
+            group: "systems",
             desc: "Backend refactor on a live farming game that cut server lag by 40% and stopped memory leaks.",
             role: "Scripter",
             result: "Server lag reduced by ~40% on live servers",
@@ -105,7 +105,7 @@ const SITE = {
         {
             title: "Quest Engine",
             category: "RPG SYSTEM",
-            group: "featured",
+            group: "systems",
             desc: "Modular branching dialogue and quest progression engine with smooth UI transitions.",
             role: "Scripter",
             result: "Plug-and-play quest trees with zero headache",
@@ -124,7 +124,7 @@ const SITE = {
         {
             title: "Escape Lava: Collect Brainrots",
             category: "FULL GAME",
-            group: "featured",
+            group: "other",
             desc: "Casual progression game with stage tracking, UI flow, and reliable player saving.",
             role: "Sole Scripter",
             result: "Live on Roblox - saves stage progress reliably",
@@ -139,7 +139,7 @@ const SITE = {
         {
             title: "Weather System",
             category: "GAMEPLAY",
-            group: "systems",
+            group: "featured",
             desc: "Dynamic weather engine with smooth lighting transitions and realistic rain/storm cycles.",
             role: "Scripter",
             result: "Smooth transitions between weather states",
@@ -152,7 +152,7 @@ const SITE = {
         {
             title: "Dialogue System",
             category: "RPG SYSTEM",
-            group: "systems",
+            group: "featured",
             desc: "FPS-style dialogue system built for readability, pacing, and clean interaction flow.",
             role: "Scripter",
             result: "Reusable ModuleScript with snappy pacing",
@@ -191,7 +191,7 @@ const SITE = {
         {
             title: "Project Halo",
             category: "FULL GAME",
-            group: "systems",
+            group: "featured",
             desc: "Story-driven FPS with combat systems, UI, and narrative structure. Currently being remade.",
             role: "Scripter",
             result: "Playable on Roblox, active rework in progress",
@@ -427,11 +427,11 @@ end)`
 
     sections: [
         { id: "home", label: "Home" },
-        { id: "about", label: "Profile" },
-        { id: "hub", label: "Hub" },
+        { id: "about", label: "About" },
+        { id: "projects", label: "Work" },
+        { id: "hub", label: "All projects" },
         { id: "code", label: "Code" },
-        { id: "history", label: "History" },
-        { id: "projects", label: "Projects" },
+        { id: "history", label: "Experience" },
         { id: "contact", label: "Contact" },
     ],
 };

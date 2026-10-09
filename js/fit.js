@@ -1,13 +1,11 @@
-// The fit rule, in order:
-//   1. The layout fits the screen.
-//   2. If it does not, the frame that overflows scrolls on its own (.owns-scroll).
-//   3. If even that is too cramped, the whole UI scales down to fit, like UIScale in Roblox.
-// This file is step 3, plus it makes every page a scroll frame for step 2.
+// Viewport fit:
+// 1. Normal screens use their full size.
+// 2. Content panes handle their own scrolling.
+// 3. Very small screens use a restrained scale adjustment.
 (() => {
     const MIN_W = 360, MIN_H = 640, MIN_SCALE = 0.55; // the smallest screen the layout is designed for
     const root = document.documentElement;
 
-    document.querySelectorAll('.page').forEach(p => p.classList.add('owns-scroll'));
 
     function fit() {
         const w = window.innerWidth, h = window.innerHeight;

@@ -1,4 +1,4 @@
-// Terminal Hub + Code Specimens. Reads SITE.hub, SITE.projects, SITE.specimens from config.js
+// Project archive + Code Specimens. Reads SITE.hub, SITE.projects, SITE.specimens from config.js
 (() => {
     const el = (tag, cls, text) => {
         const node = document.createElement(tag);
@@ -25,7 +25,7 @@
         if (!list || !detail) return;
 
         const rows = allRows();
-        list.parentElement.classList.add('owns-scroll'); // the list of work scrolls in its own frame
+        // CSS keeps the table header fixed while only the rows scroll.
         detail.classList.add('owns-scroll');
         const state = { q: '', status: 'ALL' };
         let visible = [], buttons = [];
@@ -33,21 +33,22 @@
         function renderDetail(r, i) {
             const p = r.project;
             detail.replaceChildren(
-                el('div', 'hub-prompt', `[ ${pad(i)} // ${r.status} ]`),
+                el('div', 'hub-prompt', r.status.toLowerCase().replaceAll('_', ' ')),
                 el('h3', '', p.title),
                 el('p', '', p.desc)
             );
+            detail.scrollTop = 0;
             const params = el('dl', 'hub-params');
             const entries = { category: p.category, stack: p.tags.join(', '), ...(p.role ? { role: p.role } : {}), ...(p.result ? { result: p.result } : {}), status: r.status, ...(p.rbx ? { playing: (window.fmtRbxNum || String)(p.rbx.playing), visits: (window.fmtRbxNum || String)(p.rbx.visits) } : {}), ...(r.params || {}) };
             Object.entries(entries).forEach(([k, v]) => { params.append(el('dt', '', k), el('dd', '', v)); });
             const links = el('div', 'hub-links');
             const url = p.link || (p.media === 'youtube' ? p.src : '');
             if (url) {
-                const a = el('a', 'btn btn-outline mono', p.link ? '[ OPEN ON ROBLOX ]' : '[ WATCH DEMO ]');
+                const a = el('a', 'btn btn-outline mono', p.link ? 'Open on Roblox' : 'Watch demo');
                 a.href = url; a.target = '_blank'; a.rel = 'noopener';
                 links.append(a);
             }
-            detail.append(params, links, el('div', 'hub-prompt', 'guest@spearhead:~$ _'));
+            detail.append(params, links);
         }
 
         function select(i, focus) {
@@ -67,9 +68,10 @@
             });
             buttons = [];
             list.replaceChildren();
+            list.scrollTop = 0;
             if (!visible.length) {
-                list.append(el('div', 'hub-empty', 'no matches'));
-                detail.replaceChildren(el('div', 'hub-prompt', 'guest@spearhead:~$ grep: nothing found'));
+                list.append(el('div', 'hub-empty', 'No projects match your search.'));
+                detail.replaceChildren(el('div', 'hub-empty', 'Try another search or status filter.'));
                 return;
             }
             visible.forEach((r, i) => {

@@ -69,45 +69,54 @@ function toggleMute() {
 }
 
 let _active = 0;
-let _busy   = false;
-const DUR   = 800; // wheel turn time, keep in sync with .8s in tactical.css
+let _busy = false;
+const TRANSITION_MS = 520;
 const _inited = {};
 
 function navigateTo(id, instant) {
-    const ids  = SITE.sections.map(s => s.id);
+    const ids = SITE.sections.map(section => section.id);
     const next = ids.indexOf(id);
-    if (next === -1 || (next === _active && !instant) || _busy) return;
+    if (next < 0 || (_busy && !instant)) return;
 
-    const curEl  = document.querySelector('.page.active');
-    const nextEl = document.getElementById('pg-' + id);
-    if (!nextEl) return;
+    const current = document.querySelector('.page.active');
+    const target = document.getElementById('pg-' + id);
+    if (!target) return;
 
+    // The project archive has independent list/detail panes. Start them at the top on entry.
+    if (id === 'hub') {
+        target.scrollTop = 0;
+        const list = target.querySelector('#hub-list');
+        const detail = target.querySelector('#hub-detail');
+        if (list) list.scrollTop = 0;
+        if (detail) detail.scrollTop = 0;
+    }
+
+    // Let persistent scene elements (such as the avatar) follow section transitions.
+    document.body.dataset.activePage = id;
     _updateNav(id);
-    _updateDots(next);
+    if (current === target && !instant) return;
 
-    const root = document.documentElement;
-    if (instant || !curEl || curEl === nextEl) {
-        root.classList.add('wheel-snap'); // jump, no turn
-        if (curEl && curEl !== nextEl) curEl.classList.remove('active');
-        nextEl.classList.add('active');
-        root.style.setProperty('--active', next);
+    if (instant || !current) {
+        document.querySelectorAll('.page.is-leaving').forEach(page => page.classList.remove('is-leaving'));
+        document.querySelectorAll('.page.active').forEach(page => page.classList.remove('active'));
+        target.classList.add('active');
         _active = next;
-        void nextEl.offsetWidth;
-        root.classList.remove('wheel-snap');
+        _busy = false;
         _onEnter(id);
         return;
     }
 
-    // The whole site sits on one wheel. Changing --active turns the ring and
-    // swings every page around the same pivot, so the content travels with it.
     _busy = true;
-    curEl.classList.remove('active');
-    nextEl.classList.add('active');
-    root.style.setProperty('--active', next);
+    current.classList.remove('active');
+    current.classList.add('is-leaving');
+    target.classList.remove('is-leaving');
+    target.classList.add('active');
     _active = next;
-    playSfx('swipe', 0.3);
-    setTimeout(() => _onEnter(id), 250);
-    setTimeout(() => { _busy = false; }, DUR);
+    playSfx('swipe', 0.22);
+
+    window.setTimeout(() => current.classList.remove('is-leaving'), TRANSITION_MS + 40);
+    window.setTimeout(() => _onEnter(id), 110);
+    window.setTimeout(() => { _busy = false; }, TRANSITION_MS);
 }
 
 function _onEnter(id) {
@@ -122,53 +131,25 @@ function _onEnter(id) {
 }
 
 function _updateNav(id) {
-    document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.section === id));
-}
-function _updateDots(idx) {
-    document.querySelectorAll('.wheel-btn').forEach((b, i) => {
-        b.classList.toggle('active', i === idx);
-        b.setAttribute('aria-current', i === idx ? 'page' : 'false');
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.toggle('active', link.dataset.section === id);
     });
-    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
 }
 
 function initKeyboardNav() {
-    document.addEventListener('keydown', e => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-        const ids = SITE.sections.map(s => s.id);
-        if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); navigateTo(ids[Math.min(_active + 1, ids.length - 1)]); }
-        if (e.key === 'ArrowUp'   || e.key === 'PageUp')   { e.preventDefault(); navigateTo(ids[Math.max(_active - 1, 0)]); }
+    // Preserve native arrow-key scrolling; Alt + Left/Right is an optional section shortcut.
+    document.addEventListener('keydown', event => {
+        const target = event.target;
+        if (target && (target.matches('input, textarea, select') || target.isContentEditable)) return;
+        if (!event.altKey || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+        event.preventDefault();
+        const ids = SITE.sections.map(section => section.id);
+        const next = event.key === 'ArrowRight'
+            ? Math.min(_active + 1, ids.length - 1)
+            : Math.max(_active - 1, 0);
+        if (next !== _active) navigateTo(ids[next]);
     });
 }
-
-function initWheelNav() {
-    // Normal mouse wheel scrolling is preserved so trackpads and mice scroll content naturally.
-    // Page navigation is handled by the tactical wheel buttons, arrow keys, and top nav links.
-}
-
-function initSwipeNav() {
-    let sy = 0, st = 0, blocked = false;
-    const ids = SITE.sections.map(s => s.id);
-    const app = document.getElementById('app');
-    if (!app) return;
-    app.addEventListener('touchstart', e => {
-        const t = e.target;
-        blocked = !!(t.closest && (t.closest('#pg-code .spec-body') || (t.closest('.owns-scroll') && t.closest('.owns-scroll').scrollHeight > t.closest('.owns-scroll').clientHeight + 2)));
-        sy = e.touches[0].clientY; st = Date.now();
-    }, { passive: true });
-    app.addEventListener('touchend', e => {
-        if (blocked) { blocked = false; return; }
-        const dy = sy - e.changedTouches[0].clientY;
-        const dt = Date.now() - st;
-        if (Math.abs(dy) < 60 || dt > 400) return;
-        const pg    = document.querySelector('.page.active');
-        const atBot = pg.scrollHeight - pg.scrollTop - pg.clientHeight < 10;
-        const atTop = pg.scrollTop < 10;
-        if (dy > 0 && atBot) navigateTo(ids[Math.min(_active + 1, ids.length - 1)]);
-        if (dy < 0 && atTop) navigateTo(ids[Math.max(_active - 1, 0)]);
-    }, { passive: true });
-}
-
 
 function runBoot() {
     const cont = document.getElementById('boot-log');
@@ -458,7 +439,7 @@ function showToast(msg, color = 'var(--red)') {
     const t = document.createElement('div');
     const c = color;
     t.style.cssText = `position:fixed;bottom:${84 + (_toastN - 1) * 76}px;right:22px;z-index:9998;background:rgba(4,6,15,0.97);border:1px solid rgba(255,255,255,0.07);border-left:3px solid ${c};color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;padding:11px 16px;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,0.7);max-width:300px;line-height:1.5;transform:translate3d(16px,0,0) scale(0.97);opacity:0;pointer-events:none;transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275),opacity 0.4s ease;will-change:transform,opacity;`;
-    t.innerHTML = `<div style="font-size:8px;color:${c};letter-spacing:.12em;margin-bottom:3px;opacity:.7;">WATER.SYS</div><div>${msg}</div>`;
+    t.innerHTML = `<div style="font-size:8px;color:${c};letter-spacing:.12em;margin-bottom:3px;opacity:.7;">made by Water</div><div>${msg}</div>`;
     document.body.appendChild(t);
     requestAnimationFrame(() => requestAnimationFrame(() => { t.style.transform = 'translate3d(0,0,0) scale(1)'; t.style.opacity = '1'; }));
     setTimeout(() => {
@@ -612,72 +593,7 @@ function _stars(n, size) {
     ).join('');
 }
 
-/* Ambient notifications intentionally disabled: the wheel + inline system states are the only persistent UI signals. */
-
-function initCLI() {
-    const inp = document.getElementById('cli-input');
-    const out = document.getElementById('cli-output');
-    if (!inp || !out) return;
-
-    const B  = 'color:var(--accent)', G  = 'color:var(--gold)',   P  = 'color:var(--purple)';
-    const GN = 'color:var(--green)',  R  = 'color:var(--red)',    D  = 'color:var(--dim)';
-    const M  = 'color:var(--muted)';
-
-    const go = (id, msg) => { setTimeout(() => navigateTo(id), 200); return `<span style="${D}">${msg}</span>`; };
-
-    const cmds = {
-        hub:       () => go('hub',  'Opening hub...'),
-        code:      () => go('code', 'Opening code specimens...'),
-        palette:   () => { setTimeout(() => window.openPalette && window.openPalette(), 120); return 'Opening palette...'; },
-        shortcuts: () => { setTimeout(() => window.openHelp && window.openHelp(), 120); return 'Shortcuts:'; },
-        help:     () => [`<span style="${B}">Available commands:</span>`, `  <span style="${G}">about projects contact</span>`, `  <span style="${G}">date whoami status neofetch coffee uwu hack sudo</span>`, `  <span style="${G}">git blame  ls  ping  clear  touch grass</span>`, `  <span style="${M}">(secrets hidden in the void)</span>`].join('<br>'),
-        about:    () => go('home',     'Navigating...'),
-        projects: () => go('projects', 'Accessing project files...'),
-        contact:  () => go('contact',  'Opening comms...'),
-        date:     () => `<span style="${D}">[${new Date().toLocaleString()}]</span>`,
-        whoami:   () => `<span style="${D}">Guest · Level 1 · Node: Spearhead-Alpha · IP: 127.0.0.1</span>`,
-        status:   () => _override ? `<span style="${B}">REPUBLIC OVERRIDE active.</span>` : `<span style="${GN}">✓ NOMINAL: All nodes green.</span>`,
-        neofetch: () => [`<span style="${B}">WATER</span>@<span style="${B}">spearhead</span>`, '  OS: EightyOS x64 · Host: WATER.SYS v1', '  Shell: bash (certified bad decisions)', '  CPU: Galaxy Brain (2 cores, 0 free)', '  RAM: 16GB (14.9GB used by browser)', '  Coffee: <span style="color:var(--red)">CRITICAL LOW</span>', '  Bugs: 0 (official count)', '  Legion: <span style="color:var(--red)">ACTIVE</span>', `  <span style="color:var(--red)">●</span><span style="color:var(--gold)">●</span><span style="color:var(--green)">●</span><span style="color:var(--accent)">●</span><span style="color:var(--purple)">●</span>`].join('<br>'),
-        coffee:   () => [`<span style="${G}">Brewing...</span>`, `<span style="${D}">Caffeine: 9000mg. Bugs fixed: still 0.</span>`].join('<br>'),
-        uwu:      () => [`<span style="${P}">UwU what's this?? a stwange tewminal??</span>`, `<span style="${M}">[ this was a mistake. deeply sorry. ]</span>`].join('<br>'),
-        sudo:     () => `<span style="${R}">Permission denied. Reported to Handler One.</span>`,
-        hack:     () => [`<span style="${GN}">INITIATING HACK SEQUENCE...</span>`, `<span style="${D}">Bypassing Legion core... ████████░░</span>`, `<span style="${R}">ERROR: This is a portfolio. Nothing to hack.</span>`].join('<br>'),
-        clear:    () => { out.innerHTML = ''; return null; },
-        ls:       () => `<span style="${D}">home/ about/ history/ projects/ contact/ classified/ TODO_never_fix/</span>`,
-        ping:     () => `<span style="${GN}">PONG: 1ms (localhost, obviously)</span>`,
-        'git blame':     () => `<span style="${D}">git blame: Water (100% of commits, 100% of bugs)</span>`,
-        'git push':      () => `<span style="${R}">remote: Permission denied.</span>`,
-        'touch grass':   () => `<span style="${GN}">✓ Grass touched. Rare event.</span>`,
-        vim:             () => `<span style="${D}">I know how to exit vim. I choose not to.</span>`,
-        exit:            () => `<span style="${D}">lol no</span>`,
-        'npm install':   () => `<span style="${D}">added 2,847 packages. 3 vulnerabilities. node_modules: 850MB.</span>`,
-        'cat readme.md': () => `<span style="${D}">README: "built at 2am. please hire."</span>`,
-    };
-
-    const SASSY = [
-        c => `Command not found: "${c}". Type "help".`,
-        c => `bash: ${c}: not found. skill issue.`,
-        c => `"${c}": never heard of it.`,
-    ];
-
-    const allKeys = Object.keys(cmds);
-    inp.addEventListener('keydown', e => {
-        if (e.key === 'Tab') { e.preventDefault(); const m = allKeys.find(k => k.startsWith(inp.value.toLowerCase().trim())); if (m) inp.value = m; }
-    });
-
-    inp.addEventListener('keypress', e => {
-        if (e.key !== 'Enter') return;
-        const raw = inp.value.trim(), cmd = raw.toLowerCase();
-        if (!cmd) return;
-        playClick();
-        out.innerHTML += `<div style="margin-bottom:2px"><span style="${B}">guest@spearhead:~$</span> <span style="color:#7080a0">${esc(raw)}</span></div>`;
-        const jump = cmd.match(/^(?:goto|cd)\s+(\w+)$/);
-        const h = jump && SITE.sections.some(s => s.id === jump[1]) ? () => go(jump[1], 'Navigating...') : cmds[cmd];
-        if (h !== undefined) { const res = typeof h === 'function' ? h() : h; if (res) out.innerHTML += `<div style="margin-bottom:5px">${res}</div>`; }
-        else { const fn = SASSY[Math.floor(Math.random() * SASSY.length)]; out.innerHTML += `<div style="color:var(--red);margin-bottom:5px">${fn(esc(cmd))}</div>`; }
-        inp.value = ''; out.scrollTop = out.scrollHeight;
-    });
-}
+/* Ambient notifications remain disabled; section navigation stays intentionally quiet. */
 
 function initLogoEgg() {
     const logo = document.querySelector('[data-logo-egg]');
@@ -721,28 +637,20 @@ function initHoverSfx() {
 
 (function () {
     setTimeout(() => console.log(
-        '%c\n  WATER.SYS v1\n  Roblox Systems & Gameplay Engineer\n  Try CLI: coffee · hack · neofetch\n',
+        '%c\n  made by Water\n  Roblox game developer\n',
         'color:#3d8bff;font-family:monospace;font-size:11px;'
     ), 1200);
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
     initVisitorCounter();
-    runBoot();
+    // No boot gate: show the portfolio immediately and run the normal entrance reveals.
+    _onEnter('home');
     initKeyboardNav();
-    initWheelNav();
-    initSwipeNav();
-    initParticles();
-    initTooltips();
-    initCLI();
-    initLogoEgg();
     initMobileLinks();
     initUptime();
-    initHoverSfx();
-
 
     lucide.createIcons();
-    typeWriter();
 
     const firstFilter = document.querySelector('.filter-btn');
     if (firstFilter) firstFilter.classList.add('active');

@@ -9,32 +9,6 @@
     const typing = t => t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // ---------- the wheel: ring nav + page placement ----------
-    (function buildWheel() {
-        const root = document.documentElement;
-        const start = typeof _active === 'number' ? _active : 0;
-        SITE.sections.forEach((s, i) => {
-            const pg = document.getElementById('pg-' + s.id);
-            if (pg) pg.style.setProperty('--i', i);
-        });
-        root.style.setProperty('--active', start);
-
-        const wheel = el('div'); // not <nav>: the site's nav rule pins that to the top
-        wheel.id = 'wheel';
-        wheel.setAttribute('role', 'navigation');
-        wheel.setAttribute('aria-label', 'Pages');
-        SITE.sections.forEach((s, i) => {
-            const stop = el('div', 'wheel-stop');
-            stop.style.setProperty('--ang', 'calc(' + i + ' * var(--step))');
-            const b = el('button', 'wheel-btn' + (i === start ? ' active' : ''), s.label.toUpperCase());
-            b.type = 'button';
-            b.addEventListener('click', () => navigateTo(s.id));
-            stop.append(b);
-            wheel.append(stop);
-        });
-        document.body.append(wheel);
-    })();
-
     // ---------- overlays ----------
     const overlay = el('div', 'pal');
     overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true');
