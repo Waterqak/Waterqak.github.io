@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-21T07:18:36.095Z",
+  "updatedAt": "2026-10-21T18:11:39.586Z",
   "games": {
     "17290214724": {
       "universeId": 5915413518,
@@ -10,7 +10,7 @@
       "created": "2024-04-26T11:13:08.213Z",
       "updated": "2026-10-18T18:47:09.123Z",
       "playing": 0,
-      "visits": 9431,
+      "visits": 9432,
       "favorites": 53,
       "likes": 33,
       "dislikes": 6,
@@ -50,7 +50,7 @@
       "created": "2024-10-01T11:58:56.743Z",
       "updated": "2026-10-04T19:20:46.637Z",
       "playing": 0,
-      "visits": 1240,
+      "visits": 1243,
       "favorites": 58,
       "likes": 37,
       "dislikes": 2,
