@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-22T01:03:29.316Z",
+  "updatedAt": "2026-11-22T08:38:20.731Z",
   "games": {
     "17290214724": {
       "universeId": 5915413518,
@@ -10,7 +10,7 @@
       "created": "2024-04-26T11:13:08.213Z",
       "updated": "2026-10-23T08:35:41.337Z",
       "playing": 0,
-      "visits": 9459,
+      "visits": 9460,
       "favorites": 54,
       "likes": 34,
       "dislikes": 6,
@@ -90,7 +90,7 @@
       "updated": "2024-07-12T14:24:12.92Z",
       "playing": 0,
       "visits": 66,
-      "favorites": 8,
+      "favorites": 9,
       "likes": 6,
       "dislikes": 0,
       "icon": "https://tr.rbxcdn.com/180DAY-28265289229d72b52e1a68c556dcb0b8/512/512/Image/Png/noFilter",
